@@ -11230,7 +11230,15 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
 }
 
 .card-small {
-  width: 450px;
+      width: 450px;
+      position: absolute;
+      left: 35%;
+      top: 35%;
+      -moz-transform: translate(-50%, -50%)
+      -webkit-transform: translate(-50%, -50%)
+      -ms-transform: translate(-50%, -50%)
+      -o-transform: translate(-50%, -50%)
+      transform: translate(-50%, -50%);
 }
 
 /* ==========================================================================
