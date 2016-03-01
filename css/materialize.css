@@ -11229,6 +11229,10 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
   color: #ffffff;
 }
 
+.card-small {
+  width: 450px;
+}
+
 /* ==========================================================================
    $DEFAULT-TIME-PICKER
    ========================================================================== */
