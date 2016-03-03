@@ -10,8 +10,9 @@
 	font-weight: bold;	
 }
 
-.friend-name:hover{
-	color: green;	
+.mat-div:after, .mat-div:before{
+
+	background-color: red;
 }
 
 .secondary-content{
@@ -20,4 +21,8 @@
 
 .secondary-content:hover{
 	color: black;
+}
+
+#friend-link {
+	color:black;
 }
