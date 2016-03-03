@@ -109,6 +109,7 @@ p {
 .container .info span .fa {
   color: #EF3B3A;
 }
+
 body {
   background: #fa8072; /* fallback for old browsers */
   background: -webkit-linear-gradient(right, #fa8072, #fa8072);
