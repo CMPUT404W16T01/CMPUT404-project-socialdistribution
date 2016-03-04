@@ -3,3 +3,21 @@
 	height: 22.5px;
 	width: 	22.5px;
 }
+
+#settings {
+	padding-left: 3%;
+}
+
+#setList {
+	padding-left: 30%;
+	padding-right: 30%
+}
+
+#checkBox {
+	padding-left: 35%;
+}
+
+#listitem {
+	padding-left: 5%;
+	padding-right: 5%;
+}
