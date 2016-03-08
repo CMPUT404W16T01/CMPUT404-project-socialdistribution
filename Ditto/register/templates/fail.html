@@ -1,0 +1,22 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<head>
+<script src="{% static 'jquery/jquery-2.2.1.js' %}" type="text/javascript" charset="utf-8"></script>
+<link href='http://fonts.googleapis.com/css?family=Raleway:100' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/materialize.css' %}">
+<script src="{% static 'js/login.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/materialize.js' %}" type="text/javascript" charset="utf-8"></script>
+</head>
+<hgroup>
+<img src="http://cleartheairchicago.com/files/2014/06/logo-placeholder.jpg" style="	height: auto; 
+    width: auto; 
+    max-width: 200px; 
+    max-height: 200px;">
+</hgroup>
+
+<div class='container'>
+  <div class='center-align'>
+    <a href='/register' class="waves-effect waves-light btn"> Email already in use. </a>
+  </div>
+</div>
