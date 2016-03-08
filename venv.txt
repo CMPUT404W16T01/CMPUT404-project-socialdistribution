@@ -1,2 +1,0 @@
-pip install Django==1.8
-pip install Pillow

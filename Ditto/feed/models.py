@@ -13,6 +13,7 @@ class Author(models.Model):
 	github_account	= models.CharField(max_length=30)
 	github_flag		= models.BooleanField(default=False)
 	user_id			= models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+	admin_auth      = models.BooleanField(default=False)
 
 #@python_2_unicode_compatible
 class Post(models.Model):

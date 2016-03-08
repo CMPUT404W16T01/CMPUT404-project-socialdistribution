@@ -1,11 +1,12 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <head>
+<script src="{% static 'jquery/jquery-2.2.1.js' %}" type="text/javascript" charset="utf-8"></script>
 <link href='http://fonts.googleapis.com/css?family=Raleway:100' rel='stylesheet' type='text/css'>
-
 <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/materialize.css' %}">
 <script src="{% static 'js/login.js' %}" type="text/javascript" charset="utf-8"></script>
-
+<script src="{% static 'js/materialize.js' %}" type="text/javascript" charset="utf-8"></script>
 </head>
 <hgroup>
 <img src="http://cleartheairchicago.com/files/2014/06/logo-placeholder.jpg" style="	height: auto; 
@@ -15,13 +16,44 @@
 </hgroup>
 <div class="login-page">
   <div class="form">
-    <form class="login-form">
-      <input type="text" placeholder="first name"/>
-      <input type="text" placeholder="last name"/>
-      <input type="email" placeholder="email"/>
-      <input type="password" placeholder="password"/>
-      <input type="password" placeholder="confirm password"/>
-      <button>Register</button>
+    <form class="col s12" id="formValidate" action="{% url 'register:sign_up' %}" method = 'post'>
+      {% csrf_token %}
+
+      <div class="row">
+        <div class="input-field" col s12>
+          <input placeholder="First Name" id="first_name" type="text" name="fname" class="validate" required="" aria-required="true">
+          <label for="first_name"></label>
+        </div>
+      </div> 
+
+      <div class="row">
+        <div class="input-field" col s12>
+          <input placeholder="Last Name" id="last_name" type="text" name="lname" class="validate" required="" aria-required="true">
+          <label for="last_name"></label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field" col s12>
+          <input placeholder="E-mail" id="email" type="email" name="email" class="validate" required="" aria-required="true">
+          <label for="email" data-error="" data-success=""></label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field" col s12>
+          <input placeholder="Password" id="pass" type="password" name="pass" class="validate" required="" aria-required="true">
+          <label for="pass" data-error="" data-success=""></label>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="input-fiel" col s12>
+          <button type="submit">Register</button>
+        </div>
+      </div>
+
     </form>
   </div>
 </div>
