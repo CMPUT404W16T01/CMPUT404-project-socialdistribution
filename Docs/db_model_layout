@@ -1,0 +1,33 @@
+<These are the things being stored in the database>
+
+Author
+	string:		display name
+	string:		password
+	string:		email
+	UUID:		id
+	URL:		host url
+	string:		github_username
+	bool:		github_flag
+	string:		bio
+
+Posts
+	UUID:		post_id
+	UUID:		author_id
+	Date:		date published
+	string:		text of post
+	bool:		plain/MD flag
+	string:		visibility flag ("PUBLIC","FOAF","FRIENDS","PRIVATE","SERVERONLY")
+	unknown:	list of images
+
+Comments:
+	UUID:		post_id
+	UUID:		comment_id
+	UUID:		author_id
+	string:		text body
+	bool:		plain/MD flag
+	Date:		date published
+
+Friend:
+	UUID:		follower_id
+	UUID:		followed_id
+
