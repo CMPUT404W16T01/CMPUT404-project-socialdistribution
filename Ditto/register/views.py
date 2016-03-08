@@ -1,18 +1,29 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import Context, loader
+from feed.models import Author
+import uuid
+
+
 
 # Create your views here.
 def register(request):
 	return render(request, 'register.html')
 
+def confirm(request):
+	return render(request, 'confirm.html')
+
 def sign_up(request):
-	print request.POST.get('fname') 
-	print request.POST.get('lname')  
-	print request.POST.get('email')
-	print request.POST.get('pass') 
-	return HttpResponse(request.POST.get('fname'))
+	display_name = request.POST.get('fname') + " " + request.POST.get('lname')
+	password = request.POST.get('pass') 
+	email = request.POST.get('email')
+	DITTO_HOST = request.get_host()
+	new_author = Author(display_name = display_name, password = password, email = email, host=DITTO_HOST)
+	new_author.save()
+	return redirect("/register/confirm")
 
-	# if x is empty, return and ask for X
 
-	#return render(request, request.data)
+
+
+
+
