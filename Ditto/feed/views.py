@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from feed.models import Post
 from feed.models import Author
 from django.contrib.auth.models import User
-from django.template import Context, loader
+from django.template import Context, loader, Template
 import uuid
 import json
 import datetime
@@ -15,7 +15,11 @@ import datetime
 
 @login_required
 def feed(request):
-	return render(request, 'feed.html')
+	all_posts = Post.objects.all()
+	context = {
+		'all_posts': all_posts,
+	}
+	return render(request, 'feed.html', context)
 
 def create_post(request):
 	body = request.POST.get('post_body')

@@ -150,4 +150,48 @@
 
 
 
+<<<<<<< HEAD
+=======
+    <textarea id="post-input" class="materialize-textarea"></textarea>
+
+    <div class="input-field" id = "post-categories">
+      <input placeholder="categories" id= "categories" type="text">
+    </div>
+
+    <div class="row">
+
+      <div class="col s3">
+
+       <p>
+        <input type="checkbox" id="is-markdown" />
+        <label for="is-markdown">Markdown</label>
+      </p>
+
+    </div>
+    <div class="col s9">
+      <div class="input-field">
+        <select id="visibility">
+          <option value="public">Public</option>
+          <option value="foaf">FOAF</option>
+          <option value="friends">Friends</option>
+          <option value="private">Private</option>
+          <option value="server">Server Only</option>
+
+        </select>
+        <label>Choose Privacy Setting</label>
+      </div>
+
+    </div>
+  </div>
+
+
+  <button type="submit">CREATE POST</button>
+</form>
+
+{% for post in all_posts %}
+        {{post.title}} <br> {{post.description}} <br> {{post.body}} <br> <br>
+    {% endfor %}
+</div>
+
+>>>>>>> 931715034209570922a7ca04638b22319efb0550
 </html>
