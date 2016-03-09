@@ -14,10 +14,15 @@
 }
 
 #checkBox {
-	padding-right: 1%;
+	float: right;
 }
 
 #listitem {
 	padding-left: 5%;
 	padding-right: 5%;
+}
+
+#submit {
+	width: 100%;
+	float: right;
 }

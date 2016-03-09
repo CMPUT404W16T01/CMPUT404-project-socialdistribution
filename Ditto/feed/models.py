@@ -29,7 +29,7 @@ class Post(models.Model):
 	body			= models.CharField(max_length=1000)
 	is_markdown		= models.BooleanField(default=False)
 	visibility		= models.CharField(max_length=20)
-	image			= models.ImageField()
+	image			= models.ImageField(upload_to="image/")
 
 
 
