@@ -11,7 +11,7 @@ from django.conf import settings
 class Author(models.Model):
 	email 			= models.ForeignKey(User)
 	user_id			= models.UUIDField(primary_key=True, editable=False)
-	display_name	= models.CharField(max_length=60)
+	displayName		= models.CharField(max_length=60)
 	bio				= models.CharField(max_length=1000, default=" ")
 	host			= models.URLField(max_length=500)
 	github_account	= models.CharField(max_length=30, default=" ")
@@ -27,9 +27,17 @@ class Post(models.Model):
 	author_id		= models.ForeignKey(Author)	# issue here?
 	date_published	= models.DateTimeField(auto_now=True) # issue here?
 	body			= models.CharField(max_length=1000)
+	contentType		= models.CharField(max_length=100)
 	is_markdown		= models.BooleanField(default=False)
 	visibility		= models.CharField(max_length=20)
 	image			= models.ImageField(upload_to="image/")
+	title			= models.CharField(max_length=50)
+	source			= models.URLField()
+	origin			= models.URLField()
+	description		= models.CharField(max_length=150)
+	comment_count	= models.IntegerField()
+	categories		= models.CharField(max_length=1000)
+
 
 
 
