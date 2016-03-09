@@ -1,6 +1,7 @@
 $(document).ready(function () {
     $(".dropdown-button").dropdown();
     $('select').material_select();
+    $('.modal-trigger').leanModal();
 
 $('#post-form').on('submit', function(event){
     event.preventDefault();

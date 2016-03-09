@@ -47,11 +47,75 @@
       </ul>
     </div>
   </nav>
-  <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+<!--   <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
     <a class="btn-floating btn-large red">
       <i class="large material-icons">mode_edit</i>
     </a>
+  </div> -->
+  <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+    <!-- Modal Trigger -->
+    <a class="btn-floating btn-large red modal-trigger" href="#modal1">
+      <i class="large material-icons">mode_edit</i>
+    </a>
   </div>
+      <!-- Modal Structure -->
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h4>Create a new post</h4>
+        <!--THIS WILL HAVE TO GET INTEGRATED INTO THE CARDS-->
+        <div style="padding-right: 10%; padding-left: 10%;">
+          <form id="post-form" action="{% url 'feed:create_post' %}" method = 'post'>
+            {% csrf_token %}
+
+            <div class="input-field" id = "post-title">
+              <input placeholder="Title" id = "title" type="text">
+            </div>
+
+            <div class="input-field" id = "post-description">
+              <input placeholder="Description" id = "description" type="text">
+            </div>
+
+            <textarea id="post-input" class="materialize-textarea"></textarea>
+
+            <div class="input-field" id = "post-categories">
+              <input placeholder="categories" id= "categories" type="text">
+            </div>
+
+            <div class="row">
+
+              <div class="col s3">
+
+               <p>
+                <input type="checkbox" id="is-markdown" />
+                <label for="is-markdown">Markdown</label>
+              </p>
+
+            </div>
+            <div class="col s9">
+              <div class="input-field">
+                <select id="visibility">
+                  <option value="public">Public</option>
+                  <option value="foaf">FOAF</option>
+                  <option value="friends">Friends</option>
+                  <option value="private">Private</option>
+                  <option value="server">Server Only</option>
+
+                </select>
+                <label>Choose Privacy Setting</label>
+              </div>
+
+            </div>
+          </div>
+
+
+          <button type="submit">CREATE POST</button>
+        </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Post to Feed</a>
+      </div>
+    </div>
 
 </body>
 
@@ -84,57 +148,6 @@
 </div>
 </div>
 
-<!--THIS WILL HAVE TO GET INTEGRATED INTO THE CARDS-->
-<div style="padding-right: 10%; padding-left: 10%;">
-  <form id="post-form" action="{% url 'feed:create_post' %}" method = 'post'>
-    {% csrf_token %}
 
-    <div class="input-field" id = "post-title">
-      <input placeholder="Title" id = "title" type="text">
-    </div>
-
-    <div class="input-field" id = "post-description">
-      <input placeholder="Description" id = "description" type="text">
-    </div>
-
-
-
-
-    <textarea id="post-input" class="materialize-textarea"></textarea>
-
-    <div class="input-field" id = "post-categories">
-      <input placeholder="categories" id= "categories" type="text">
-    </div>
-
-    <div class="row">
-
-      <div class="col s3">
-
-       <p>
-        <input type="checkbox" id="is-markdown" />
-        <label for="is-markdown">Markdown</label>
-      </p>
-
-    </div>
-    <div class="col s9">
-      <div class="input-field">
-        <select id="visibility">
-          <option value="public">Public</option>
-          <option value="foaf">FOAF</option>
-          <option value="friends">Friends</option>
-          <option value="private">Private</option>
-          <option value="server">Server Only</option>
-
-        </select>
-        <label>Choose Privacy Setting</label>
-      </div>
-
-    </div>
-  </div>
-
-
-  <button type="submit">CREATE POST</button>
-</form>
-</div>
 
 </html>
