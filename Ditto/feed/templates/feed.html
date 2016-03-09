@@ -135,6 +135,10 @@
 
   <button type="submit">CREATE POST</button>
 </form>
+
+{% for post in all_posts %}
+        {{post.title}} <br> {{post.description}} <br> {{post.body}} <br> <br>
+    {% endfor %}
 </div>
 
 </html>
