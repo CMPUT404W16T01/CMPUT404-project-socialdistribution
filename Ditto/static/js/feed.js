@@ -39,7 +39,10 @@ function create_post() {
     console.log("creating post...");
     //console.log($('#post-input').val());
     //console.log($('#is-markdown').prop('checked'));
-    console.log($('#visibility').val());
+    //console.log($('#visibility').val());
+    console.log($('#title').val());
+    console.log($('#description').val());
+    console.log($('#categories').val());
 
 var csrftoken = getCookie('csrftoken');
 
@@ -56,8 +59,10 @@ var csrftoken = getCookie('csrftoken');
         type : "POST", // http method
         data : { post_body : $('#post-input').val(),
         		is_markdown : $('#is-markdown').prop('checked'), 
-        		visibility : $('#visibility').val()
-
+        		visibility : $('#visibility').val(),
+                title: $('#title').val(),
+                description: $('#description').val(),
+                categories: $('#categories').val()
         }, // data sent with the post request
 
         // handle a successful response

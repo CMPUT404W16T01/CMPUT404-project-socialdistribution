@@ -19,6 +19,7 @@ def feed(request):
 
 def create_post(request):
 	body = request.POST.get('post_body')
+	print body
 	date_published = datetime.datetime
 	is_markdown = json.loads(request.POST.get('is_markdown'))
 	visibility = request.POST.get('visibility')
@@ -26,12 +27,24 @@ def create_post(request):
 	user_object = User.objects.get(username = c_username)
 	author_object = Author.objects.get(email = user_object)
 
+	DITTO_HOST = request.get_host()
+	print DITTO_HOST
+	title = request.POST.get('title')
+	print title
+	description = request.POST.get('description')
+	print description
+	categories = request.POST.get('categories')
+	
+	c= categories.split(' ')
+	
+	categories_json = json.dumps(c)
+	print categories_json
 
 	print "date :" + str(date_published) + "\n" + "post body :" + body + "\n" + "is markdown : " + str(is_markdown) + "\n" + "visibility : " + visibility 
 	
 
-	new_post = Post(date_published = date_published, author_id = author_object, body = body, is_markdown = is_markdown, visibility = visibility)
-	
+	new_post = Post(date_published = date_published, author_id = author_object, body = body, is_markdown = is_markdown, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description ) 
+	print "fghfgh"
 	new_post.save()
 
 	return HttpResponse(request.POST.get('post_body'))
