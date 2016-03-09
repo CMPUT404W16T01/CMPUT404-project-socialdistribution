@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^feed/', include('feed.urls', namespace='feed')),
     url(r'^settings/', include('settings.urls', namespace='settings')),
     url(r'^friends/', include('friends.urls', namespace='friends')),
+    url(r'^', include('feed.urls')),
 ]
