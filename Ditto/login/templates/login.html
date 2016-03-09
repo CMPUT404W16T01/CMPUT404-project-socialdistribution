@@ -1,31 +1,59 @@
 {% load staticfiles %}
 <head>
+<script src="{% static 'jquery/jquery-2.2.1.js' %}" type="text/javascript" charset="utf-8"></script>
 <link href='http://fonts.googleapis.com/css?family=Raleway:100' rel='stylesheet' type='text/css'>
-
 <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/materialize.css' %}">
 <script src="{% static 'js/login.js' %}" type="text/javascript" charset="utf-8"></script>
-
+<script src="{% static 'js/materialize.js' %}" type="text/javascript" charset="utf-8"></script>
 </head>
+
 <hgroup>
 <img src="http://cleartheairchicago.com/files/2014/06/logo-placeholder.jpg" style="	height: auto; 
     width: auto; 
     max-width: 200px; 
     max-height: 200px;">
 </hgroup>
+
 <div class="login-page">
   <div class="form">
-    <form class="login-form">
-      <input type="email" placeholder="email"/>
-      <input type="password" placeholder="password"/>
-      <button>login</button>
+    <form class="col s12" id="formValidate" action="{% url 'login:user_login' %}" method = 'post'>
+      {% csrf_token %}
+
+      <div class="row">
+        <div class="input-field" col s12>
+          <input placeholder="E-mail" id="email" type="email" name="username" class="validate" required="" aria-required="true">
+          <label for="email" data-error="" data-success=""></label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field" col s12>
+          <input placeholder="Password" id="pass" type="password" name="password" class="validate" required="" aria-required="true">
+          <label for="pass" data-error="" data-success=""></label>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="input-field" col s12>
+          <button type="submit">Login</button>
+        </div>
+      </div>
+
     </form>
     <br>
     <hr>
     <br>
+
+
     <form action="/register">
     <form class="registration-form">
       <button>register</button>
     </form>
     </form>
+
+
+
+    </div>
   </div>
-</div>

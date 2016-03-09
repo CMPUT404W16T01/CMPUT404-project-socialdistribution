@@ -12,8 +12,6 @@ class Author(models.Model):
 	email 			= models.ForeignKey(User)
 	user_id			= models.UUIDField(primary_key=True, editable=False)
 	display_name	= models.CharField(max_length=60)
-	password		= models.CharField(max_length=30)
-	#email			= models.EmailField(max_length=30)
 	bio				= models.CharField(max_length=1000, default=" ")
 	host			= models.URLField(max_length=500)
 	github_account	= models.CharField(max_length=30, default=" ")
