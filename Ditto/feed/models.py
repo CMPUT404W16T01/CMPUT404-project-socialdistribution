@@ -37,7 +37,8 @@ class Post(models.Model):
 	comment_count	= models.IntegerField(default=0)
 	categories		= models.CharField(max_length=1000, default=" ")
 
-
+	def __unicode__(self):
+		return self.title
 
 
 class Comment(models.Model):
