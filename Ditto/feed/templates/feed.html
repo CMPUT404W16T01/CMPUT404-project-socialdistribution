@@ -107,12 +107,12 @@
 
             </div>
           </div>
-          <button type="submit">CREATE POST</button>
+          <div class="modal-footer">
+            <button class="modal-action modal-close waves-effect btn-flat" type="submit">CREATE POST
+            </button>
+          </div>
         </form>
       </div>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Post to Feed</a>
     </div>
   </div>
 
@@ -182,7 +182,7 @@
       </div>
       <div id="test_feed" class="col s12">
         {% for post in all_posts %}
-        {{post.title}} <br> {{post.description}} <br> {{post.body}} <br> <br>
+          {{post.title}} <br> {{post.description}} <br> {{post.body}} <br> <br>
         {% endfor %}
       </div>
     </div>

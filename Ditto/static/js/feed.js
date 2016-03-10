@@ -3,23 +3,23 @@ $(document).ready(function () {
     $('select').material_select();
     $('.modal-trigger').leanModal();
 
-$('#post-form').on('submit', function(event){
-    event.preventDefault();
+    $('#post-form').on('submit', function(event){
+        event.preventDefault();
     console.log("form submitted!")  // sanity check
     create_post();
+    this.reset();
 });
 
-$('#testbutton').click( function(event){
-	console.log("clicked");
-});
+    $('#testbutton').click( function(event){
+       console.log("clicked");
+   });
 
-
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
             // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) == (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -45,25 +45,25 @@ function create_post() {
     console.log($('#description').val());
     console.log($('#categories').val());
 
-var csrftoken = getCookie('csrftoken');
+    var csrftoken = getCookie('csrftoken');
 
     $.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
         }
-    }
-});
+    });
 
     $.ajax({
         url : "/feed/create_post/", // the endpoint
         type : "POST", // http method
         data : { post_body : $('#post-input').val(),
-        		is_markdown : $('#is-markdown').prop('checked'), 
-        		visibility : $('#visibility').val(),
-                title: $('#title').val(),
-                description: $('#description').val(),
-                categories: $('#categories').val()
+        is_markdown : $('#is-markdown').prop('checked'), 
+        visibility : $('#visibility').val(),
+        title: $('#title').val(),
+        description: $('#description').val(),
+        categories: $('#categories').val()
         }, // data sent with the post request
 
         // handle a successful response
