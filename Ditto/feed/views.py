@@ -30,6 +30,7 @@ def feed(request):
 	context = {
 		'all_posts': all_posts,
 	}
+	
 	return render(request, 'feed.html', context)
 
 

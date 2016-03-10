@@ -57,13 +57,10 @@
           <div class="row">
             <form class="col s12">
               <div class="row">
-                <div class="input-field col s6">
-                  <input id="first_name" type="text" class="validate">
-                  <label for="first_name">First Name</label>
-                </div>
-                <div class="input-field col s6">
-                  <input id="last_name" type="text" class="validate">
-                  <label for="last_name">Last Name</label>
+                <div class="input-field col s12">
+                  <input id="first_name" type="text" class="validate" 
+                    value='{{ display_name }}'>
+                  <label for="first_name">Display Name</label>
                 </div>
               </div>
             </form>
@@ -106,20 +103,14 @@
         <div class="collapsible-body" id="listitem">
           <div class="row">
             <div class="input-field col s6">
-              <input id="github_name" type="text" class="validate">
+              <input id="github_name" type="text" class="validate" 
+                value="{{github_account}}">
               <label class="active" for="github_name">Github Username</label>
             </div>
-          </div>
-          <!-- Switch -->
-          <div class="switch">
-            <div class="row">Post my Github activity automatically
-            <label id="checkBox">
-              Off
-              <input type="checkbox">
-              <span class="lever"></span>
-              On
-            </label>
-          </div>
+            <p>
+              <input type="checkbox" id="test6" {{github_flag}}/>
+              <label for="test6">Enable GitHub integration</label>
+            </p>
           </div>
         </div>
       </li>
