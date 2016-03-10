@@ -1,9 +1,10 @@
-from feed.models import Post
-from api.serializers import PostSerializer
+from feed.models import Post, Author, Comment
+from api.serializers import PostSerializer, CommentSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+import uuid
 
 
 class public_posts(APIView):
@@ -33,3 +34,30 @@ class post_detail(APIView):
         snippet = self.get_object(pk)
         serializer = PostSerializer(snippet)
         return Response(serializer.data)
+
+class post_comments(APIView):
+    """
+    List all comments for a single post.
+    """
+
+    def get(self, request, pk, format=None):
+        post_object = Post.objects.get(post_id=pk)
+        comments = Comment.objects.filter(post_id=post_object)
+        serializer = CommentSerializer(comments, many=True)
+        return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
+                         "previous": "http://previouspageurlhere", "comments": serializer.data})
+        
+
+class author_posts(APIView):
+    """
+    List all posts.
+    """
+
+    def get(self, request, pk, format=None):
+        author_object = Author.objects.get(user_id=pk)
+        posts = Post.objects.filter(author_id=author_object)
+        serializer = PostSerializer(posts, many=True)
+        return Response({"query": "posts", "count": len(posts), "size": "10", "next": "http://nextpageurlhere",
+                         "previous": "http://previouspageurlhere", "posts": serializer.data})
+
+        # 60da6b76-5f6e-4b9b-b766-24dc7b1d4f3c
