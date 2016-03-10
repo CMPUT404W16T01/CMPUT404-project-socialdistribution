@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import dj_database_url
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -102,24 +104,24 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Update database configuration with $DATABASE_URL.
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
+# Allow all host headers
+ALLOWED_HOSTS = ['*']
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
-STATIC_PATH = os.path.abspath(os.path.join(BASE_DIR, 'static'))
-MEDIA_URL = '/image/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
+
+# Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    STATIC_PATH,
-    MEDIA_ROOT,
+    os.path.join(PROJECT_ROOT, 'static'),
 )
 
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home2/media/media.lawrence.com/media/"
-#MEDIA_ROOT = os.path.join(BASE_DIR, 'image/')
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash.
-# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-#MEDIA_URL = '/image/'
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
