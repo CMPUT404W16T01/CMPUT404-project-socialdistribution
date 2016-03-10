@@ -25,7 +25,7 @@
 
   <ul id="dropdown1" class="dropdown-content">
     <li><a href="#!">Profile</a></li>
-    <li><a href="#!">Settings</a></li>
+    <li><a href="/settings">Settings</a></li>
     <li><a href="#!">Logout</a></li>
   </ul>
 
@@ -33,7 +33,7 @@
     <div class="navbar-fixed">
       <a href="#!" class="brand-logo">Ditto logo</a>
       <ul class="right hide-on-med-and-down">
-        <li><a href="#">Friends</a></li>
+        <li><a href="/friends">Friends</a></li>
         <li><a class="dropdown-button" href="#" data-activates="dropdown1"><i class="material-icons">account_circle</i></a></li>
       </ul>
       <ul class="brand-logo center">
@@ -52,14 +52,14 @@
       <i class="large material-icons">mode_edit</i>
     </a>
   </div> -->
-  <div id='card'>
-  <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
-    <!-- Modal Trigger -->
-    <a class="btn-floating btn-large red modal-trigger" href="#modal1">
-      <i class="large material-icons">mode_edit</i>
-    </a>
-  </div>
-      <!-- Modal Structure -->
+  <div id='feed_format'>
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+      <!-- Modal Trigger -->
+      <a class="btn-floating btn-large red modal-trigger" href="#modal1">
+        <i class="large material-icons">mode_edit</i>
+      </a>
+    </div>
+    <!-- Modal Structure -->
     <div id="modal1" class="modal">
       <div class="modal-content">
         <h4>Create a new post</h4>
@@ -107,50 +107,88 @@
 
             </div>
           </div>
-
-
           <button type="submit">CREATE POST</button>
         </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Post to Feed</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#my_feed">My Feed</a></li>
+        <li class="tab col s3"><a href="#public_feed">Public Feed</a></li>
+        <li class="tab col s3"><a href="#my_posts">My Posts</a></li>
+        <li class="tab col s3"><a href="#test_feed">Test Feed</a></li>
+      </ul>
+    </div>
+    <div id="my_feed" class="col s12">
+      <div class="card hoverable large card-large">
+        <div class="card-image waves-effect waves-block waves-light">
+          <img class="activator" src="{% static 'assets/images/office.jpg' %}">
+        </div>
+        <div class="card-content">
+          <span class="card-title activator grey-text text-darken-4">Example blog title<i class="material-icons right">more_vert</i></span>
+          <p><a>Example blog description</a></p>
+        </div>
+        <div class="card-reveal">
+          <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+          <p>Here is some more information about this product that is only revealed once clicked on.</p>
+        </div>
+        <div class="card-action">
+          <a href="#">Comment</a>
+          <a href="#">Delete</a>
         </div>
       </div>
-      <div class="modal-footer">
-        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Post to Feed</a>
+    </div>
+    <div id="public_feed" class="col s12">
+      <div class="card hoverable large card-large">
+        <div class="card-image waves-effect waves-block waves-light">
+          <img class="activator" src="{% static 'assets/images/office.jpg' %}">
+        </div>
+        <div class="card-content">
+          <span class="card-title activator grey-text text-darken-4">Another Example blog title<i class="material-icons right">more_vert</i></span>
+          <p><a>Another Example blog description</a></p>
+        </div>
+        <div class="card-reveal">
+          <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+          <p>Here is some more information about this product that is only revealed once clicked on.</p>
+        </div>
+      </div>
+    </div>
+    <div id="my_posts" class="col s12">
+      <div class="card">
+        <div class="card-content black-text">
+          <span class="card-title">Card Title      
+            <span class="card-title activator grey-text text-darken-4">
+              <i class="material-icons right">more_vert</i>
+            </span>
+          </span>
+          <p>I am a very simple card. I am good at containing small bits of information.
+            I am convenient because I require little markup to use effectively.</p>
+          </div>
+          <div class="card-reveal">
+            <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+            <p>Here is some more information about this product that is only revealed once clicked on.</p>
+          </div>
+          <div class="card-action">
+            <a href="#">This is a link</a>
+            <a href="#">This is a link</a>
+          </div>
+        </div>
+      </div>
+      <div id="test_feed" class="col s12">
+        {% for post in all_posts %}
+        {{post.title}} <br> {{post.description}} <br> {{post.body}} <br> <br>
+        {% endfor %}
       </div>
     </div>
 
-  <div class="card hoverable large card-large">
-    <div class="card-image waves-effect waves-block waves-light">
-      <img class="activator" src="{% static 'assets/images/office.jpg' %}">
-    </div>
-    <div class="card-content">
-      <span class="card-title activator grey-text text-darken-4">Example blog title<i class="material-icons right">more_vert</i></span>
-      <p><a>Example blog description</a></p>
-    </div>
-    <div class="card-reveal">
-      <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-      <p>Here is some more information about this product that is only revealed once clicked on.</p>
-    </div>
   </div>
 
-  <div class="card hoverable large card-large">
-    <div class="card-image waves-effect waves-block waves-light">
-      <img class="activator" src="{% static 'assets/images/office.jpg' %}">
-    </div>
-    <div class="card-content">
-      <span class="card-title activator grey-text text-darken-4">Another Example blog title<i class="material-icons right">more_vert</i></span>
-      <p><a>Another Example blog description</a></p>
-    </div>
-    <div class="card-reveal">
-      <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-      <p>Here is some more information about this product that is only revealed once clicked on.<br><br><br><br><br><br><br><br><br><br></p>
-    </div>
-  </div>
-  <div>
-    {% for post in all_posts %}
-            {{post.title}} <br> {{post.description}} <br> {{post.body}} <br> <br>
-        {% endfor %}
-  </div>
-</div>
 
 </body>
 
