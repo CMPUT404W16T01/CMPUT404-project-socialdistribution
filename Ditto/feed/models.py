@@ -49,7 +49,8 @@ class Comment(models.Model):
 	is_markdown		= models.BooleanField(default=False) # not in user stories, but in json spec???
 	date_published 	= models.DateTimeField(auto_now=True)
 	image			= models.ImageField(blank=True)
-
+	def __unicode__(self):
+		return str(self.comment_id)
 
 class Friend(models.Model):
 	follower_id		= models.UUIDField(primary_key=True)
