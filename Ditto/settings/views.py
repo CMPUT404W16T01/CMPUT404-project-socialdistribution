@@ -26,15 +26,11 @@ def settings(request):
 
 	# github flag
 	github_flag = author_object.github_flag
-	print github_flag
 
 	if github_flag:
 		github_flag = 'checked'
-		print github_flag
 	else:
 		github_flag = ''
-
-
 
 	context = {
 		'display_name': display_name,
@@ -61,7 +57,6 @@ def save_settings(request):
 	if len(new_password) > 0 and len(retype > 0):
 		if new_password == retype:
 			password = new_password
-			print password
 			user_object.set_password(new_password)
 
 
