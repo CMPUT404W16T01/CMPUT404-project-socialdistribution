@@ -28,7 +28,7 @@ class Post(models.Model):
 	date_published	= models.DateTimeField(auto_now=True) # issue here?
 	body			= models.CharField(max_length=1000)
 	is_markdown		= models.BooleanField(default=False)
-	visibility		= models.CharField(max_length=20)
+	visibility		= models.CharField(max_length=20) #private, public, friends, foaf, server
 	image			= models.ImageField()
 	title			= models.CharField(max_length=50, default=" ")
 	source			= models.URLField(default=" ")

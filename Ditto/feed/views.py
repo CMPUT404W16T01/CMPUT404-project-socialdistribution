@@ -15,7 +15,16 @@ import datetime
 
 @login_required
 def feed(request):
-	all_posts = Post.objects.all()
+	user_object = User.objects.get(username = request.user.username)
+	author_object = Author.objects.get(email = user_object)
+    self_posts = Post.objects.filter(author_id = author_object)
+    public_posts = Post.objects.filter(visibility = "public")
+    #friend_posts
+    #foaf_posts
+    server_posts = Post.objects.filter(visibilty = "server")
+	all_posts = self_posts | public_posts | server_posts
+
+
 	context = {
 		'all_posts': all_posts,
 	}
