@@ -182,7 +182,7 @@
       </div>
       <div id="test_feed" class="col s12">
         {% for post in all_posts %}
-        {{post.title}} <br> {{post.description}} <br> {{post.body}} <br> <br>
+        {{post.title}} <br> {{post.description}} <br> {{post.body | safe}} <br> <br>
         {% endfor %}
       </div>
     </div>
