@@ -17,11 +17,11 @@ import datetime
 def feed(request):
 	user_object = User.objects.get(username = request.user.username)
 	author_object = Author.objects.get(email = user_object)
-    self_posts = Post.objects.filter(author_id = author_object)
-    public_posts = Post.objects.filter(visibility = "public")
+	self_posts = Post.objects.filter(author_id = author_object)
+	public_posts = Post.objects.filter(visibility = "public")
     #friend_posts
     #foaf_posts
-    server_posts = Post.objects.filter(visibilty = "server")
+	server_posts = Post.objects.filter(visibility = "server")
 	all_posts = self_posts | public_posts | server_posts
 
 
