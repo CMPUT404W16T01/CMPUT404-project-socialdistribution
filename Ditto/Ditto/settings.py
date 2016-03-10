@@ -44,6 +44,8 @@ INSTALLED_APPS = (
     'feed',
     'settings',
     'friends',
+    'api',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
