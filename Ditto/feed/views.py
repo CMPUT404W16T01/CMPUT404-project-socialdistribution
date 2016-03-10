@@ -13,6 +13,8 @@ from django.template import Context, loader, Template
 import uuid
 import json
 import datetime
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
 import CommonMark
 # Create your views here.
 
@@ -20,6 +22,8 @@ import CommonMark
 def feed(request):
 	user_object = User.objects.get(username = request.user.username)
 	author_object = Author.objects.get(email = user_object)
+
+	github_name = author_object.github_account
 
 	# My feed, access all posts that I can see
 	self_posts = Post.objects.filter(author_id = author_object)
@@ -67,12 +71,13 @@ def feed(request):
 
 
 	
-
 	context = {
 		'main_posts': main_posts,
 		'public_posts': public_posts,
 		'my_posts': self_posts,
+		"github_account" : github_name,
 	}
+
 	
 	return render(request, 'feed.html', context)
 
