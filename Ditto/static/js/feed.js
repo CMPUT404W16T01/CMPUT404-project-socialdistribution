@@ -3,16 +3,11 @@ $(document).ready(function () {
     $('select').material_select();
     $('.modal-trigger').leanModal();
 
-    $('#post-form').on('submit', function(event){
+    $('#create-post').on('submit', function(event){
         event.preventDefault();
-    console.log("form submitted!")  // sanity check
-    create_post();
-    this.reset();
-});
-
-    $('#testbutton').click( function(event){
-       console.log("clicked");
-   });
+        create_post();
+        this.reset();
+    });
 
     function getCookie(name) {
         var cookieValue = null;
@@ -37,13 +32,11 @@ function csrfSafeMethod(method) {
 
 
 function create_post() {
-    console.log("creating post...");
-    //console.log($('#post-input').val());
-    //console.log($('#is-markdown').prop('checked'));
-    //console.log($('#visibility').val());
-    console.log($('#title').val());
-    console.log($('#description').val());
-    console.log($('#categories').val());
+   // console.log("creating post...");
+  //  console.log($('#title').val());
+   // console.log($('#description').val());
+  //  console.log($('#categories').val());
+   // console.log($('#is-markdown-post').prop('checked'));
 
     var csrftoken = getCookie('csrftoken');
 
@@ -56,28 +49,26 @@ function create_post() {
     });
 
     $.ajax({
-        url : "/feed/create_post/", // the endpoint
-        type : "POST", // http method
+        url : "/feed/create_post/", 
+        type : "POST", 
         data : { post_body : $('#post-input').val(),
-        is_markdown : $('#is-markdown').prop('checked'), 
+        is_markdown : $('#is-markdown-post').prop('checked'), 
         visibility : $('#visibility').val(),
         title: $('#title').val(),
         description: $('#description').val(),
         categories: $('#categories').val()
-        }, // data sent with the post request
+        }, 
 
-        // handle a successful response
         success : function(json) {
-            $('#post-text').val(''); // remove the value from the input
-            console.log(json); // log the returned json to the console
+            console.log("Success"); 
         },
 
-        // handle a non-successful response
         error : function(xhr,errmsg,err) {
             console.log("AJAX ERROR");
             console.log(errmsg);
         }
     });
 };
+
 
 });

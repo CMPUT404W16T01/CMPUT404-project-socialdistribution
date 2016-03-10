@@ -65,7 +65,7 @@
         <h4>Create a new post</h4>
         <!--THIS WILL HAVE TO GET INTEGRATED INTO THE CARDS-->
         <div style="padding-right: 10%; padding-left: 10%;">
-          <form id="post-form" action="{% url 'feed:create_post' %}" method = 'post'>
+          <form id="create-post" action="{% url 'feed:create_post' %}" method = 'post'>
             {% csrf_token %}
 
             <div class="input-field" id = "post-title">
@@ -87,8 +87,8 @@
               <div class="col s3">
 
                <p>
-                <input type="checkbox" id="is-markdown" />
-                <label for="is-markdown">Markdown</label>
+                <input type="checkbox" id="is-markdown-post" />
+                <label for="is-markdown-post">Markdown</label>
               </p>
 
             </div>
@@ -126,7 +126,7 @@
     </div>
       <div id="my_feed" class="col s12">
         {% for main_post in main_posts %}
-        <div class="card">
+        <div class="card large">
           <div class="card-content black-text">
             <span class="card-title">
               {{main_post.title}}      
@@ -141,6 +141,24 @@
                 {{main_post.title}} 
                 <i class="material-icons right">close</i></span>
               <p>{{main_post.body | safe}}</p>
+              {% for main_post_comment in main_post.comments %}
+              {{main_post_comment.body}} <hr>
+              {% endfor %}
+                <form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
+                {% csrf_token %}
+
+            <textarea name="comment-input" class="materialize-textarea"></textarea>
+              <div class="col s3">
+
+               <p>
+                <input type="checkbox" name="comment-is-markdown" id="{{main_post.post_id}}" />
+                <label for="{{main_post.post_id}}">Markdown</label>
+              </p>
+              <input type="hidden" value="{{main_post.post_id}}" name="comment-parent-id">
+
+              <button type="submit"> ADD COMMENT </button>
+            </div>
+          </form>
             </div>
             <div class="card-action">
               {% if main_post.flag %}
