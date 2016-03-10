@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import login as auth_login, authenticate
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from feed.models import Post
 from feed.models import Author
@@ -30,6 +31,13 @@ def feed(request):
 		'all_posts': all_posts,
 	}
 	return render(request, 'feed.html', context)
+
+
+def logout(request):
+	auth_logout(request)
+	print 'asdf'
+	return redirect('/login')
+
 
 def create_post(request):
 	body = request.POST.get('post_body')
