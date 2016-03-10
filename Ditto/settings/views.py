@@ -29,8 +29,10 @@ def settings(request):
 
 	if github_flag:
 		github_flag = 'checked'
+		print github_flag
 	else:
 		github_flag = ''
+		print 'not checked'
 
 	context = {
 		'display_name': display_name,
