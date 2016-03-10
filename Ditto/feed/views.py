@@ -11,6 +11,7 @@ from django.template import Context, loader, Template
 import uuid
 import json
 import datetime
+import CommonMark
 # Create your views here.
 
 @login_required
@@ -35,6 +36,9 @@ def create_post(request):
 	print body
 	date_published = datetime.datetime
 	is_markdown = json.loads(request.POST.get('is_markdown'))
+	if is_markdown:
+		body = CommonMark.commonmark(body)
+	print is_markdown
 	visibility = request.POST.get('visibility')
 	c_username = request.user.username
 	user_object = User.objects.get(username = c_username)
