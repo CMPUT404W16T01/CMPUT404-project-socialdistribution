@@ -19,22 +19,47 @@ import CommonMark
 def feed(request):
 	user_object = User.objects.get(username = request.user.username)
 	author_object = Author.objects.get(email = user_object)
+
+	# My feed, access all posts that I can see
 	self_posts = Post.objects.filter(author_id = author_object)
 	public_posts = Post.objects.filter(visibility = "public")
     #friend_posts
     #foaf_posts
 	server_posts = Post.objects.filter(visibility = "server")
-	all_posts = self_posts | public_posts | server_posts
-	for post in all_posts:
+	main_posts = self_posts | public_posts | server_posts
+	for post in main_posts:
 		#print post.post_id
 		if (str(author_object.user_id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
+	# end of my feed
+
+	# Begin Public Feed
+	# public_posts was already created for use in the other one
+	for post in public_posts:
+		#print post.post_id
+		if (str(author_object.user_id) == str(post.author_id)):
+			post.flag=True
+		else:
+			post.flag=False
+	# end of public feed
+
+	# Begin My Posts
+	# self_posts was already created for use 
+	for post in self_posts:
+		#print post.post_id
+		if (str(author_object.user_id) == str(post.author_id)):
+			post.flag=True
+		else:
+			post.flag=False
+	# end of public feed
 	
 
 	context = {
-		'all_posts': all_posts,
+		'main_posts': main_posts,
+		'public_posts': public_posts,
+		'my_posts': self_posts,
 	}
 	return render(request, 'feed.html', context)
 

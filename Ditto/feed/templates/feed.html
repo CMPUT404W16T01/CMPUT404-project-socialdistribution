@@ -122,89 +122,32 @@
         <li class="tab col s3"><a href="#my_feed">My Feed</a></li>
         <li class="tab col s3"><a href="#public_feed">Public Feed</a></li>
         <li class="tab col s3"><a href="#my_posts">My Posts</a></li>
-        <li class="tab col s3"><a href="#test_feed">Test Feed</a></li>
       </ul>
     </div>
-    <div id="my_feed" class="col s12">
-      <div class="card hoverable large card-large">
-        <div class="card-image waves-effect waves-block waves-light">
-          <img class="activator" src="{% static 'assets/images/office.jpg' %}">
-        </div>
-        <div class="card-content">
-          <span class="card-title activator grey-text text-darken-4">Example blog title<i class="material-icons right">more_vert</i></span>
-          <p><a>Example blog description</a></p>
-        </div>
-        <div class="card-reveal">
-          <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-          <p>Here is some more information about this product that is only revealed once clicked on.</p>
-        </div>
-        <div class="card-action">
-          <a href="#">Comment</a>
-          <a href="#">Delete</a>
-        </div>
-      </div>
-    </div>
-    <div id="public_feed" class="col s12">
-      <div class="card hoverable large card-large">
-        <div class="card-image waves-effect waves-block waves-light">
-          <img class="activator" src="{% static 'assets/images/office.jpg' %}">
-        </div>
-        <div class="card-content">
-          <span class="card-title activator grey-text text-darken-4">Another Example blog title<i class="material-icons right">more_vert</i></span>
-          <p><a>Another Example blog description</a></p>
-        </div>
-        <div class="card-reveal">
-          <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-          <p>Here is some more information about this product that is only revealed once clicked on.</p>
-        </div>
-      </div>
-    </div>
-    <div id="my_posts" class="col s12">
-      <div class="card">
-        <div class="card-content black-text">
-          <span class="card-title">Card Title      
-            <span class="card-title activator grey-text text-darken-4">
-              <i class="material-icons right">more_vert</i>
-            </span>
-          </span>
-          <p>I am a very simple card. I am good at containing small bits of information.
-            I am convenient because I require little markup to use effectively.</p>
-          </div>
-          <div class="card-reveal">
-            <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-            <p>Here is some more information about this product that is only revealed once clicked on.</p>
-          </div>
-          <div class="card-action">
-            <a href="#">This is a link</a>
-            <a href="#">This is a link</a>
-          </div>
-        </div>
-      </div>
-      <div id="test_feed" class="col s12">
-        {% for post in all_posts %}
+      <div id="my_feed" class="col s12">
+        {% for main_post in main_posts %}
         <div class="card">
           <div class="card-content black-text">
             <span class="card-title">
-              <h4>{{post.title}}</h4>      
+              {{main_post.title}}      
               <span class="card-title activator grey-text text-darken-4">
                 <i class="material-icons right">more_vert</i>
               </span>
             </span>
-            <p><i>{{post.description}}</i></p>
+            <p><i>{{main_post.description}}</i></p>
           </div>
             <div class="card-reveal">
               <span class="card-title grey-text text-darken-4">
-                {{post.title}} 
+                {{main_post.title}} 
                 <i class="material-icons right">close</i></span>
-              <p>{{post.body | safe}}</p>
+              <p>{{main_post.body | safe}}</p>
             </div>
             <div class="card-action">
-              {% if post.flag %}
+              {% if main_post.flag %}
               <form id="post-form" action="{% url 'delete' %}" method = 'post'>
               {% csrf_token %}
-              <input type="hidden" value="{{post.post_id}}" name="post_post_id">
-
-              <input type="submit">Delete</a>
+              <input type="hidden" value="{{main_post.post_id}}" name="post_post_id">
+              <button type="submit">Delete</button>
               </form>
               {% endif %}
               <a href="#">This is a link</a>
@@ -212,8 +155,71 @@
           </div>
         {% endfor %}
       </div>
+
+    <div id="public_feed" class="col s12">
+        {% for public_post in public_posts %}
+        <div class="card">
+          <div class="card-content black-text">
+            <span class="card-title">
+              {{public_post.title}}      
+              <span class="card-title activator grey-text text-darken-4">
+                <i class="material-icons right">more_vert</i>
+              </span>
+            </span>
+            <p><i>{{public_post.description}}</i></p>
+          </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">
+                {{public_post.title}} 
+                <i class="material-icons right">close</i></span>
+              <p>{{public_post.body | safe}}</p>
+            </div>
+            <div class="card-action">
+              {% if public_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{public_post.post_id}}" name="post_post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        {% endfor %}
     </div>
 
+
+    <div id="my_posts" class="col s12">
+        {% for my_post in my_posts %}
+        <div class="card">
+          <div class="card-content black-text">
+            <span class="card-title">
+              {{my_post.title}}      
+              <span class="card-title activator grey-text text-darken-4">
+                <i class="material-icons right">more_vert</i>
+              </span>
+            </span>
+            <p><i>{{my_post.description}}</i></p>
+          </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">
+                {{my_post.title}} 
+                <i class="material-icons right">close</i></span>
+              <p>{{my_post.body | safe}}</p>
+            </div>
+            <div class="card-action">
+              {% if my_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{my_post.post_id}}" name="post_post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
   </div>
 
 
