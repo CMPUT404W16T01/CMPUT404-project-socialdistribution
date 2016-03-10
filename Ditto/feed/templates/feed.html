@@ -182,7 +182,27 @@
       </div>
       <div id="test_feed" class="col s12">
         {% for post in all_posts %}
-          {{post.title}} <br> {{post.description}} <br> {{post.body}} <br> <br>
+        <div class="card">
+          <div class="card-content black-text">
+            <span class="card-title">
+              <h4>{{post.title}}</h4>      
+              <span class="card-title activator grey-text text-darken-4">
+                <i class="material-icons right">more_vert</i>
+              </span>
+            </span>
+            <p><i>{{post.description}}</i></p>
+          </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">
+                {{post.title}} 
+                <i class="material-icons right">close</i></span>
+              <p>{{post.body}}</p>
+            </div>
+            <div class="card-action">
+              <a href="#">This is a link</a>
+              <a href="#">This is a link</a>
+            </div>
+          </div>
         {% endfor %}
       </div>
     </div>

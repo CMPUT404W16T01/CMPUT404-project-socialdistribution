@@ -29,7 +29,7 @@ class Post(models.Model):
 	body			= models.CharField(max_length=1000)
 	is_markdown		= models.BooleanField(default=False)
 	visibility		= models.CharField(max_length=20) #private, public, friends, foaf, server
-	image			= models.ImageField()
+	image			= models.ImageField(blank=True)
 	title			= models.CharField(max_length=50, default=" ")
 	source			= models.URLField(default=" ")
 	origin			= models.URLField(default=" ")
@@ -48,6 +48,7 @@ class Comment(models.Model):
 	body			= models.CharField(max_length=1000)
 	is_markdown		= models.BooleanField(default=False) # not in user stories, but in json spec???
 	date_published 	= models.DateTimeField(auto_now=True)
+	image			= models.ImageField(blank=True)
 
 
 class Friend(models.Model):
