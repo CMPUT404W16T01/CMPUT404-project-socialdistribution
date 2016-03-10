@@ -8,7 +8,7 @@ $(document).ready(function () {
         create_post();
         this.reset();
     });
-
+//From the official django documentation: https://docs.djangoproject.com/en/1.9/ref/csrf/
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -26,20 +26,14 @@ $(document).ready(function () {
 }
 
 function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
 
 function create_post() {
-   // console.log("creating post...");
-  //  console.log($('#title').val());
-   // console.log($('#description').val());
-  //  console.log($('#categories').val());
-   // console.log($('#is-markdown-post').prop('checked'));
 
     var csrftoken = getCookie('csrftoken');
-
+    //From the official django documentation: https://docs.djangoproject.com/en/1.9/ref/csrf/
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
