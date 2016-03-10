@@ -19,7 +19,7 @@ class Author(models.Model):
 	admin_auth      = models.BooleanField(default=False)
 
 	def __unicode__(self):
-		return self.display_name
+		return str(self.user_id)
 
 #@python_2_unicode_compatible
 class Post(models.Model):
@@ -38,7 +38,7 @@ class Post(models.Model):
 	categories		= models.CharField(max_length=1000, default=" ")
 
 	def __unicode__(self):
-		return self.title
+		return str(self.post_id)
 
 
 class Comment(models.Model):

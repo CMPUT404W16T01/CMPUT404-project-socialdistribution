@@ -196,10 +196,17 @@
               <span class="card-title grey-text text-darken-4">
                 {{post.title}} 
                 <i class="material-icons right">close</i></span>
-              <p>{{post.body}}</p>
+              <p>{{post.body | safe}}</p>
             </div>
             <div class="card-action">
-              <a href="#">This is a link</a>
+              {% if post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{post.post_id}}" name="post_post_id">
+
+              <input type="submit">Delete</a>
+              </form>
+              {% endif %}
               <a href="#">This is a link</a>
             </div>
           </div>
