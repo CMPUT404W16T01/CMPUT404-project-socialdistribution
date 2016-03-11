@@ -51,21 +51,33 @@ def feed(request):
 	# Begin Public Feed
 	# public_posts was already created for use in the other one
 	for post in public_posts:
+		comment_list=[]
 		#print post.post_id
 		if (str(author_object.user_id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
+			
+		for comment in all_comments:
+			if (str(comment.post_id) == str(post.post_id)):
+				comment_list.append(comment)
+		post.comments=comment_list
 	# end of public feed
 
 	# Begin My Posts
 	# self_posts was already created for use 
 	for post in self_posts:
+		comment_list=[]
 		#print post.post_id
 		if (str(author_object.user_id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
+
+		for comment in all_comments:
+			if (str(comment.post_id) == str(post.post_id)):
+				comment_list.append(comment)
+		post.comments=comment_list
 	# end of public feed
 
 
