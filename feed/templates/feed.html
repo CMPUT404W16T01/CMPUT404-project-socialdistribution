@@ -1,0 +1,250 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <!--Import Google Icon Font-->
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="{% static 'css/feed.css' %}"  media="screen,projection"/>
+  <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.css' %}" media="screen,projection"/>
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!--Import jQuery before materialize.js-->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="{% static 'jquery/jquery.cookie.js' %}" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/feed.js' %}"></script>
+
+
+</head>
+
+
+<body>
+
+  <ul id="dropdown1" class="dropdown-content">
+    <li><a href="#!">Profile</a></li>
+    <li><a href="/settings">Settings</a></li>
+    <li><a href="/logout">Logout</a></li>
+  </ul>
+
+  <nav>
+    <div class="navbar-fixed">
+      <a href="#!" class="brand-logo">Ditto logo</a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="/friends">Friends</a></li>
+        <li><a class="dropdown-button" href="#" data-activates="dropdown1"><i class="material-icons">account_circle</i></a></li>
+      </ul>
+      <ul class="brand-logo center">
+        <li><form>
+          <div class="input-field">
+            <input id="search" type="search" required>
+            <label for="search"><i class="material-icons">search</i></label>
+            <i class="material-icons">close</i>
+          </div>
+        </form></li>
+      </ul>
+    </div>
+  </nav>
+<!--   <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+    <a class="btn-floating btn-large red">
+      <i class="large material-icons">mode_edit</i>
+    </a>
+  </div> -->
+  <div id='feed_format'>
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+      <!-- Modal Trigger -->
+      <a class="btn-floating btn-large red modal-trigger" href="#modal1">
+        <i class="large material-icons">mode_edit</i>
+      </a>
+    </div>
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h4>Create a new post</h4>
+        <!--THIS WILL HAVE TO GET INTEGRATED INTO THE CARDS-->
+        <div style="padding-right: 10%; padding-left: 10%;">
+          <form id="create-post" action="{% url 'feed:create_post' %}" method = 'post'>
+            {% csrf_token %}
+
+            <div class="input-field" id = "post-title">
+              <input color="black" placeholder="Title" id = "title" type="text">
+            </div>
+
+            <div class="input-field" id = "post-description">
+              <input placeholder="Description" id = "description" type="text">
+            </div>
+
+            <textarea id="post-input" class="materialize-textarea"></textarea>
+
+            <div class="input-field" id = "post-categories">
+              <input placeholder="categories" id= "categories" type="text">
+            </div>
+
+            <div class="row">
+
+              <div class="col s3">
+
+               <p>
+                <input type="checkbox" id="is-markdown-post" />
+                <label for="is-markdown-post">Markdown</label>
+              </p>
+
+            </div>
+            <div class="col s9">
+              <div class="input-field">
+                <select id="visibility">
+                  <option value="public">Public</option>
+                  <option value="foaf">FOAF</option>
+                  <option value="friends">Friends</option>
+                  <option value="private">Private</option>
+                  <option value="server">Server Only</option>
+
+                </select>
+                <label>Choose Privacy Setting</label>
+              </div>
+
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="modal-action modal-close waves-effect btn-flat" type="submit">CREATE POST
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs transparent">
+        <li class="tab col s3"><a href="#my_feed">My Feed</a></li>
+        <li class="tab col s3"><a href="#public_feed">Public Feed</a></li>
+        <li class="tab col s3"><a href="#my_posts">My Posts</a></li>
+        <li class="tab col s3"><a href="#git_posts">Github Feed</a></li>
+      </ul>
+    </div>
+      <div id="my_feed" class="col s12">
+        {% for main_post in main_posts %}
+        <div class="card large">
+          <div class="card-content black-text">
+            <span class="card-title">
+              {{main_post.title}}      
+              <span class="card-title activator grey-text text-darken-4">
+                <i class="material-icons right">more_vert</i>
+              </span>
+            </span>
+            <p><i>{{main_post.description}}</i></p>
+          </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">
+                {{main_post.title}} 
+                <i class="material-icons right">close</i></span>
+              <p>{{main_post.body | safe}}</p>
+              {% for main_post_comment in main_post.comments %}
+              {{main_post_comment.body}} <hr>
+              {% endfor %}
+                <form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
+                {% csrf_token %}
+
+            <textarea name="comment-input" class="materialize-textarea"></textarea>
+              <div class="col s3">
+
+               <p>
+                <input type="checkbox" name="comment-is-markdown" id="{{main_post.post_id}}" />
+                <label for="{{main_post.post_id}}">Markdown</label>
+              </p>
+              <input type="hidden" value="{{main_post.post_id}}" name="comment-parent-id">
+
+              <button type="submit"> ADD COMMENT </button>
+            </div>
+          </form>
+            </div>
+            <div class="card-action">
+              {% if main_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{main_post.post_id}}" name="post_post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    <div id="public_feed" class="col s12">
+        {% for public_post in public_posts %}
+        <div class="card">
+          <div class="card-content black-text">
+            <span class="card-title">
+              {{public_post.title}}      
+              <span class="card-title activator grey-text text-darken-4">
+                <i class="material-icons right">more_vert</i>
+              </span>
+            </span>
+            <p><i>{{public_post.description}}</i></p>
+          </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">
+                {{public_post.title}} 
+                <i class="material-icons right">close</i></span>
+              <p>{{public_post.body | safe}}</p>
+            </div>
+            <div class="card-action">
+              {% if public_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{public_post.post_id}}" name="post_post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
+
+
+    <div id="my_posts" class="col s12">
+        {% for my_post in my_posts %}
+        <div class="card">
+          <div class="card-content black-text">
+            <span class="card-title">
+              {{my_post.title}}      
+              <span class="card-title activator grey-text text-darken-4">
+                <i class="material-icons right">more_vert</i>
+              </span>
+            </span>
+            <p><i>{{my_post.description}}</i></p>
+          </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">
+                {{my_post.title}} 
+                <i class="material-icons right">close</i></span>
+              <p>{{my_post.body | safe}}</p>
+            </div>
+            <div class="card-action">
+              {% if my_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{my_post.post_id}}" name="post_post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
+        <div id="git_posts" class="col s12"> 
+
+<!-- start feedwind code --><script type="text/javascript">document.write('\x3Cscript type="text/javascript" src="' + ('https:' == document.location.protocol ? 'https://' : 'http://') + 'feed.mikle.com/js/rssmikle.js">\x3C/script>');</script><script type="text/javascript">(function() {var params = {rssmikle_url: "https://github.com/{{github_account}}.atom|https://github.com/{{github_account}}.atom",rssmikle_frame_width: "300",rssmikle_frame_height: "400",frame_height_by_article: "0",rssmikle_target: "_blank",rssmikle_font: "Arial, Helvetica, sans-serif",rssmikle_font_size: "12",rssmikle_border: "off",responsive: "off",rssmikle_css_url: "",text_align: "left",text_align2: "left",corner: "off",scrollbar: "on",autoscroll: "on",scrolldirection: "up",scrollstep: "3",mcspeed: "20",sort: "Off",rssmikle_title: "on",rssmikle_title_sentence: "",rssmikle_title_link: "",rssmikle_title_bgcolor: "#0066FF",rssmikle_title_color: "#FFFFFF",rssmikle_title_bgimage: "",rssmikle_item_bgcolor: "#FFFFFF",rssmikle_item_bgimage: "",rssmikle_item_title_length: "55",rssmikle_item_title_color: "#0066FF",rssmikle_item_border_bottom: "on",rssmikle_item_description: "on",item_link: "off",rssmikle_item_description_length: "150",rssmikle_item_description_color: "#666666",rssmikle_item_date: "gl1",rssmikle_timezone: "Etc/GMT",datetime_format: "%b %e, %Y %l:%M %p",item_description_style: "text+tn",item_thumbnail: "full",item_thumbnail_selection: "auto",article_num: "15",rssmikle_item_podcast: "off",keyword_inc: "",keyword_exc: ""};feedwind_show_widget_iframe(params);})();</script><div style="font-size:10px; text-align:center; width:300px;"><a href="http://feed.mikle.com/" target="_blank" style="color:#CCCCCC;"></a><!--Please display the above link in your web page according to Terms of Service.--></div><!-- end feedwind code --><!--  end  feedwind code -->
+            </div>
+    </div>
+  </div>
+</body>
+
+</html>
