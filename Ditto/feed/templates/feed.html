@@ -177,7 +177,7 @@
 
     <div id="public_feed" class="col s12">
         {% for public_post in public_posts %}
-        <div class="card">
+        <div class="card large">
           <div class="card-content black-text">
             <span class="card-title">
               {{public_post.title}}      
@@ -192,6 +192,34 @@
                 {{public_post.title}} 
                 <i class="material-icons right">close</i></span>
               <p>{{public_post.body | safe}}</p>
+              {% for public_post_comment in public_post.comments %}
+              {{public_post_comment.body}} <hr>
+              {% endfor %}
+
+                <form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
+                {% csrf_token %}
+
+            <textarea name="comment-input" class="materialize-textarea"></textarea>
+              <div class="col s3">
+
+               <p>
+                <input type="checkbox" name="comment-is-markdown" id="{{public_post.post_id}}" />
+                <label for="{{public_post.post_id}}">Markdown</label>
+              </p>
+              <input type="hidden" value="{{public_post.post_id}}" name="comment-parent-id">
+
+              <button type="submit"> ADD COMMENT </button>
+            </div>
+          </form>
+            </div>
+            <div class="card-action">
+              {% if main_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{main_post.post_id}}" name="post_post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
             </div>
             <div class="card-action">
               {% if public_post.flag %}
@@ -201,7 +229,6 @@
               <button type="submit">Delete</button>
               </form>
               {% endif %}
-              <a href="#">This is a link</a>
             </div>
           </div>
         {% endfor %}
@@ -210,7 +237,7 @@
 
     <div id="my_posts" class="col s12">
         {% for my_post in my_posts %}
-        <div class="card">
+        <div class="card large">
           <div class="card-content black-text">
             <span class="card-title">
               {{my_post.title}}      
@@ -225,6 +252,26 @@
                 {{my_post.title}} 
                 <i class="material-icons right">close</i></span>
               <p>{{my_post.body | safe}}</p>
+              {% for my_post_comment in my_post.comments %}
+              {{my_post_comment.body}} <hr>
+              {% endfor %}
+
+                <form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
+                {% csrf_token %}
+
+            <textarea name="comment-input" class="materialize-textarea"></textarea>
+              <div class="col s3">
+
+               <p>
+                <input type="checkbox" name="comment-is-markdown" id="{{my_post.post_id}}" />
+                <label for="{{my_post.post_id}}">Markdown</label>
+              </p>
+              <input type="hidden" value="{{my_post.post_id}}" name="comment-parent-id">
+
+              <button type="submit"> ADD COMMENT </button>
+            </div>
+          </form>
+
             </div>
             <div class="card-action">
               {% if my_post.flag %}

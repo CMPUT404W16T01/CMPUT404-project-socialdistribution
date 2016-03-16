@@ -10,5 +10,4 @@ urlpatterns = [
     url(r'^author/(?P<pk>[0-9a-z-]+)/posts/$', api_views.author_posts.as_view()),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
-    
-
+ 

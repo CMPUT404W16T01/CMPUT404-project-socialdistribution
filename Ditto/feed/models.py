@@ -52,6 +52,7 @@ class Comment(models.Model):
 	def __unicode__(self):
 		return str(self.comment_id)
 
+
 class Friend(models.Model):
 	follower_id		= models.UUIDField(primary_key=True)
 	followed_id		= models.UUIDField()

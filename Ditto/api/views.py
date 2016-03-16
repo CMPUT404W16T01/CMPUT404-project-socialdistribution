@@ -54,10 +54,9 @@ class author_posts(APIView):
     """
 
     def get(self, request, pk, format=None):
+        print "Here"
         author_object = Author.objects.get(user_id=pk)
-        posts = Post.objects.filter(author_id=author_object)
+        posts = Post.objects.filter(author_id="52c2d777-ba24-423e-adba-8246265fbbce")
         serializer = PostSerializer(posts, many=True)
         return Response({"query": "posts", "count": len(posts), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "posts": serializer.data})
-
-        # 60da6b76-5f6e-4b9b-b766-24dc7b1d4f3c
