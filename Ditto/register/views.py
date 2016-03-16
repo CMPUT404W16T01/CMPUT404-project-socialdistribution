@@ -36,10 +36,11 @@ def sign_up(request):
 		user_id = uuid.uuid4()
 		user = User.objects.create_user(username = email, password = password)
 		user.save()
-		new_author = Author(user_id = user_id, display_name = display_name, email = user, host=DITTO_HOST)
+		new_author = Author(id = user_id, display_name = display_name, email = user, host=DITTO_HOST)
 		new_author.save()
 		return redirect("/register/confirm")
-	except:
+	except Exception as e:
+		print e
 		return redirect("/register/fail")
 
 

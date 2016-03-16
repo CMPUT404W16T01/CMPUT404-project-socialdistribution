@@ -10,7 +10,7 @@ from django.conf import settings
 #@python_2_unicode_compatible
 class Author(models.Model):
 	email 			= models.ForeignKey(User)
-	user_id			= models.UUIDField(primary_key=True, editable=False)
+	id				= models.UUIDField(primary_key=True, editable=False)
 	display_name	= models.CharField(max_length=60)
 	bio				= models.CharField(max_length=1000, default=" ")
 	host			= models.URLField(max_length=500)
@@ -19,7 +19,7 @@ class Author(models.Model):
 	admin_auth      = models.BooleanField(default=False)
 
 	def __unicode__(self):
-		return str(self.user_id)
+		return str(self.id)
 
 #@python_2_unicode_compatible
 class Post(models.Model):
@@ -49,6 +49,7 @@ class Comment(models.Model):
 	is_markdown		= models.BooleanField(default=False) # not in user stories, but in json spec???
 	date_published 	= models.DateTimeField(auto_now=True)
 	image			= models.ImageField(blank=True)
+	
 	def __unicode__(self):
 		return str(self.comment_id)
 

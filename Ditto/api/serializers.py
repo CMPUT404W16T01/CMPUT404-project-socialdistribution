@@ -16,9 +16,10 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = (
             'date_published', 'author_id')
 
+
 class AuthorSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Author
 		fields = (
-			'user_id', 'host', 'display_name', 'github_account', 'email', 'bio')
+			'id', 'host', 'display_name', 'github_account', 'email', 'bio')
 

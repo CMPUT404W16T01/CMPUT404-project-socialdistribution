@@ -36,7 +36,7 @@ def feed(request):
 	for post in main_posts:
 		#print post.post_id
 		comment_list=[]
-		if (str(author_object.user_id) == str(post.author_id)):
+		if (str(author_object.id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
@@ -53,7 +53,7 @@ def feed(request):
 	for post in public_posts:
 		comment_list=[]
 		#print post.post_id
-		if (str(author_object.user_id) == str(post.author_id)):
+		if (str(author_object.id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
@@ -69,7 +69,7 @@ def feed(request):
 	for post in self_posts:
 		comment_list=[]
 		#print post.post_id
-		if (str(author_object.user_id) == str(post.author_id)):
+		if (str(author_object.id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False

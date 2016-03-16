@@ -54,7 +54,7 @@ class author_posts(APIView):
     """
 
     def get(self, request, pk, format=None):
-        author_object = Author.objects.get(user_id=pk)
+        author_object = Author.objects.get(id=pk)
         posts = Post.objects.filter(author_id=author_object)
         serializer = PostSerializer(posts, many=True)
         return Response({"query": "posts", "count": len(posts), "size": "10", "next": "http://nextpageurlhere",
@@ -66,7 +66,7 @@ class author_comments(APIView):
     """
 
     def get(self, request, pk, format=None):
-        author_object = Author.objects.get(user_id=pk)
+        author_object = Author.objects.get(id=pk)
         comments = Comment.objects.filter(author_id=author_object)
         serializer = CommentSerializer(comments, many=True)
         return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
@@ -79,7 +79,7 @@ class author_detail(APIView):
     """
 
     def get(self, request, pk, format=None):
-        author_object = Author.objects.get(user_id=pk)
+        author_object = Author.objects.get(id=pk)
         serializer = AuthorSerializer(author_object)
         return Response({"query": "author", "count": "1", "size": "10", "next": "http://nextpageurlhere",
                  "previous": "http://previouspageurlhere", "author": serializer.data})
