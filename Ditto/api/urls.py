@@ -4,10 +4,17 @@ from api import views as api_views
 from rest_framework import routers
 
 urlpatterns = [
-    url(r'^posts/(?P<pk>[0-9a-z-]+)/comments/$', api_views.post_comments.as_view()),
-    url(r'^posts/(?P<pk>[0-9a-z-]+)/$', api_views.post_detail.as_view()),
-    url(r'^posts/', api_views.public_posts.as_view()),
-    url(r'^author/(?P<pk>[0-9a-z-]+)/posts/$', api_views.author_posts.as_view()),
+	# Posts API
+	url(r'^posts/', 								api_views.public_posts.as_view()),
+	url(r'^posts/(?P<pk>[0-9a-z-]+)/$', 			api_views.post_detail.as_view()),
+    url(r'^posts/(?P<pk>[0-9a-z-]+)/comments/$', 	api_views.post_comments.as_view()),
+    
+    # Author API
+    url(r'^author/(?P<pk>[0-9a-z-]+)/$', 			api_views.author_detail.as_view()),
+    url(r'^author/(?P<pk>[0-9a-z-]+)/posts/$', 		api_views.author_posts.as_view()),
+    url(r'^author/(?P<pk>[0-9a-z-]+)/comments/$', 	api_views.author_comments.as_view()),
+
+    # API Auth
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
  

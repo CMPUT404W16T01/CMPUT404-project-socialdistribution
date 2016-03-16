@@ -1,5 +1,5 @@
 from feed.models import Post, Author, Comment
-from api.serializers import PostSerializer, CommentSerializer
+from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -54,9 +54,32 @@ class author_posts(APIView):
     """
 
     def get(self, request, pk, format=None):
-        print "Here"
         author_object = Author.objects.get(user_id=pk)
-        posts = Post.objects.filter(author_id="52c2d777-ba24-423e-adba-8246265fbbce")
+        posts = Post.objects.filter(author_id=author_object)
         serializer = PostSerializer(posts, many=True)
         return Response({"query": "posts", "count": len(posts), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "posts": serializer.data})
+
+class author_comments(APIView):
+    """
+    List all comments from a specific author
+    """
+
+    def get(self, request, pk, format=None):
+        author_object = Author.objects.get(user_id=pk)
+        comments = Comment.objects.filter(author_id=author_object)
+        serializer = CommentSerializer(comments, many=True)
+        return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
+                 "previous": "http://previouspageurlhere", "comments": serializer.data})
+
+
+class author_detail(APIView):
+    """
+    List all information on provided author
+    """
+
+    def get(self, request, pk, format=None):
+        author_object = Author.objects.get(user_id=pk)
+        serializer = AuthorSerializer(author_object)
+        return Response({"query": "author", "count": "1", "size": "10", "next": "http://nextpageurlhere",
+                 "previous": "http://previouspageurlhere", "author": serializer.data})
