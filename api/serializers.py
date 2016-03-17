@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from feed.models import Post, Comment
+from feed.models import Post, Comment, Author
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -15,4 +15,11 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = (
             'date_published', 'author_id')
+
+
+class AuthorSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Author
+		fields = (
+			'id', 'host', 'display_name', 'github_account', 'email', 'bio')
 
