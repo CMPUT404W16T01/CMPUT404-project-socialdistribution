@@ -24,3 +24,8 @@ Contributors:
     Olexiy Berjanskii
     Erin Torbiak
     Abram Hindle
+    Michael Stensby
+    Brandon Smolley
+    Randy Wong
+    Ramish Syed
+    Marcin Pietrasik
