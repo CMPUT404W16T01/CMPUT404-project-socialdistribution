@@ -105,17 +105,17 @@ def logout(request):
 	return redirect('/login')
 
 def create_comment(request):
-	body = request.POST.get('comment-input')
+	comment = request.POST.get('comment-input')
 	parent_id = request.POST.get('comment-parent-id')
 	print parent_id
 	is_markdown = request.POST.get('comment-is-markdown')
 	print type(is_markdown)
 	if is_markdown:
-		body = CommonMark.commonmark(body)
+		comment = CommonMark.commonmark(comment)
 		is_markdown = True
 	else:
 		is_markdown = False
-	print body
+	print comment
 	print is_markdown
 	
 	published = datetime.datetime
@@ -129,7 +129,7 @@ def create_comment(request):
 	print author_object.email
 
 
-	new_comment = Comment(author_id = author_object, id = post_object, body = body, is_markdown = is_markdown, published=published)
+	new_comment = Comment(author_id = author_object, id = post_object, comment = comment, is_markdown = is_markdown, published=published)
 	print("comment made")
 
 	new_comment.save()
@@ -137,12 +137,12 @@ def create_comment(request):
 
 
 def create_post(request):
-	body = request.POST.get('post_body')
+	content = request.POST.get('post_body')
 	published = datetime.datetime
 	is_markdown = json.loads(request.POST.get('is_markdown'))
 	
 	if is_markdown:
-		body = CommonMark.commonmark(body)
+		content = CommonMark.commonmark(content)
 	visibility = request.POST.get('visibility')
 	c_username = request.user.username
 	user_object = User.objects.get(username = c_username)
@@ -159,7 +159,9 @@ def create_post(request):
 	categories_json = json.dumps(c)
 	
 
-	new_post = Post(published = published, author_id = author_object, body = body, is_markdown = is_markdown, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description ) 
+	new_post = Post(published = published, author_id = author_object, content = content, is_markdown = is_markdown, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description ) 
 	new_post.save()
 
-	return HttpResponse(request.POST.get('post_body'))
+	return redirect('/feed')
+
+	#return HttpResponse(request.POST.get('post_body'))

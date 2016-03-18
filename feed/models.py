@@ -26,7 +26,7 @@ class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author_id = models.ForeignKey(Author)  # issue here?
     published = models.DateTimeField(auto_now=True)  # issue here?
-    body = models.CharField(max_length=1000)
+    content = models.CharField(max_length=1000)
     is_markdown = models.BooleanField(default=False)
     visibility = models.CharField(max_length=20)  # private, public, friends, foaf, server
     image = models.ImageField(blank=True)
@@ -45,9 +45,9 @@ class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post_id = models.ForeignKey(Post)  # issue?
     author_id = models.ForeignKey(Author)  # issue?
-    body = models.CharField(max_length=1000)
+    comment = models.CharField(max_length=1000)
     is_markdown = models.BooleanField(default=False)  # not in user stories, but in json spec???
-    published = models.DateTimeField(auto_now=True)
+    published = models.DateTimeField(autonow=True)
     image = models.ImageField(blank=True)
 
     def __unicode__(self):

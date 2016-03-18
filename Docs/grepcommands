@@ -12,3 +12,4 @@ grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "comment_id" . | xargs se
 grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "date_published" . | xargs sed -i "s/date_published/published/g"
 
 grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "comment_count" . | xargs sed -i "s/comment_count/count/g"
+
