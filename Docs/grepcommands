@@ -1,0 +1,14 @@
+grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "github_account" . | xargs sed -i "s/github_account/github/g"
+
+
+grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "display_name" . | xargs sed -i "s/display_name/displayName/g"
+
+grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "user_id" . | xargs sed -i "s/user_id/id/g"
+
+grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "post_id" . | xargs sed -i "s/id/id/g"
+
+grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "comment_id" . | xargs sed -i "s/comment_id/id/g"
+
+grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "date_published" . | xargs sed -i "s/date_published/published/g"
+
+grep -lr --exclude-dir=".git" --exclude="*\.pyc\.*" -e "comment_count" . | xargs sed -i "s/comment_count/count/g"
