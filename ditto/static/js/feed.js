@@ -53,15 +53,16 @@ function create_post() {
         description: $('#description').val(),
         categories: $('#categories').val()
         }, 
-
+        
         success : function(json) {
-            console.log("Success"); 
+            location.reload()
         },
-
+        
         error : function(xhr,errmsg,err) {
             console.log("AJAX ERROR");
             console.log(errmsg);
         }
+
     });
 };
 

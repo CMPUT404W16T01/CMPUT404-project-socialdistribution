@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import login as auth_login, authenticate
@@ -16,7 +16,8 @@ import datetime
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 import CommonMark
-import urllib2
+import urllib2 
+
 # Create your views here.
 
 @login_required
@@ -160,7 +161,7 @@ def create_comment(request):
 
 def create_post(request):
 	content = request.POST.get('post_body')
-	published = datetime.datetime
+	published = datetime.datetime.now()
 	is_markdown = json.loads(request.POST.get('is_markdown'))
 	
 	if is_markdown:
@@ -169,7 +170,8 @@ def create_post(request):
 	c_username = request.user.username
 	user_object = User.objects.get(username = c_username)
 	author_object = Author.objects.get(email = user_object)
-	author_name = author_object.display_name
+	author_name = author_object.displayName
+
 
 	DITTO_HOST = request.get_host()
 	title = request.POST.get('title')
@@ -186,6 +188,4 @@ def create_post(request):
 	new_post = Post(published = published, author_id = author_object, content = content, is_markdown = is_markdown, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description ) 
 	new_post.save()
 
-	return redirect('/feed')
-
-	#return HttpResponse(request.POST.get('post_body'))
+	return HttpResponse(request.POST.get('post_body'))
