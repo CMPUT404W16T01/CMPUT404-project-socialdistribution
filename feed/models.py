@@ -47,7 +47,7 @@ class Post(models.Model):
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post_id = models.ForeignKey(Post)  # issue?
-    author_id = models.ForeignKey(Author)  # issue?
+    author = models.CharField(max_length=100, default="")  # issue?
     author_name = models.CharField(max_length=1000, default= " ")
     comment = models.CharField(max_length=1000)
     is_markdown = models.BooleanField(default=False)  # not in user stories, but in json spec???

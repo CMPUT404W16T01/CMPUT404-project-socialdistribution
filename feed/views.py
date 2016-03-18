@@ -126,15 +126,15 @@ def create_comment(request):
 	c_username = request.user.username
 	user_object = User.objects.get(username = c_username)
 	author_object = Author.objects.get(email = user_object)
-	author_name =author_object.display_name
+	author_name =author_object.displayName
 
 
-	new_comment = Comment(author_id = author_object, id = post_object, comment = comment, is_markdown = is_markdown, published=published)
-	print("comment made")
+	#new_comment = Comment(author_id = author_object, id = post_object, comment = comment, is_markdown = is_markdown, published=published)
+	#print("comment made")
 
 	
 	packet = {}
-	packet['comment'] = body
+	packet['comment'] = comment
 	if is_markdown:
 		packet['contentType'] = 'text/x-markdown'
 	else:
@@ -143,13 +143,13 @@ def create_comment(request):
 	packet['author'] = {}
 	packet['author']['id'] = str(author_object.id)
 	packet['author']['host'] = request.get_host()
-	packet['author']['displayName'] = author_object.display_name
+	packet['author']['displayName'] = author_object.displayName
 	packet['author']['url'] = author_object.url
-	packet['author']['github'] = "http://github.com/"+author_object.github_account
+	packet['author']['github'] = "http://github.com/"+author_object.github
 
 	json_packet = json.dumps(packet)
 	print json_packet
-	url1 = "http://" + request.get_host()+"/api/posts/"+parent_id+"/comments"
+	url1 = "http://" + request.get_host()+"/api/posts/"+parent_id+"/comments/"
 	req = urllib2.Request(url1)
 	req.add_header('Content-Type', 'application/json')
 
