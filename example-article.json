@@ -12,7 +12,7 @@ This file specifies what posts look like:
 # or
 # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
 # or
-# http://service/posts/{post_id}/comments access to the comments in a post
+# http://service/posts/{id}/comments access to the comments in a post
 #
 # All of the previous URIs will get a list of posts like this:
 # If a page is provided, return the results for that page, if no page is provided return page 0
@@ -73,7 +73,7 @@ This file specifies what posts look like:
 			# page size
 			"size": 50,
 			# the first page of comments
-			"next": "http://service/posts/{post_id}/comments",
+			"next": "http://service/posts/{id}/comments",
 			# You should return ~ 5 comments per post.
 			# should be sorted newest(first) to oldest(last) 
 			"comments":[
@@ -114,9 +114,9 @@ This file specifies what posts look like:
 
 
 # Example 
-# http://service/posts/{post_id}/comments access to the comments in a post
-# http://service/posts/{post_id}/comments?page=4
-# http://service/posts/{post_id}/comments?page=4&size=40
+# http://service/posts/{id}/comments access to the comments in a post
+# http://service/posts/{id}/comments?page=4
+# http://service/posts/{id}/comments?page=4&size=40
 {
 	"query": "comments",
         # comments about the post
@@ -125,9 +125,9 @@ This file specifies what posts look like:
     	"count": 1023,
     	"size": 50,
     	# Do not return next if last page
-        "next": "http://service/posts/{post_id}/comments?page=5",
+        "next": "http://service/posts/{id}/comments?page=5",
     	# Do not return previous if page is 0.
-    	"previous": "http://service/posts/{post_id}/comments?page=3",
+    	"previous": "http://service/posts/{id}/comments?page=3",
         "comments":[{
         	"author":{
                 	"id":"8d919f29c12e8f97bcbbd34cc908f19ab9496989",

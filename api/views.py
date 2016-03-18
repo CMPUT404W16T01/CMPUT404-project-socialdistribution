@@ -41,8 +41,8 @@ class post_comments(APIView):
     """
 
     def get(self, request, pk, format=None):
-        post_object = Post.objects.get(post_id=pk)
-        comments = Comment.objects.filter(post_id=post_object)
+        post_object = Post.objects.get(id=pk)
+        comments = Comment.objects.filter(id=post_object)
         serializer = CommentSerializer(comments, many=True)
         return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "comments": serializer.data})

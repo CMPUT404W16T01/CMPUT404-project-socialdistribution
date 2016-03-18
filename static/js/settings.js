@@ -31,7 +31,7 @@ function save_settings() {
     //console.log($('#post-input').val());
     //console.log($('#is-markdown').prop('checked'));
     //console.log($('#visibility').val());
-    console.log($('#display_name').val());
+    console.log($('#displayName').val());
     console.log($('#old_password').val());
     console.log($('#new_password').val());
     console.log($('#retype').val());
@@ -52,7 +52,7 @@ function save_settings() {
         url : "/settings/save_settings/", // the endpoint
         type : "POST", // http method
         data : { 
-        	display_name: 	$('#display_name').val(),
+        	displayName: 	$('#displayName').val(),
 	        old_password: 	$('#old_password').val(), 
 	        new_password: 	$('#new_password').val(),
 	        retype: 		$('#retype').val(),
