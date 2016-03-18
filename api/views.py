@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import uuid
+import json
 
 
 class public_posts(APIView):
@@ -14,7 +15,7 @@ class public_posts(APIView):
 
     def get(self, request, format=None):
         posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
+        serializer = PostSerializerloads(posts, many=True)
         return Response({"query": "posts", "count": len(posts), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "posts": serializer.data})
 
@@ -41,12 +42,30 @@ class post_comments(APIView):
     """
 
     def get(self, request, pk, format=None):
-        post_object = Post.objects.get(post_id=pk)
-        comments = Comment.objects.filter(post_id=post_object)
+        post_object = Post.objects.get(id=pk)
+        comments = Comment.objects.filter(id=post_object)
         serializer = CommentSerializer(comments, many=True)
         return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "comments": serializer.data})
-        
+
+    def post(self, request, pk, format=None):
+        comment = request.data.get('comment')
+        author_object = request.data.get('author')
+        author_name = author_object['displayName']
+        print "here"
+
+        published = request.data.get('published')
+        contentType = request.data.get('contentType')
+        post_object = Post.objects.get(id=pk)
+        print "zxcv"
+
+        new_comment = Comment(author=json.dumps(author_object), post_id=post_object, comment=comment,  published=published, author_name=author_name)
+        new_comment.save()
+
+
+
+        return Response({})
+
 
 class author_posts(APIView):
     """

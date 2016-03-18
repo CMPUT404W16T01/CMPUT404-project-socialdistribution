@@ -11,7 +11,7 @@ Author
 	string:		bio
 
 Posts
-	UUID:		post_id
+	UUID:		id
 	UUID:		author_id
 	Date:		date published
 	string:		text of post
@@ -20,8 +20,8 @@ Posts
 	unknown:	list of images
 
 Comments:
-	UUID:		post_id
-	UUID:		comment_id
+	UUID:		id
+	UUID:		id
 	UUID:		author_id
 	string:		text body
 	bool:		plain/MD flag

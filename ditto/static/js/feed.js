@@ -3,6 +3,7 @@ $(document).ready(function () {
     $('select').material_select();
     $('.modal-trigger').leanModal();
 
+
     $('#create-post').on('submit', function(event){
         event.preventDefault();
         create_post();
@@ -52,15 +53,16 @@ function create_post() {
         description: $('#description').val(),
         categories: $('#categories').val()
         }, 
-
+        
         success : function(json) {
-            console.log("Success"); 
+            location.reload()
         },
-
+        
         error : function(xhr,errmsg,err) {
             console.log("AJAX ERROR");
             console.log(errmsg);
         }
+
     });
 };
 

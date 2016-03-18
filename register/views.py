@@ -28,14 +28,16 @@ def fail(request):
 
 def sign_up(request):
     try:
-        display_name = request.POST.get('fname') + " " + request.POST.get('lname')
+        displayName = request.POST.get('fname') + " " + request.POST.get('lname')
         password = request.POST.get('pass')
         email = request.POST.get('email')
         DITTO_HOST = request.get_host()
-        user_id = uuid.uuid4()
+        id = uuid.uuid4()
         user = User.objects.create_user(username=email, password=password)
         user.save()
-        new_author = Author(user_id=user_id, display_name=display_name, email=user, host=DITTO_HOST)
+
+        url = 'http://' + DITTO_HOST + "/author/" + str(id)
+        new_author = Author(id=id, displayName=displayName, email=user, host=DITTO_HOST, url=url)
         new_author.save()
         return redirect("/register/confirm")
     except:
