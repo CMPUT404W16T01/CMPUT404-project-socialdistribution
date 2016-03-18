@@ -3,6 +3,7 @@ $(document).ready(function () {
     $('select').material_select();
     $('.modal-trigger').leanModal();
 
+
     $('#create-post').on('submit', function(event){
         event.preventDefault();
         create_post();

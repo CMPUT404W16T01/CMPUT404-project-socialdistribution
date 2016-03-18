@@ -46,7 +46,7 @@ class post_comments(APIView):
         serializer = CommentSerializer(comments, many=True)
         return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "comments": serializer.data})
-        
+
 
 class author_posts(APIView):
     """

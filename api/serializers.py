@@ -23,3 +23,8 @@ class AuthorSerializer(serializers.ModelSerializer):
 		fields = (
 			'id', 'host', 'display_name', 'github_account', 'email', 'bio')
 
+class CommentAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Author
+        fields = (
+            'id', 'host', 'display_name', 'github_account', 'bio')

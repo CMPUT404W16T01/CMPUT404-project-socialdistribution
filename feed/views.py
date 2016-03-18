@@ -16,6 +16,7 @@ import datetime
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 import CommonMark
+import urllib2
 # Create your views here.
 
 @login_required
@@ -36,7 +37,7 @@ def feed(request):
 	for post in main_posts:
 		#print post.post_id
 		comment_list=[]
-		if (str(author_object.user_id) == str(post.author_id)):
+		if (str(author_object.id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
@@ -53,7 +54,7 @@ def feed(request):
 	for post in public_posts:
 		comment_list=[]
 		#print post.post_id
-		if (str(author_object.user_id) == str(post.author_id)):
+		if (str(author_object.id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
@@ -69,7 +70,7 @@ def feed(request):
 	for post in self_posts:
 		comment_list=[]
 		#print post.post_id
-		if (str(author_object.user_id) == str(post.author_id)):
+		if (str(author_object.id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
@@ -115,8 +116,7 @@ def create_comment(request):
 		is_markdown = True
 	else:
 		is_markdown = False
-	print body
-	print is_markdown
+
 	
 	date_published = datetime.datetime
 
@@ -124,15 +124,35 @@ def create_comment(request):
 	c_username = request.user.username
 	user_object = User.objects.get(username = c_username)
 	author_object = Author.objects.get(email = user_object)
+	author_name =author_object.display_name
 
-	print post_object.title
-	print author_object.email
-
-
-	new_comment = Comment(author_id = author_object, post_id = post_object, body = body, is_markdown = is_markdown, date_published=date_published)
+	new_comment = Comment(author_id = author_object, post_id = post_object, body = body, is_markdown = is_markdown, date_published=date_published, author_name = author_name)
 	print("comment made")
 
-	new_comment.save()
+	
+	packet = {}
+	packet['comment'] = body
+	if is_markdown:
+		packet['contentType'] = 'text/x-markdown'
+	else:
+		packet['contentType'] = 'text/plain'
+	packet['published'] =  str(datetime.datetime.now())
+	packet['author'] = {}
+	packet['author']['id'] = str(author_object.id)
+	packet['author']['host'] = request.get_host()
+	packet['author']['displayName'] = author_object.display_name
+	packet['author']['url'] = author_object.url
+	packet['author']['github'] = "http://github.com/"+author_object.github_account
+
+	json_packet = json.dumps(packet)
+	print json_packet
+	url1 = "http://" + request.get_host()+"/api/posts/"+parent_id+"/comments"
+	req = urllib2.Request(url1)
+	req.add_header('Content-Type', 'application/json')
+
+	urllib2.urlopen(req, json_packet)
+
+	#new_comment.save()
 	return redirect('/feed')
 
 
@@ -147,6 +167,7 @@ def create_post(request):
 	c_username = request.user.username
 	user_object = User.objects.get(username = c_username)
 	author_object = Author.objects.get(email = user_object)
+	author_name = author_object.display_name
 
 	DITTO_HOST = request.get_host()
 	title = request.POST.get('title')
@@ -159,7 +180,7 @@ def create_post(request):
 	categories_json = json.dumps(c)
 	
 
-	new_post = Post(date_published = date_published, author_id = author_object, body = body, is_markdown = is_markdown, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description ) 
+	new_post = Post(date_published = date_published, author_id = author_object, body = body, is_markdown = is_markdown, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description, author_name = author_name ) 
 	new_post.save()
 
 	return HttpResponse(request.POST.get('post_body'))
