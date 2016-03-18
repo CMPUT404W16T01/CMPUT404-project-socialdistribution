@@ -24,7 +24,7 @@ def feed(request):
 	user_object = User.objects.get(username = request.user.username)
 	author_object = Author.objects.get(email = user_object)
 
-	github_name = author_object.github_account
+	github_name = author_object.github
 
 	# My feed, access all posts that I can see
 	self_posts = Post.objects.filter(author_id = author_object)
@@ -35,7 +35,7 @@ def feed(request):
 	server_posts = Post.objects.filter(visibility = "server")
 	main_posts = self_posts | public_posts | server_posts
 	for post in main_posts:
-		#print post.post_id
+		#print post.id
 		comment_list=[]
 		if (str(author_object.id) == str(post.author_id)):
 			post.flag=True
@@ -43,7 +43,7 @@ def feed(request):
 			post.flag=False
 
 		for comment in all_comments:
-			if (str(comment.post_id) == str(post.post_id)):
+			if (str(comment.id) == str(post.id)):
 				comment_list.append(comment)
 		post.comments=comment_list
 		print post.comments
@@ -53,14 +53,15 @@ def feed(request):
 	# public_posts was already created for use in the other one
 	for post in public_posts:
 		comment_list=[]
-		#print post.post_id
+
+		#print post.id
 		if (str(author_object.id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
 			
 		for comment in all_comments:
-			if (str(comment.post_id) == str(post.post_id)):
+			if (str(comment.id) == str(post.id)):
 				comment_list.append(comment)
 		post.comments=comment_list
 	# end of public feed
@@ -69,14 +70,15 @@ def feed(request):
 	# self_posts was already created for use 
 	for post in self_posts:
 		comment_list=[]
-		#print post.post_id
+
+		#print post.id
 		if (str(author_object.id) == str(post.author_id)):
 			post.flag=True
 		else:
 			post.flag=False
 
 		for comment in all_comments:
-			if (str(comment.post_id) == str(post.post_id)):
+			if (str(comment.id) == str(post.id)):
 				comment_list.append(comment)
 		post.comments=comment_list
 	# end of public feed
@@ -88,7 +90,7 @@ def feed(request):
 		'main_posts': main_posts,
 		'public_posts': public_posts,
 		'my_posts': self_posts,
-		"github_account" : github_name,
+		"github" : github_name,
 	}
 
 	
@@ -96,8 +98,8 @@ def feed(request):
 
 
 def delete(request):
-	post_id = request.POST.get('post_post_id')
-	Post.objects.filter(post_id = post_id).delete()
+	id = request.POST.get('post_id')
+	Post.objects.filter(id = id).delete()
 	return redirect('/feed')
 
 
@@ -106,27 +108,27 @@ def logout(request):
 	return redirect('/login')
 
 def create_comment(request):
-	body = request.POST.get('comment-input')
+	comment = request.POST.get('comment-input')
 	parent_id = request.POST.get('comment-parent-id')
-	print parent_id
 	is_markdown = request.POST.get('comment-is-markdown')
 	print type(is_markdown)
 	if is_markdown:
-		body = CommonMark.commonmark(body)
+		comment = CommonMark.commonmark(comment)
 		is_markdown = True
 	else:
 		is_markdown = False
 
 	
-	date_published = datetime.datetime
+	published = datetime.datetime
 
-	post_object = Post.objects.get(post_id = parent_id)
+	post_object = Post.objects.get(id = parent_id)
 	c_username = request.user.username
 	user_object = User.objects.get(username = c_username)
 	author_object = Author.objects.get(email = user_object)
 	author_name =author_object.display_name
 
-	new_comment = Comment(author_id = author_object, post_id = post_object, body = body, is_markdown = is_markdown, date_published=date_published, author_name = author_name)
+
+	new_comment = Comment(author_id = author_object, id = post_object, comment = comment, is_markdown = is_markdown, published=published)
 	print("comment made")
 
 	
@@ -157,12 +159,12 @@ def create_comment(request):
 
 
 def create_post(request):
-	body = request.POST.get('post_body')
-	date_published = datetime.datetime
+	content = request.POST.get('post_body')
+	published = datetime.datetime
 	is_markdown = json.loads(request.POST.get('is_markdown'))
 	
 	if is_markdown:
-		body = CommonMark.commonmark(body)
+		content = CommonMark.commonmark(content)
 	visibility = request.POST.get('visibility')
 	c_username = request.user.username
 	user_object = User.objects.get(username = c_username)
@@ -180,7 +182,10 @@ def create_post(request):
 	categories_json = json.dumps(c)
 	
 
-	new_post = Post(date_published = date_published, author_id = author_object, body = body, is_markdown = is_markdown, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description, author_name = author_name ) 
+
+	new_post = Post(published = published, author_id = author_object, content = content, is_markdown = is_markdown, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description ) 
 	new_post.save()
 
-	return HttpResponse(request.POST.get('post_body'))
+	return redirect('/feed')
+
+	#return HttpResponse(request.POST.get('post_body'))

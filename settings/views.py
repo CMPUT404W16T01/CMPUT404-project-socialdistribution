@@ -11,10 +11,10 @@ def settings(request):
     author_object = Author.objects.get(email=user_object)
 
     # display name
-    display_name = author_object.display_name
+    displayName = author_object.displayName
 
     # github account
-    github_account = author_object.github_account
+    github = author_object.github
 
     # github flag
     github_flag = author_object.github_flag
@@ -27,8 +27,8 @@ def settings(request):
         print 'not checked'
 
     context = {
-        'display_name': display_name,
-        'github_account': github_account,
+        'displayName': displayName,
+        'github': github,
         'github_flag': github_flag,
     }
 
@@ -38,10 +38,10 @@ def settings(request):
 def save_settings(request):
     user_object = User.objects.get(username=request.user.username)
     author_object = Author.objects.get(email=user_object)
-    display_name = request.POST.get('display_name')
+    displayName = request.POST.get('displayName')
     new_password = request.POST.get('new_password').strip()
     retype = request.POST.get('retype').strip()
-    github_account = request.POST.get('github_name')
+    github = request.POST.get('github_name')
     github_flag = request.POST.get('test6')
 
     if github_flag == 'true':
@@ -54,8 +54,8 @@ def save_settings(request):
             password = new_password
             user_object.set_password(new_password)
 
-    author_object.display_name = display_name
-    author_object.github_account = github_account
+    author_object.displayName = displayName
+    author_object.github = github
     author_object.github_flag = github_flag
 
     user_object.save()

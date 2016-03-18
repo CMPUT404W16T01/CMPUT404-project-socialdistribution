@@ -175,6 +175,7 @@
             <div style="word-break: break-all;">
             {{main_post_comment.body | safe}}
           </div>
+
         </div>
              </div> 
              <hr>
@@ -191,6 +192,20 @@
               <button type="submit"> ADD COMMENT </button>
             </div>
           </form>
+
+            </div>
+            <div class="card-action">
+              {% if main_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{main_post.id}}" name="post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        {% endfor %}
       </div>
     </div>
       {% endfor %}
@@ -205,54 +220,55 @@
             <span class="card-title activator grey-text text-darken-4">
               <i class="material-icons right">more_vert</i>
             </span>
-          </span>
-          <p><i>{{public_post.description}}</i></p>
-        </div>
-        <div class="card-reveal">
-          <span class="card-title grey-text text-darken-4">
-            {{public_post.title}} 
-            <i class="material-icons right">close</i></span>
-            <p>{{public_post.body | safe}}</p>
-            {% for public_post_comment in public_post.comments %}
-            {{public_post_comment.body | safe}} <hr>
-            {% endfor %}
 
-            <form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
-              {% csrf_token %}
+            <p><i>{{public_post.description}}</i></p>
+          </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">
+                {{public_post.title}} 
+                <i class="material-icons right">close</i></span>
+              <p>{{public_post.content | safe}}</p>
+              {% for public_post_comment in public_post.comments %}
+              {{public_post_comment.comment | safe}} <hr>
+              {% endfor %}
 
-              <textarea name="comment-input" class="materialize-textarea"></textarea>
+                <form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
+                {% csrf_token %}
+
+            <textarea name="comment-input" class="materialize-textarea"></textarea>
               <div class="col s3">
 
                <p>
-                <input type="checkbox" name="comment-is-markdown" id="{{public_post.post_id}}" />
-                <label for="{{public_post.post_id}}">Markdown</label>
+                <input type="checkbox" name="comment-is-markdown" id="{{public_post.id}}" />
+                <label for="{{public_post.id}}">Markdown</label>
               </p>
-              <input type="hidden" value="{{public_post.post_id}}" name="comment-parent-id">
+              <input type="hidden" value="{{public_post.id}}" name="comment-parent-id">
 
               <button type="submit"> ADD COMMENT </button>
             </div>
           </form>
-        </div>
-        <div class="card-action">
-          {% if main_post.flag %}
-          <form id="post-form" action="{% url 'delete' %}" method = 'post'>
-            {% csrf_token %}
-            <input type="hidden" value="{{main_post.post_id}}" name="post_post_id">
-            <button type="submit">Delete</button>
-          </form>
-          {% endif %}
-        </div>
-        <div class="card-action">
-          {% if public_post.flag %}
-          <form id="post-form" action="{% url 'delete' %}" method = 'post'>
-            {% csrf_token %}
-            <input type="hidden" value="{{public_post.post_id}}" name="post_post_id">
-            <button type="submit">Delete</button>
-          </form>
-          {% endif %}
-        </div>
-      </div>
-      {% endfor %}
+
+            </div>
+            <div class="card-action">
+              {% if main_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{main_post.id}}" name="post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
+            </div>
+            <div class="card-action">
+              {% if public_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{public_post.id}}" name="post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
     </div>
 
 
@@ -265,51 +281,54 @@
             <span class="card-title activator grey-text text-darken-4">
               <i class="material-icons right">more_vert</i>
             </span>
-          </span>
-          <p><i>{{my_post.description}}</i></p>
-        </div>
-        <div class="card-reveal">
-          <span class="card-title grey-text text-darken-4">
-            {{my_post.title}} 
-            <i class="material-icons right">close</i></span>
-            <p>{{my_post.body | safe}}</p>
-            {% for my_post_comment in my_post.comments %}
-            {{my_post_comment.body | safe}} <hr>
-            {% endfor %}
 
-            <form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
-              {% csrf_token %}
+            <p><i>{{my_post.description}}</i></p>
+          </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">
+                {{my_post.title}} 
+                <i class="material-icons right">close</i></span>
+              <p>{{my_post.content | safe}}</p>
+              {% for my_post_comment in my_post.comments %}
+              {{my_post_comment.comment | safe}} <hr>
+              {% endfor %}
 
-              <textarea name="comment-input" class="materialize-textarea"></textarea>
+                <form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
+                {% csrf_token %}
+
+            <textarea name="comment-input" class="materialize-textarea"></textarea>
               <div class="col s3">
 
                <p>
-                <input type="checkbox" name="comment-is-markdown" id="{{my_post.post_id}}" />
-                <label for="{{my_post.post_id}}">Markdown</label>
+                <input type="checkbox" name="comment-is-markdown" id="{{my_post.id}}" />
+                <label for="{{my_post.id}}">Markdown</label>
               </p>
-              <input type="hidden" value="{{my_post.post_id}}" name="comment-parent-id">
+              <input type="hidden" value="{{my_post.id}}" name="comment-parent-id">
 
               <button type="submit"> ADD COMMENT </button>
             </div>
           </form>
 
-        </div>
-        <div class="card-action">
-          {% if my_post.flag %}
-          <form id="post-form" action="{% url 'delete' %}" method = 'post'>
-            {% csrf_token %}
-            <input type="hidden" value="{{my_post.post_id}}" name="post_post_id">
-            <button type="submit">Delete</button>
-          </form>
-          {% endif %}
-          <a href="#">This is a link</a>
-        </div>
-      </div>
-      {% endfor %}
+
+            </div>
+            <div class="card-action">
+              {% if my_post.flag %}
+              <form id="post-form" action="{% url 'delete' %}" method = 'post'>
+              {% csrf_token %}
+              <input type="hidden" value="{{my_post.id}}" name="post_id">
+              <button type="submit">Delete</button>
+              </form>
+              {% endif %}
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        {% endfor %}
     </div>
     <div id="git_posts" class="col s12"> 
 
-      <!-- start feedwind code --><script type="text/javascript">document.write('\x3Cscript type="text/javascript" src="' + ('https:' == document.location.protocol ? 'https://' : 'http://') + 'feed.mikle.com/js/rssmikle.js">\x3C/script>');</script><script type="text/javascript">(function() {var params = {rssmikle_url: "https://github.com/{{github_account}}.atom|https://github.com/{{github_account}}.atom",rssmikle_frame_width: "300",rssmikle_frame_height: "400",frame_height_by_article: "0",rssmikle_target: "_blank",rssmikle_font: "Arial, Helvetica, sans-serif",rssmikle_font_size: "12",rssmikle_border: "off",responsive: "off",rssmikle_css_url: "",text_align: "left",text_align2: "left",corner: "off",scrollbar: "on",autoscroll: "on",scrolldirection: "up",scrollstep: "3",mcspeed: "20",sort: "Off",rssmikle_title: "on",rssmikle_title_sentence: "",rssmikle_title_link: "",rssmikle_title_bgcolor: "#0066FF",rssmikle_title_color: "#FFFFFF",rssmikle_title_bgimage: "",rssmikle_item_bgcolor: "#FFFFFF",rssmikle_item_bgimage: "",rssmikle_item_title_length: "55",rssmikle_item_title_color: "#0066FF",rssmikle_item_border_bottom: "on",rssmikle_item_description: "on",item_link: "off",rssmikle_item_description_length: "150",rssmikle_item_description_color: "#666666",rssmikle_item_date: "gl1",rssmikle_timezone: "Etc/GMT",datetime_format: "%b %e, %Y %l:%M %p",item_description_style: "text+tn",item_thumbnail: "full",item_thumbnail_selection: "auto",article_num: "15",rssmikle_item_podcast: "off",keyword_inc: "",keyword_exc: ""};feedwind_show_widget_iframe(params);})();</script><div style="font-size:10px; text-align:center; width:300px;"><a href="http://feed.mikle.com/" target="_blank" style="color:#CCCCCC;"></a><!--Please display the above link in your web page according to Terms of Service.--></div><!-- end feedwind code --><!--  end  feedwind code -->
+
+<!-- start feedwind code --><script type="text/javascript">document.write('\x3Cscript type="text/javascript" src="' + ('https:' == document.location.protocol ? 'https://' : 'http://') + 'feed.mikle.com/js/rssmikle.js">\x3C/script>');</script><script type="text/javascript">(function() {var params = {rssmikle_url: "https://github.com/{{github}}.atom|https://github.com/{{github}}.atom",rssmikle_frame_width: "300",rssmikle_frame_height: "400",frame_height_by_article: "0",rssmikle_target: "_blank",rssmikle_font: "Arial, Helvetica, sans-serif",rssmikle_font_size: "12",rssmikle_border: "off",responsive: "off",rssmikle_css_url: "",text_align: "left",text_align2: "left",corner: "off",scrollbar: "on",autoscroll: "on",scrolldirection: "up",scrollstep: "3",mcspeed: "20",sort: "Off",rssmikle_title: "on",rssmikle_title_sentence: "",rssmikle_title_link: "",rssmikle_title_bgcolor: "#0066FF",rssmikle_title_color: "#FFFFFF",rssmikle_title_bgimage: "",rssmikle_item_bgcolor: "#FFFFFF",rssmikle_item_bgimage: "",rssmikle_item_title_length: "55",rssmikle_item_title_color: "#0066FF",rssmikle_item_border_bottom: "on",rssmikle_item_description: "on",item_link: "off",rssmikle_item_description_length: "150",rssmikle_item_description_color: "#666666",rssmikle_item_date: "gl1",rssmikle_timezone: "Etc/GMT",datetime_format: "%b %e, %Y %l:%M %p",item_description_style: "text+tn",item_thumbnail: "full",item_thumbnail_selection: "auto",article_num: "15",rssmikle_item_podcast: "off",keyword_inc: "",keyword_exc: ""};feedwind_show_widget_iframe(params);})();</script><div style="font-size:10px; text-align:center; width:300px;"><a href="http://feed.mikle.com/" target="_blank" style="color:#CCCCCC;"></a><!--Please display the above link in your web page according to Terms of Service.--></div><!-- end feedwind code --><!--  end  feedwind code -->
+            </div>
     </div>
   </div>
 </div>
