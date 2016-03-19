@@ -41,12 +41,13 @@
         <div class="row">
     <div class="col s12">
       <ul class="tabs transparent">
-        <li class="tab col s3"><a href="#manage_friends">Manage Friends</a></li>
+        <li class="tab col s3"><a href="#my_friends">My Friends</a></li>
         <li class="tab col s3"><a href="#friend_requests">Friend Requests</a></li>
+        <li class="tab col s3"><a href="#all_users">All Users</a></li>
       </ul>
     </div>
 
-    <div id="manage_friends" class="col s12">
+    <div id="my_friends" class="col s12">
       <div class="mat-div">
       <input type="text" placeholder="search for friends">
     </div>
@@ -63,23 +64,28 @@
     </div>
 
      <div id="friend_requests" class="col s12">
+      <!-- PUT SHIT HERE -->
+     </div>
+
+     <div id="all_users" class='col s12'>
+        {% for author in authors %}
+        <ul class="collection">
+          <li class="collection-item avatar">
+            <a id="friend-link" href="#!">
+            <i class="material-icons circle red">perm_identity</i>
+            <span class="friend-name">{{author.displayName}}</span>
+            <a href="#!" class="secondary-content"><i class="material-icons">add_circle_outline</i></a>
+           </a>
+          </li>
+        </ul>
+
+        {% endfor %}
      </div>
 
   </div>
 
-      <hr>
-      {% for author in authors %}
-      <ul class="collection">
-        <li class="collection-item avatar">
-          <a id="friend-link" href="#!">
-          <i class="material-icons circle red">perm_identity</i>
-          <span class="friend-name">{{author.displayName}}</span>
-          <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
-         </a>
-        </li>
-      </ul>
+<!--       <hr> -->
 
-      {% endfor %}
 
 
   	</div>
