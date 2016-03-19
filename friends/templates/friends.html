@@ -38,21 +38,34 @@
   <div class="row">
   	<div class="col s6 offset-s3">
 
-      <div class="mat-div">
-  		<input type="text" placeholder="search for friends">
+        <div class="row">
+    <div class="col s12">
+      <ul class="tabs transparent">
+        <li class="tab col s3"><a href="#manage_friends">Manage Friends</a></li>
+        <li class="tab col s3"><a href="#friend_requests">Friend Requests</a></li>
+      </ul>
     </div>
 
-
-  		<ul class="collection">
-  			<li class="collection-item avatar">
+    <div id="manage_friends" class="col s12">
+      <div class="mat-div">
+      <input type="text" placeholder="search for friends">
+    </div>
+      <ul class="collection">
+        <li class="collection-item avatar">
           <a id="friend-link" href="#!">
-  				<i class="material-icons circle red">perm_identity</i>
-  				<span class="friend-name">Marcin Pietrasik</span>
-  				<p>Edmonton AB</p>
-  				<a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
-  			 </a>
+          <i class="material-icons circle red">perm_identity</i>
+          <span class="friend-name">Marcin Pietrasik</span>
+          <p>Edmonton AB</p>
+          <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+         </a>
         </li>
-  		</ul>
+      </ul>
+    </div>
+
+     <div id="friend_requests" class="col s12">
+     </div>
+
+  </div>
 
       <hr>
       {% for author in authors %}
