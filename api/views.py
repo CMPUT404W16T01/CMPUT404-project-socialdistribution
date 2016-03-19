@@ -155,15 +155,12 @@ class friend_request(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
-        author = request.data["author"]
-        friend = request.data["friend"]
-
+        author = json.loads(request.data.get("author"))
+        friend = json.loads(request.data.get("friend"))
         author_host = author.get("host")
         friend_host = friend.get("host")
-
         friend_to_author = Friend.objects.filter(follower_id=friend["id"], followed_id=author["id"])
         author_to_friend = Friend.objects.filter(follower_id=author["id"], followed_id=friend["id"])
-
         # checks what kind of relationship the two have, intimate or otherwise
         if (len(friend_to_author) > 0) and (len(author_to_friend) > 0):
             print "you're an idiot you're already friends"
@@ -171,7 +168,8 @@ class friend_request(APIView):
             new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"],
                                        follower_host=author_host, followed_host=friend_host)
             new_friend_object.save()
-        elif (len(author_to_friend) > 0):
+            # WE ARE NOW FRIENDS
+        else:
             new_friend_object = Friend(follower_id=friend["id"], followed_id=author["id"],
                                        follower_host=friend_host, followed_host=author_host)
             new_friend_object.save()

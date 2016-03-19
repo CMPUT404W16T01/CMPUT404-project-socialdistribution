@@ -31,7 +31,7 @@ def sign_up(request):
         displayName = request.POST.get('fname') + " " + request.POST.get('lname')
         password = request.POST.get('pass')
         email = request.POST.get('email')
-        DITTO_HOST = request.get_host()
+        DITTO_HOST = "http://" + request.get_host() + '/' 
         id = uuid.uuid4()
         user = User.objects.create_user(username=email, password=password)
         user.save()

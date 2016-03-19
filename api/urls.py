@@ -15,7 +15,7 @@ urlpatterns = [
 
     # Friend API
     url(r'^friends/(?P<pk1>[0-9a-z-]+)/(?P<pk2>[0-9a-z-]+)', views.check_mutual_friend.as_view()),
-    url(r'^friends/friendrequest', views.friend_request.as_view()),
+    url(r'^friendrequest/$', views.friend_request.as_view(), name='friendrequest'),
 
 
     # API Auth
