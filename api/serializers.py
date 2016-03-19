@@ -28,3 +28,4 @@ class CommentAuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = (
             'id', 'host', 'displayName', 'github', 'bio')
+

@@ -1,4 +1,4 @@
-from feed.models import Post, Author, Comment
+from feed.models import Post, Author, Comment, Friend
 from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer
 from django.http import Http404
 from rest_framework.views import APIView
@@ -15,7 +15,7 @@ class public_posts(APIView):
 
     def get(self, request, format=None):
         posts = Post.objects.all()
-        serializer = PostSerializerloads(posts, many=True)
+        serializer = PostSerializer(posts, many=True)
         return Response({"query": "posts", "count": len(posts), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "posts": serializer.data})
 
@@ -104,3 +104,55 @@ class author_detail(APIView):
         serializer = AuthorSerializer(author_object)
         return Response({"query": "author", "count": "1", "size": "10", "next": "http://nextpageurlhere",
                  "previous": "http://previouspageurlhere", "author": serializer.data})
+
+class check_mutual_friend(APIView):
+    """
+    Return JSON with True or False if friends
+    """
+
+    def get(self, request, pk1, pk2, format=None):
+        author_one_to_two = Friend.objects.filter(follower_id = pk1, followed_id = pk2)
+        author_two_to_one = Friend.objects.filter(follower_id = pk2, followed_id = pk1)
+
+        packet = {"query": "friends",
+          "authors": [pk1, pk2],
+          "friends": False}
+
+        if (len(author_one_to_two) > 0) and (len(author_two_to_one) > 0):
+            packet["friends"] = True
+
+        return Response(packet)
+
+class friend_request(APIView):
+    """
+    Make a friend (follow) request, if we have already followed the person who is requesting
+    to become friends with us, they are actually responding to our friend request
+
+    """
+
+    def post(self, request, format=None):
+        author = request.data["author"]
+        friend = request.data["friend"]
+
+        author_host = author.get("host")
+        friend_host = friend.get("host")
+
+        friend_to_author = Friend.objects.filter(follower_id=friend["id"], followed_id=author["id"])
+        author_to_friend = Friend.objects.filter(follower_id=author["id"], followed_id=friend["id"])
+
+        # checks what kind of relationship the two have, intimate or otherwise
+        if (len(friend_to_author) > 0) and (len(author_to_friend) > 0):
+            print "you're an idiot you're already friends"
+        elif (len(friend_to_author) > 0):
+            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"], 
+                                        follower_host=author_host, followed_host=friend_host)
+            new_friend_object.save()
+        elif (len(author_to_friend) > 0):
+            new_friend_object = Friend(follower_id=friend["id"], followed_id=author["id"], 
+                                        follower_host=friend_host, followed_host=author_host)
+            new_friend_object.save()
+            #TODO: SEND SOMETHING TO THE FRIENDS PAGE TO ALERT FRIEND REQUEST
+
+
+        return Response()
+
