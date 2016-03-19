@@ -44,7 +44,7 @@ def feed(request):
 			post.flag=False
 
 		for comment in all_comments:
-			if (str(comment.id) == str(post.id)):
+			if (str(comment.post_id) == str(post.id)):
 				comment_list.append(comment)
 		post.comments=comment_list
 		print post.comments
@@ -62,7 +62,7 @@ def feed(request):
 			post.flag=False
 			
 		for comment in all_comments:
-			if (str(comment.id) == str(post.id)):
+			if (str(comment.post_id) == str(post.id)):
 				comment_list.append(comment)
 		post.comments=comment_list
 	# end of public feed
@@ -79,7 +79,7 @@ def feed(request):
 			post.flag=False
 
 		for comment in all_comments:
-			if (str(comment.id) == str(post.id)):
+			if (str(comment.post_id) == str(post.id)):
 				comment_list.append(comment)
 		post.comments=comment_list
 	# end of public feed
