@@ -10,6 +10,6 @@ urlpatterns = [
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^delete/$', views.delete, name='delete'),
     url(r'^create_comment/$', views.create_comment, name='create_comment'),
-    url(r'^profile/$', views.profile, name='profile'),
+
 
 ]
