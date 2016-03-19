@@ -1,3 +1,5 @@
+{% load staticfiles %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,6 +15,7 @@
 
   <!--Import materialize.css-->
   <link type="text/css" rel="stylesheet" href="profile.css"  media="screen,projection"/>
+  <link type="text/css" rel="stylesheet" href="{% static 'css/profile.css' %}"  media="screen,projection"/>
   <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.css' %}" media="screen,projection"/>
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -61,25 +64,24 @@
 
     <div id="about_author" class="col s12">
       <div class="mat-div">
-                <div class="card">
+                <center><div class="card center-align">
   <div class="card-header">
   </div>
   <div class="card-content">
-    <center><h3>Name</h3></center>
+    <h3>Firstname Lastname</h3>
     <br>
-    <center><h4>Bio</h4></center>
+    <a href="#"><i class="fa fa-github fa-2x" style="color:salmon"></i></a>
     <br>
     <br>
-        <div class="card-footer">
-    <ul>
-      <li>
-        <a href="#"><i class="fa fa-github"></i></a>
-      </li>
-    </ul>
+    <h4>Example Bio</h4>
+    <br>
+    <div class="card-footer">
+    </div>
+    <a href="#" style="color:salmon"><i class="fa fa-user-plus fa-3x" style="color:salmon"></i><br>Add Friend</a><br>
+    OR<br>
+    <a href="#" style="color:salmon"><i class="fa fa-user-times fa-3x" style="color:salmon"></i><br>Unfriend</a>
   </div>
-    <center><a class="btn-large">Add/Remove friend</a></center>
-  </div>
-</div>
+</div></center>
     </div>
     </div>
 
