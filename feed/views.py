@@ -109,6 +109,8 @@ def logout(request):
 	return redirect('/login')
 
 def create_comment(request):
+	# text/x-markdown
+	# text/plain
 	comment = request.POST.get('comment-input')
 	parent_id = request.POST.get('comment-parent-id')
 	is_markdown = request.POST.get('comment-is-markdown')
@@ -165,13 +167,16 @@ def create_post(request):
 	is_markdown = json.loads(request.POST.get('is_markdown'))
 	
 	if is_markdown:
+		contentType = "text/x-markdown"
 		content = CommonMark.commonmark(content)
+	else:
+		contentType = "text/plain"
+
 	visibility = request.POST.get('visibility')
 	c_username = request.user.username
 	user_object = User.objects.get(username = c_username)
 	author_object = Author.objects.get(email = user_object)
 	author_name = author_object.displayName
-
 
 	DITTO_HOST = request.get_host()
 	title = request.POST.get('title')
@@ -179,13 +184,13 @@ def create_post(request):
 
 	categories = request.POST.get('categories')
 	
-	c= categories.split(' ')
+	c = categories.split(' ')
 	
 	categories_json = json.dumps(c)
 	
 
 
-	new_post = Post(published = published, author_id = author_object, content = content, is_markdown = is_markdown, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description ) 
+	new_post = Post(published = published, author_id = author_object, content = content, contentType = contentType, visibility = visibility, source= DITTO_HOST, origin = DITTO_HOST, categories=categories,title=title,description=description ) 
 	new_post.save()
 
 	return HttpResponse(request.POST.get('post_body'))

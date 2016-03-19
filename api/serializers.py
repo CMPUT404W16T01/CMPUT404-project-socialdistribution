@@ -6,7 +6,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = (
-            'title', 'source', 'origin', 'description', 'is_markdown', 'content', 'author_id', 'categories',
+            'title', 'source', 'origin', 'description', 'contentType', 'content', 'author_id', 'categories',
             'published', 'id', 'visibility')
 
 
@@ -27,4 +27,4 @@ class CommentAuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         fields = (
-            'id', 'host', 'display_name', 'github_account', 'bio')
+            'id', 'host', 'displayName', 'github', 'bio')

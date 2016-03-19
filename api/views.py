@@ -59,7 +59,9 @@ class post_comments(APIView):
         post_object = Post.objects.get(id=pk)
         print "zxcv"
 
-        new_comment = Comment(author=json.dumps(author_object), post_id=post_object, comment=comment,  published=published, author_name=author_name)
+        new_comment = Comment(author=json.dumps(author_object), post_id=post_object, 
+            comment=comment,  published=published, 
+            author_name=author_name, contentType=contentType)
         new_comment.save()
 
 

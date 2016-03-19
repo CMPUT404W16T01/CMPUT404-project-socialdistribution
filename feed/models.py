@@ -30,7 +30,7 @@ class Post(models.Model):
     author_id = models.ForeignKey(Author)  # issue here?
     published = models.DateTimeField(default=django.utils.timezone.now)  # issue here?
     content = models.CharField(max_length=1000)
-    is_markdown = models.BooleanField(default=False)
+    contentType = models.CharField(max_length=50, default=" ")
     visibility = models.CharField(max_length=20)  # private, public, friends, foaf, server
     image = models.ImageField(blank=True)
     title = models.CharField(max_length=50, default=" ")
@@ -50,7 +50,7 @@ class Comment(models.Model):
     author = models.CharField(max_length=100, default="")  # issue?
     author_name = models.CharField(max_length=1000, default= " ")
     comment = models.CharField(max_length=1000)
-    is_markdown = models.BooleanField(default=False)  # not in user stories, but in json spec???
+    contentType = models.CharField(max_length=50, default=" ")  # not in user stories, but in json spec???
     published = models.DateTimeField(default=django.utils.timezone.now)
     image = models.ImageField(blank=True)
 

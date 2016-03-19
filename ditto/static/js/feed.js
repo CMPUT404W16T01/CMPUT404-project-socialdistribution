@@ -54,8 +54,10 @@ function create_post() {
         categories: $('#categories').val()
         }, 
         
-        success : function(json) {
-            location.reload()
+        success : function(json) {  
+            // var active = $("u1.tabs").tabs('option', 'active');
+            // $('ul.tabs').tabs('select_tab', active);
+            location.reload();
         },
         
         error : function(xhr,errmsg,err) {
