@@ -18,14 +18,14 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Author
-		fields = (
-			'id', 'host', 'displayName', 'github', 'email', 'bio')
+    class Meta:
+        model = Author
+        fields = (
+            'id', 'host', 'displayName', 'github', 'email', 'bio')
+
 
 class CommentAuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         fields = (
             'id', 'host', 'displayName', 'github', 'bio')
-
