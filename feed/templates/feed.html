@@ -127,26 +127,31 @@
 		</div>
 		<div id="my_feed" class="col s12">
 			{% for main_post in main_posts %}
-			<div class="card small">
+			<div class="card">
 				<div class="card-content black-text">
 					<span class="card-title">
-						<a class="modal-trigger"  href="#{{main_post.id}}">
-							{{main_post.title}}      
-						</a>
-						<span class="card-title activator grey-text text-darken-4">
-							<i class="material-icons right">more_vert</i>
+						<div class="row">
+							<div class="col s11">
+								<a class="modal-trigger"  href="#{{main_post.id}}">
+									{{main_post.title}}      
+								</a>
+							</div>
+							<div class="col s1">
+								{% if main_post.flag %}
+								<form id="post-form" action="{% url 'delete' %}" method = 'post'>
+									{% csrf_token %}
+									<input type="hidden" value="{{main_post.id}}" name="post_id">
+									<span class="card-title activator grey-text text-darken-4">
+										<button class="material-icons right"><i class="material-icons">close</i></button>
+									</span>
+								</form>
+								{% endif %}
+							</div>
 						</span>
-					</span>
-					<p><i>{{main_post.description}}</i></p>
-				</div>
-				<div class="card-action">
-					{% if main_post.flag %}
-					<form id="post-form" action="{% url 'delete' %}" method = 'post'>
-						{% csrf_token %}
-						<input type="hidden" value="{{main_post.id}}" name="post_id">
-						<button type="submit">Delete</button>
-					</form>
-					{% endif %}
+						<div class="col s11">
+							<p><i>{{main_post.description}}</i></p>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div id="{{main_post.id}}" class="modal">
@@ -202,27 +207,33 @@
 
 		<div id="public_feed" class="col s12">
 			{% for public_post in public_posts %}
-			<div class="card small">
+			<div class="card">
 				<div class="card-content black-text">
 					<span class="card-title">
-						<a class="modal-trigger"  href="#{{public_post.id}}PUBLIC">
-							{{public_post.title}}      
-						</a>
-						<span class="card-title activator grey-text text-darken-4">
-							<i class="material-icons right">more_vert</i>
+						<div class="row">
+							<div class="col s11">
+								<a class="modal-trigger"  href="#{{public_post.id}}PUBLIC">
+									{{public_post.title}}      
+								</a>
+							</div>
+							<div class="col s1">
+								{% if public_post.flag %}
+								<form id="post-form" action="{% url 'delete' %}" method = 'post'>
+									{% csrf_token %}
+									<input type="hidden" value="{{public_post.id}}" name="post_id">
+									<span class="card-title activator grey-text text-darken-4">
+										<button class="material-icons right"><i class="material-icons">close</i></button>
+									</span>
+								</form>
+								{% endif %}
+							</div>
 						</span>
-					</span>
-					<p><i>{{public_post.description}}</i></p>
+						<div class="col s11">
+							<p><i>{{public_post.description}}</i></p>
+						</div>
+					</div>
 				</div>
-				<div class="card-action">
-					{% if public_post.flag %}
-					<form id="post-form" action="{% url 'delete' %}" method = 'post'>
-						{% csrf_token %}
-						<input type="hidden" value="{{public_post.id}}" name="post_id">
-						<button type="submit">Delete</button>
-					</form>
-					{% endif %}
-				</div>
+
 			</div>
 			<div id="{{public_post.id}}PUBLIC" class="modal">
 				<div class="modal-content">
@@ -278,30 +289,35 @@
 
 		<div id="my_posts" class="col s12">
 			{% for my_post in my_posts %}
-			<div class="card small">
+			<div class="card">
 				<div class="card-content black-text">
 					<span class="card-title">
-						<a class="modal-trigger"  href="#{{my_post.id}}my">
-							{{my_post.title}}      
-						</a>
-						<span class="card-title activator grey-text text-darken-4">
-							<i class="material-icons right">more_vert</i>
+						<div class="row">
+							<div class="col s11">
+								<a class="modal-trigger"  href="#{{my_post.id}}MY">
+									{{my_post.title}}      
+								</a>
+							</div>
+							<div class="col s1">
+								{% if my_post.flag %}
+								<form id="post-form" action="{% url 'delete' %}" method = 'post'>
+									{% csrf_token %}
+									<input type="hidden" value="{{my_post.id}}" name="post_id">
+									<span class="card-title activator grey-text text-darken-4">
+										<button class="material-icons right"><i class="material-icons">close</i></button>
+									</span>
+								</form>
+								{% endif %}
+							</div>
 						</span>
-					</span>
-					<p><i>{{my_post.description}}</i></p>
-				</div>
-				<div class="card-action">
-					{% if my_post.flag %}
-					<form id="post-form" action="{% url 'delete' %}" method = 'post'>
-						{% csrf_token %}
-						<input type="hidden" value="{{my_post.id}}" name="post_id">
-						<button type="submit">Delete</button>
-					</form>
-					{% endif %}
+						<div class="col s11">
+							<p><i>{{my_post.description}}</i></p>
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<div id="{{my_post.id}}my" class="modal">
+			<div id="{{my_post.id}}MY" class="modal">
 				<div class="modal-content">
 					<div class="row">
 						<div class = "col s6">
