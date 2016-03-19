@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import Author, Post, Comment, Friend
+import models
 
 
 # Register your models here.
-admin.site.register(Author)
-admin.site.register(Post)
-admin.site.register(Comment)
-admin.site.register(Friend)
+admin.site.register(models.Author)
+admin.site.register(models.Post)
+admin.site.register(models.Comment)
+admin.site.register(models.Friend)
+admin.site.register(models.ForeignHost)
