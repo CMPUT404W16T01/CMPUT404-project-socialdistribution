@@ -54,6 +54,20 @@
         </li>
   		</ul>
 
+      <hr>
+      {% for author in authors %}
+      <ul class="collection">
+        <li class="collection-item avatar">
+          <a id="friend-link" href="#!">
+          <i class="material-icons circle red">perm_identity</i>
+          <span class="friend-name">{{author.displayName}}</span>
+          <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+         </a>
+        </li>
+      </ul>
+
+      {% endfor %}
+
 
   	</div>
   </div>
