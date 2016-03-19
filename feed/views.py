@@ -6,6 +6,7 @@ from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from feed.models import Post
+from feed.models import Git_Post
 from feed.models import Author
 from feed.models import Comment
 from django.contrib.auth.models import User
@@ -17,6 +18,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 import CommonMark
 import urllib2 
+import feedparser
 
 # Create your views here.
 
@@ -26,6 +28,8 @@ def feed(request):
 	author_object = Author.objects.get(email = user_object)
 
 	github_name = author_object.github
+
+	github_posts = create_github_post(github_name)
 
 	# My feed, access all posts that I can see
 	self_posts = Post.objects.filter(author_id = author_object)
@@ -91,11 +95,20 @@ def feed(request):
 		'main_posts': main_posts,
 		'public_posts': public_posts,
 		'my_posts': self_posts,
-		"github" : github_name,
+		"github_posts" : github_posts,
 	}
 
 	
 	return render(request, 'feed.html', context)
+
+def create_github_post(github_id):
+	d = feedparser.parse("https://github.com/"+github_id+".atom")
+	items = d[ "items" ]
+	git_feed = []
+	for item in items:
+		new_git_post = Git_Post(title = item[ "title" ], date = item[ "date" ], link = item[ "link" ])
+		git_feed.append(new_git_post)
+	return git_feed
 
 def profile(request):
 	return render(request, 'profile.html')	
