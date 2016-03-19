@@ -47,7 +47,7 @@ class Post(models.Model):
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post_id = models.ForeignKey(Post)  # issue?
-    author = models.CharField(max_length=100, default="")  # issue?
+    author = models.CharField(max_length=2000, default="")  # issue?
     author_name = models.CharField(max_length=1000, default= " ")
     comment = models.CharField(max_length=1000)
     contentType = models.CharField(max_length=50, default=" ")  # not in user stories, but in json spec???
@@ -58,5 +58,8 @@ class Comment(models.Model):
         return str(self.id)
 
 class Friend(models.Model):
+    follower_host   = models.URLField(max_length=500)
 	follower_id		= models.UUIDField(primary_key=True)
+    followed_host   = models.URLField(max_length=500)
 	followed_id		= models.UUIDField()
+
