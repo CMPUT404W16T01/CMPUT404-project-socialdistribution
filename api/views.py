@@ -52,12 +52,12 @@ class post_comments(APIView):
         comment = request.data.get('comment')
         author_object = request.data.get('author')
         author_name = author_object['displayName']
-        print "here"
+        #print "here"
 
         published = request.data.get('published')
         contentType = request.data.get('contentType')
         post_object = Post.objects.get(id=pk)
-        print "zxcv"
+        #print "zxcv"
 
         new_comment = Comment(author=json.dumps(author_object), post_id=post_object, 
             comment=comment,  published=published, 

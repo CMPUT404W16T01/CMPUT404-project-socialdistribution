@@ -150,7 +150,7 @@ def create_comment(request):
 	packet['author']['github'] = "http://github.com/"+author_object.github
 
 	json_packet = json.dumps(packet)
-	print json_packet
+	#print json_packet
 	url1 = "http://" + request.get_host()+"/api/posts/"+parent_id+"/comments/"
 	req = urllib2.Request(url1)
 	req.add_header('Content-Type', 'application/json')
