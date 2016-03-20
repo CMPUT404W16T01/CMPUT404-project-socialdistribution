@@ -174,13 +174,15 @@
 						</div>
 					</div>
 
-					<br><hr><br>
+					<hr>
 					{% for main_post_comment in main_post.comments %}
 					<div class = "row">
+						<i class="fa fa-comment"></i>
 						<div class="col s11 offset-s1">
 							<div style="word-break: break-all;">
 								{{main_post_comment.comment | safe}}
 							</div>
+								<div style="color:grey; font-size:x-small">by {{main_post_comment.author_name}}</div>
 						</div>
 					</div> 
 					<hr>
@@ -189,7 +191,7 @@
 					<form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
 						{% csrf_token %}
 
-						<textarea name="comment-input" class="materialize-textarea"></textarea>
+						<textarea placeholder="Enter comment here..." name="comment-input" class="materialize-textarea"></textarea>
 						<div class="col s3">
 
 							<input type="hidden" value="{{main_post.id}}" name="comment-parent-id">

@@ -13,7 +13,6 @@ from django.contrib.auth.models import User
 from django.template import Context, loader, Template
 import uuid
 import json
-import datetime
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 import CommonMark
@@ -185,7 +184,7 @@ def create_comment(request):
 
     json_packet = json.dumps(packet)
     # print json_packet
-    url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/?id=" + author_object.id
+    url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/?id=" + str(author_object.id)
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
     req.add_header('Authorization', 'Basic YWRtaW46cGFzcw==')
@@ -198,9 +197,8 @@ def create_comment(request):
 
 def create_post(request):
     content = request.POST.get('post_body')
-    published = datetime.datetime.now()
+    published = datetime.now()
     is_markdown = json.loads(request.POST.get('is_markdown'))
-
     if is_markdown:
         contentType = "text/x-markdown"
         content = CommonMark.commonmark(content)
