@@ -17,7 +17,7 @@ class public_posts(APIView):
     """
 
     def get(self, request, format=None):
-        posts = Post.objects.all()
+        posts = Post.objects.filter(visibility="PUBLIC")
         serializer = PostSerializer(posts, many=True)
         return Response({"query": "posts", "count": len(posts), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "posts": serializer.data})
