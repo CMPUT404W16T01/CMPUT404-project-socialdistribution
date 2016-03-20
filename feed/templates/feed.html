@@ -260,19 +260,21 @@
 					<br><hr><br>
 					{% for public_post_comment in public_post.comments %}
 					<div class = "row">
+						<i class="fa fa-comment"></i>
 						<div class="col s11 offset-s1">
 							<div style="word-break: break-all;">
 								{{public_post_comment.comment | safe}}
 							</div>
+								<div style="color:grey; font-size:x-small">by {{public_post_comment.author_name}}</div>
 						</div>
-					</div> 
+					</div>  
 					<hr>
 
 					{% endfor %}
 					<form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
 						{% csrf_token %}
 
-						<textarea name="comment-input" class="materialize-textarea"></textarea>
+						<textarea placeholder="Enter comment here..." name="comment-input" class="materialize-textarea"></textarea>
 						<div class="col s3">
 
 							<input type="hidden" value="{{public_post.id}}" name="comment-parent-id">
@@ -343,12 +345,14 @@
 					<br><hr><br>
 					{% for my_post_comment in my_post.comments %}
 					<div class = "row">
+						<i class="fa fa-comment"></i>
 						<div class="col s11 offset-s1">
 							<div style="word-break: break-all;">
 								{{my_post_comment.comment | safe}}
 							</div>
+								<div style="color:grey; font-size:x-small">by {{my_post_comment.author_name}}</div>
 						</div>
-					</div> 
+					</div>  
 					<hr>
 
 					{% endfor %}
@@ -357,7 +361,7 @@
 					<form name="create-comment" action="{% url 'create_comment' %}" method = 'post'>
 						{% csrf_token %}
 
-						<textarea name="comment-input" class="materialize-textarea"></textarea>
+						<textarea placeholder="Enter comment here..." name="comment-input" class="materialize-textarea"></textarea>
 						<div class="col s3">
 
 							<input type="hidden" value="{{my_post.id}}" name="comment-parent-id">
