@@ -73,26 +73,7 @@
             <a id="friend-link" href="#!">
             <i class="material-icons circle red">perm_identity</i>
             <span class="friend-name">{{author.displayName}}</span>
-            <span> {{author.id}}</span>
-            <span> {{author.host}}</span>
-            <span> {{author.displayName}}</span>
-            <span> {{author.url}}></span>
 
-            <form name="add-friend-form" action="{% url 'api:friendrequest' %}" method='post'>
-              {% csrf_token %}
-              <input id='sender_id' value='{{current_author.id}}' hidden></input>
-              <input id='sender_host' value='{{current_author.host}}' hidden></input>
-              <input id='sender_display_name' value='{{current_author.displayName}}' hidden></input>
-
-              <input id='friend_id' value='{{author.id}}' hidden></input>
-              <input id='friend_host' value='{{author.host}}' hidden></input>
-              <input id='friend_display_name' value='{{author.displayName}}' hidden></input>
-              <input id='friend_url' value='{{author.url}}' hidden></input>
-
-              <button id="add_friend_button" type="submit" class="secondary-content transparent" ><i class="material-icons">add_circle_outline</i></button>
-
-
-            </form>
            </a>
           </li>
         {% endfor %}
