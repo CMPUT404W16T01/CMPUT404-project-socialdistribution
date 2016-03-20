@@ -19,17 +19,18 @@ def friends(request):
 	all_authors = Author.objects.all()
 
 	# send request to other servers to load their friends
-	r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
-	#print r.status_code
-	#print r.text
-	foreign_authors = json.loads(r.text)
-	print foreign_authors['author']
-	#print foreign_authors
+	foreign_authors = {'authors':[]}
+	try:
+		r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
+		foreign_authors = json.loads(r.text)
+	except:
+		pass
+
 
 	context = {
 		'authors': all_authors,
 		'current_author': author_object,
 		'friend_requests': friend_requests,
-		'foreign_authors': foreign_authors['author'],
+		'foreign_authors': foreign_authors['authors'],
 	}
 	return render(request, 'friends.html', context)
