@@ -23,6 +23,7 @@ class Author(models.Model):
 
 
 class Git_Post(models.Model):
+    primary_key = models.UUIDField(primary_key=True, default=uuid.uuid4)
     title = models.CharField(max_length=500, default=" ")
     date = models.CharField(max_length=500, default=" ")
     link = models.CharField(max_length=500, default=" ")
