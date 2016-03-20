@@ -186,11 +186,11 @@ def create_comment(request):
 
     json_packet = json.dumps(packet)
     # print json_packet
-    url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"
+    url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/?id=" + author_object.id
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
+    req.add_header('Authorization', 'Basic YWRtaW46cGFzcw==')
     print "\n\n\nSession/Cookies:"
-    # take session cookie from previous request
 
     urllib2.urlopen(req, json_packet)
     # new_comment.save()
