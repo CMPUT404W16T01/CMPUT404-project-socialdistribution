@@ -156,3 +156,66 @@ body.slide-active {
         border-radius: 100px;
     }
 }
+
+@import url(http://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans);
+
+
+.gitcard {
+  background-color: #f4f4f4;
+  width: 300px;
+  margin: 10px auto;
+  box-shadow: 1px 1px 10px 1px rgba(0,0,0,0.7);
+}
+
+.gitcard-content {
+  width: 85%;
+  margin: 35px auto;
+}
+
+.gitcard form {
+    max-width: 100%; /* Handles the responsive part, it will cause your form to scale with a max-width of 100% */
+}
+
+.gitcard-content h3 {
+  font-size: 25px;
+  margin-bottom: 0;
+
+  font-family: 'Montserrat', sans-serif;
+}
+
+.gitcard-content h4 {
+  font-size: 12px;
+  margin-top: 0;
+
+  font-family: 'Montserrat', sans-serif;
+}
+
+.gitcard-content p {
+
+  font-size: 12px;
+  font-family: 'Open Sans', sans-serif;
+  
+}
+
+.gitcard-footer {
+  border-top: solid 1px #B6B6B6;
+  padding: 5px;
+}
+
+.gitcard-footer ul {
+  padding: 0;
+  width: 90%;
+  margin: auto;
+  text-align: center;
+}
+
+.gitcard-footer ul li{
+  display: inline-block;
+  list-style: none;
+  margin: 5px;
+}
+
+.gitcard-footer ul li i {
+  font-size: 2em;
+  color: #3F51B5;
+}
