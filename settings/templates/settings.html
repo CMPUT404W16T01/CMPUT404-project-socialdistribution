@@ -1,0 +1,129 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+  <!--Import Google Icon Font-->
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.css' %}"  media="screen,projection"/>
+  <link type="text/css" rel="stylesheet" href="{% static 'css/settings.css' %}"/>
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!--Import jQuery before materialize.js-->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/settings.js' %}"></script>
+</head>
+
+
+<body>
+
+  <ul id="dropdown1" class="dropdown-content">
+    <li><a href="#!">Profile</a></li>
+    <li><a href="/settings">Settings</a></li>
+    <li><a href="/logout">Logout</a></li>
+  </ul>
+
+  <nav>
+    <div class="navbar-fixed">
+      <a href="#!" class="brand-logo">Ditto logo</a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="/friends">Friends</a></li>
+        <li><a class="dropdown-button" href="#" data-activates="dropdown1"><i class="material-icons">account_circle</i></a></li>
+      </ul>
+      <ul class="brand-logo center">
+      	<li><form>
+          <div class="input-field">
+            <input id="search" type="search" required>
+            <label for="search"><i class="material-icons">search</i></label>
+            <i class="material-icons">close</i>
+          </div>
+        </form></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- The collapsible settings -->
+  <form id="post_form" action="{% url 'settings:save_settings' %}" method='post'>
+    {% csrf_token %}
+    <div id="setList">
+      <ul class="collapsible" data-collapsible="accordion">
+        <h4 id="settings">Settings</h4>
+        <!-- CHANGE NAME -->
+        <li>
+          <div class="collapsible-header">
+            <i class="material-icons">perm_identity</i>
+            Change Name
+          </div>
+          <div class="collapsible-body" id="listitem">
+            <!-- Change name info -->
+            <div class="row">
+              <form class="col s12">
+                <div class="row">
+                  <div class="input-field col s12">
+                    <input id="displayName" type="text" class="validate" 
+                    value='{{ displayName }}'>
+                    <label for="displayName">Display Name</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </li>
+        <!-- CHANGE PASSWORD -->
+        <li>
+          <div class="collapsible-header">
+            <i class="material-icons">https</i>
+            Change Password</div>
+            <div class="collapsible-body" id="listitem">
+                <div class="row">
+                  <div class="input-field col s12">
+                    <input id="new_password" type="password" class="validate">
+                    <label for="new_password">New Password</label>
+                  </div>
+                </div>
+                <div>
+                  <div class="row">
+                    <div class="input-field col s12">
+                      <input id="retype" type="password" class="validate">
+                      <label for="retype">Re-type Password</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <!-- GITHUB -->
+            <!-- add username for redirection -->
+            <li>
+              <div class="collapsible-header">
+                <i class="material-icons">code</i>
+                Github Integration</div>
+                <div class="collapsible-body" id="listitem">
+                  <div class="row">
+                    <div class="input-field col s6">
+                      <input id="github_name" type="text" class="validate" 
+                      value="{{github}}">
+                      <label class="active" for="github_name">Github Username</label>
+                    </div>
+                    <p>
+                      <input type="checkbox" id="test6" {{github_flag}}/>
+                      <label for="test6">Enable GitHub integration</label>
+                    </p>
+                  </div>
+                </div>
+              </li>
+              <p>
+                <button id="submit" class="btn waves-effect waves-light" type="submit">Save
+                  <i class="material-icons right">send</i>
+                </button>
+              </p>
+            </ul>
+          </div>
+        </form>
+
+        </body>
+
+      </div>
+
+      </html>

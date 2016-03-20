@@ -1,0 +1,91 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+  <html>
+  <head>
+  	<!--Import Google Icon Font-->
+  	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  	<!--Import materialize.css-->
+  	<link type="text/css" rel="stylesheet" href="{% static 'css/materialize.css' %}"  media="screen,projection"/>
+  	<link rel="stylesheet" type="text/css" href="{% static 'css/friends.css' %}">
+  	<!--Let browser know website is optimized for mobile-->
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  	<!--Import jQuery before materialize.js-->
+  	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  	<script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/friends.js' %}"></script>
+  </head>
+  <body>
+
+  	<ul id="dropdown1" class="dropdown-content">
+  		<li><a href="#!">Profile</a></li>
+  		<li><a href="/settings">Settings</a></li>
+  		<li><a href="/logout">Logout</a></li>
+  	</ul>
+
+  	<nav>
+  		<div class="navbar-fixed">
+  			<a href="#!" class="brand-logo">Ditto logo</a>
+  			<ul class="right hide-on-med-and-down">
+  				<li><a href="/feed">Home</a></li>
+  				<li><a class="dropdown-button" href="#" data-activates="dropdown1"><i class="material-icons">account_circle</i></a></li>
+  			</li>
+  		</ul>
+  	</div>
+  </nav>
+
+
+  <div class="row">
+  	<div class="col s6 offset-s3">
+
+        <div class="row">
+    <div class="col s12">
+      <ul class="tabs transparent">
+        <li class="tab col s3"><a href="#my_friends">My Friends</a></li>
+        <li class="tab col s3"><a href="#friend_requests">Friend Requests</a></li>
+        <li class="tab col s3"><a href="#all_users">All Users</a></li>
+      </ul>
+    </div>
+
+    <div id="my_friends" class="col s12">
+      <div class="mat-div">
+      <input type="text" placeholder="search for friends">
+    </div>
+      <ul class="collection">
+        <li class="collection-item avatar">
+          <a id="friend-link" href="#!">
+          <i class="material-icons circle red">perm_identity</i>
+          <span class="friend-name">Marcin Pietrasik</span>
+          <p>Edmonton AB</p>
+          <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+         </a>
+        </li>
+      </ul>
+    </div>
+
+
+
+     <div id="all_users" class='col s12'>
+        <ul class="collection">
+        {% for author in authors %}
+          <li class="collection-item avatar">
+            <a id="friend-link" href="#!">
+            <i class="material-icons circle red">perm_identity</i>
+            <span class="friend-name">{{author.displayName}}</span>
+
+           </a>
+          </li>
+        {% endfor %}
+        </ul>
+     </div>
+  </div>
+
+<!--       <hr> -->
+
+
+
+  	</div>
+  </div>
+</body>
+</html>
