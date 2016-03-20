@@ -1,8 +1,16 @@
 from rest_framework import serializers
-from feed.models import Post, Comment, Author
+from feed.models import Post, Comment, Author, CommentAuthor
+
+
+class CommentAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentAuthor
+        fields = ('id', 'host', 'displayName', 'url', 'github')
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    author = CommentAuthorSerializer()
+
     class Meta:
         model = Comment
         fields = ('author', 'comment', 'contentType', 'id', 'published')
@@ -11,17 +19,13 @@ class CommentSerializer(serializers.ModelSerializer):
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = ('id', 'host', 'displayName', 'url', 'github', 'email', 'bio')
+        fields = ('id', 'host', 'displayName', 'url', 'github', 'bio')
+
 
 class AllAuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         fields = ('id', 'host', 'displayName', 'url')
-
-class CommentAuthorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Author
-        fields = ('id', 'host', 'displayName', 'github', 'bio')
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -34,5 +38,5 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = (
-            'title', 'source', 'origin', 'description', 'contentType', 'content', 'author', 'comments', 'categories',
-            'published', 'id', 'visibility')
+            'title', 'source', 'origin', 'description', 'contentType', 'content', 'author', 'comments',
+            'categories', 'published', 'id', 'visibility')
