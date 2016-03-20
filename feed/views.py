@@ -30,7 +30,7 @@ def feed(request):
     user_object = User.objects.get(username=request.user.username)
     author_object = Author.objects.get(email=user_object)
 
-    github_name = author_object.github
+    github_name = "".join((author_object.github).split())
 
     github_posts = create_github_post(github_name)
 
@@ -102,7 +102,6 @@ def feed(request):
     }
 
     return render(request, 'feed.html', context)
-
 
 def create_github_post(github_id):
     d = feedparser.parse("https://github.com/" + github_id + ".atom")
