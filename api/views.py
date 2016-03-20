@@ -1,4 +1,5 @@
 from feed.models import Post, Author, Comment, Friend
+from django.contrib.auth.models import User
 from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer
 from django.http import Http404
 from rest_framework.views import APIView
@@ -8,7 +9,9 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import uuid
 import json
+
 
 
 class public_posts(APIView):
@@ -122,6 +125,7 @@ class author_detail(APIView):
                          "previous": "http://previouspageurlhere", "author": serializer.data})
 
 
+
 class check_mutual_friend(APIView):
     """
     Return JSON with True or False if friends
@@ -155,27 +159,34 @@ class friend_request(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
-        print request.data
         author = json.loads(request.data.get("author"))
         friend = json.loads(request.data.get("friend"))
         author_host = author.get("host")
         friend_host = friend.get("host")
         friend_to_author = Friend.objects.filter(follower_id=friend["id"], followed_id=author["id"])
         author_to_friend = Friend.objects.filter(follower_id=author["id"], followed_id=friend["id"])
+        print friend_to_author
+        print author_to_friend
+        print len(author_to_friend)
         # checks what kind of relationship the two have, intimate or otherwise
-        if (len(friend_to_author) > 0) and (len(author_to_friend) > 0):
+        if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
             print "you're an idiot you're already friends"
-        elif (len(friend_to_author) > 0):
-            print "asdf"
+        elif (len(friend_to_author) == 1) and (len(author_to_friend) == 0):
+            print "1"
             new_friend_object = Friend(follower_id=friend["id"], followed_id=author["id"],
                                        follower_host=friend_host, followed_host=author_host)
             new_friend_object.save()
             # WE ARE NOW FRIENDS
-        else:
-            print "we hit here"
-            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"],
-                                       follower_host=author_host, followed_host=friend_host)
+        elif (len(friend_to_author) == 0) and (len(author_to_friend) == 1):
+            print "2"
+            pass
+        elif (len(friend_to_author) == 0) and (len(author_to_friend) == 0):
+            print "3"
+            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"], follower_host=author_host, followed_host=friend_host)
             new_friend_object.save()
             # TODO: SEND SOMETHING TO THE FRIENDS PAGE TO ALERT FRIEND REQUEST
+
+        # CHECK THE USERS, IF ONE OF THEM IS OFF SERVER WE MUST POST TO THEIR SERVER
+
 
         return Response()

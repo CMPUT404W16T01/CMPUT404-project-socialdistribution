@@ -115,8 +115,33 @@ def create_github_post(github_id):
 		git_feed.append(new_git_post)
 	return git_feed
 
+
 def profile(request):
-	return render(request, 'profile.html')	
+	user_object = User.objects.get(username = request.user.username)
+	author_object = Author.objects.get(email = user_object)
+	return redirect('/author/' + str(author_object.id) + '/profile')
+
+
+
+def get_profile(request, pk):
+	user_object = User.objects.get(username = request.user.username)
+	us_object = Author.objects.get(email = user_object)
+	them_object = Author.objects.get(id=pk)
+
+
+	context = {
+		'sender': us_object,
+		'them': them_object,
+	}
+
+
+
+
+	return render(request, 'profile.html', context)
+
+
+
+
 
 def delete(request):
 	id = request.POST.get('post_id')

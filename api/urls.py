@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^author/(?P<pk>[0-9a-z-]+)/?$', 			views.author_detail.as_view()),
     url(r'^author/(?P<pk>[0-9a-z-]+)/?posts/$', 		views.author_posts.as_view()),
     url(r'^author/(?P<pk>[0-9a-z-]+)/?comments/$', 	views.author_comments.as_view()),
-    url(r'^author/(?P<pk>[0-9a-z-]+)/?profile/$',  views.author_comments.as_view()),
 
 
     # Friend API

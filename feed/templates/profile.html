@@ -24,6 +24,7 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="{% static 'jquery/jquery.cookie.js' %}" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/friends.js' %}"></script>
 
   </head>
 
@@ -68,7 +69,7 @@
     <div class="card-header">
     </div>
     <div class="card-content">
-      <h3>Firstname Lastname</h3>
+      <h3>{{them.displayName}}</h3>
       <br>
       <a href="#"><i class="fa fa-github fa-2x" style="color:salmon"></i></a>
       <br>
@@ -78,8 +79,21 @@
       <div class="card-footer">
       </div>
 
+              <form id="add-friend-form" name="add-friend-form" action="{% url 'api:friendrequest' %}" method='post'>
+              {% csrf_token %}
+              <input id='sender_id' value='{{sender.id}}' hidden></input>
+              <input id='sender_host' value='{{sender.host}}' hidden></input>
+              <input id='sender_display_name' value='{{sender.displayName}}' hidden></input>
 
-      <a href="#" style="color:salmon"><i class="fa fa-user-plus fa-3x" style="color:salmon"></i><br>Add Friend</a><br>
+              <input id='friend_id' value='{{them.id}}' hidden></input>
+              <input id='friend_host' value='{{them.host}}' hidden></input>
+              <input id='friend_display_name' value='{{them.displayName}}' hidden></input>
+              <input id='friend_url' value='{{them.url}}' hidden></input>
+
+              <button id="add_friend_button" type="submit" style="color:salmon" ><i class="fa fa-user-plus fa-3x" style="color:salmon"></i>Add Friend</button>
+
+
+              </form>
 
 
       OR<br>
@@ -97,3 +111,6 @@
 
   </body>
   </html>
+
+
+

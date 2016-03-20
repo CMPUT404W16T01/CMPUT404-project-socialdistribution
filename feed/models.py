@@ -63,8 +63,9 @@ class Comment(models.Model):
 
 
 class Friend(models.Model):
+    primary_key = models.UUIDField(primary_key=True, default=uuid.uuid4)
     follower_host = models.URLField(max_length=500)
-    follower_id = models.UUIDField(primary_key=True)
+    follower_id = models.UUIDField()
     followed_host = models.URLField(max_length=500)
     followed_id = models.UUIDField()
 

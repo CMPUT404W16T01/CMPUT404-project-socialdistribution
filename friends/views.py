@@ -13,9 +13,6 @@ def friends(request):
 	author_object = Author.objects.get(email = user_object)
 	friend_requests = Friend.objects.filter(followed_id=author_object.id)
 	following = Friend.objects.filter(follower_id=author_object.id)
-	print author_object.id
-	for i in following:
-		print i
 
 	all_authors = Author.objects.all()
 	context = {

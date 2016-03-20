@@ -11,5 +11,7 @@ urlpatterns = [
     url(r'^delete/$', views.delete, name='delete'),
     url(r'^create_comment/$', views.create_comment, name='create_comment'),
     url(r'^profile/$', views.profile, name='profile'),
+    url(r'^author/(?P<pk>[0-9a-z-]+)/?profile/$', views.get_profile, name='get_profile'),
+
 
 ]
