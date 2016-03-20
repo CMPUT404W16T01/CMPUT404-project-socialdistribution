@@ -22,10 +22,11 @@ class Author(models.Model):
     def __unicode__(self):
         return str(self.id)
 
+
 class Git_Post(models.Model):
-    title = models.CharField(max_length=500, default= " ")
-    date = models.CharField(max_length=500, default= " ")
-    link = models.CharField(max_length=500, default= " ")
+    title = models.CharField(max_length=500, default=" ")
+    date = models.CharField(max_length=500, default=" ")
+    link = models.CharField(max_length=500, default=" ")
 
 
 # @python_2_unicode_compatible

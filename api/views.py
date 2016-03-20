@@ -1,17 +1,15 @@
-from feed.models import Post, Author, Comment, Friend
-from django.contrib.auth.models import User
-from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer
+import json
+
 from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.response import Response
 from rest_framework.views import APIView
-import uuid
-import json
+from rest_framework.views import APIView
 
+from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer
+from feed.models import Post, Author, Comment, Friend
 
 
 class public_posts(APIView):
@@ -125,7 +123,6 @@ class author_detail(APIView):
                          "previous": "http://previouspageurlhere", "author": serializer.data})
 
 
-
 class check_mutual_friend(APIView):
     """
     Return JSON with True or False if friends
@@ -182,7 +179,8 @@ class friend_request(APIView):
             pass
         elif (len(friend_to_author) == 0) and (len(author_to_friend) == 0):
             print "3"
-            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"], follower_host=author_host, followed_host=friend_host)
+            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"], follower_host=author_host,
+                                       followed_host=friend_host)
             new_friend_object.save()
             # TODO: SEND SOMETHING TO THE FRIENDS PAGE TO ALERT FRIEND REQUEST
 
