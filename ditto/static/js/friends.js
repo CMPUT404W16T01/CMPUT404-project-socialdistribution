@@ -3,11 +3,14 @@ $(document).ready(function () {
     $('.modal-trigger').leanModal();
 
 
-    $('#add-friend-form').on('submit', function(event){
-        event.preventDefault();
+    console.log("AHHHHHHHHHHh")
+    $('form').bind('submit', function(){
+        console.log("Beep")
         send_friend_request();
-        this.reset();
+
+
     });
+
     // $('#add_friend_button').click(function() {
     //     send_friend_request();
     // });
@@ -33,6 +36,8 @@ function csrfSafeMethod(method) {
 }
 
 function send_friend_request() {
+    console.log("aaggggggg")
+    console.log($('#sender_id').val())
     var csrftoken = getCookie('csrftoken');
     //From the official django documentation: https://docs.djangoproject.com/en/1.9/ref/csrf/
     $.ajaxSetup({
@@ -42,6 +47,8 @@ function send_friend_request() {
             }
         }
     });
+
+
 
     $.ajax({
         url : "/api/friendrequest/", 
@@ -60,8 +67,7 @@ function send_friend_request() {
                 displayName: $('#friend_display_name').val(),
                 url: $('#friend_url').val()
             })
-        },
-        dataType: "json", 
+        },*/
         
         success : function(json) {  
             // var active = $("u1.tabs").tabs('option', 'active');

@@ -155,6 +155,7 @@ class friend_request(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
+        print request.data
         author = json.loads(request.data.get("author"))
         friend = json.loads(request.data.get("friend"))
         author_host = author.get("host")
@@ -165,13 +166,15 @@ class friend_request(APIView):
         if (len(friend_to_author) > 0) and (len(author_to_friend) > 0):
             print "you're an idiot you're already friends"
         elif (len(friend_to_author) > 0):
-            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"],
-                                       follower_host=author_host, followed_host=friend_host)
+            print "asdf"
+            new_friend_object = Friend(follower_id=friend["id"], followed_id=author["id"],
+                                       follower_host=friend_host, followed_host=author_host)
             new_friend_object.save()
             # WE ARE NOW FRIENDS
         else:
-            new_friend_object = Friend(follower_id=friend["id"], followed_id=author["id"],
-                                       follower_host=friend_host, followed_host=author_host)
+            print "we hit here"
+            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"],
+                                       follower_host=author_host, followed_host=friend_host)
             new_friend_object.save()
             # TODO: SEND SOMETHING TO THE FRIENDS PAGE TO ALERT FRIEND REQUEST
 

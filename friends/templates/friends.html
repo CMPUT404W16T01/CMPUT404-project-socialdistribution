@@ -14,7 +14,7 @@
   	<!--Import jQuery before materialize.js-->
   	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   	<script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/friends.js' %}"></script>
+    <!-- <script type="text/javascript" src="{% static 'js/friends.js' %}"></script> -->
   </head>
   <body>
 
@@ -64,20 +64,21 @@
       </ul>
     </div>
 
-     <div id="friend_requests" class="col s12">
-      <!-- PUT SHIT HERE -->
-     </div>
+
 
      <div id="all_users" class='col s12'>
-        {% for author in authors %}
         <ul class="collection">
+        {% for author in authors %}
           <li class="collection-item avatar">
             <a id="friend-link" href="#!">
             <i class="material-icons circle red">perm_identity</i>
             <span class="friend-name">{{author.displayName}}</span>
+            <span> {{author.id}}</span>
+            <span> {{author.host}}</span>
+            <span> {{author.displayName}}</span>
+            <span> {{author.url}}></span>
 
-
-            <form id="add-friend-form" action="{% url 'api:friendrequest' %}" method='post'>
+            <form name="add-friend-form" action="{% url 'api:friendrequest' %}" method='post'>
               {% csrf_token %}
               <input id='sender_id' value='{{current_author.id}}' hidden></input>
               <input id='sender_host' value='{{current_author.host}}' hidden></input>
@@ -88,15 +89,15 @@
               <input id='friend_display_name' value='{{author.displayName}}' hidden></input>
               <input id='friend_url' value='{{author.url}}' hidden></input>
 
-              <button id="add_friend_button" type="submit" class="secondary-content"><i class="material-icons">add_circle_outline</i></button>
+              <button id="add_friend_button" type="submit" class="secondary-content transparent" ><i class="material-icons">add_circle_outline</i></button>
+
+
             </form>
            </a>
           </li>
-        </ul>
-
         {% endfor %}
+        </ul>
      </div>
-
   </div>
 
 <!--       <hr> -->
