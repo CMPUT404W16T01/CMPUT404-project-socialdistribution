@@ -30,7 +30,7 @@ def feed(request):
     user_object = User.objects.get(username=request.user.username)
     author_object = Author.objects.get(email=user_object)
 
-    github_name = author_object.github
+    github_name = "".join((author_object.github).split())
 
     github_posts = create_github_post(github_name)
 
@@ -102,7 +102,6 @@ def feed(request):
     }
 
     return render(request, 'feed.html', context)
-
 
 def create_github_post(github_id):
     d = feedparser.parse("https://github.com/" + github_id + ".atom")
@@ -186,11 +185,11 @@ def create_comment(request):
 
     json_packet = json.dumps(packet)
     # print json_packet
-    url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"
+    url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/?id=" + author_object.id
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
+    req.add_header('Authorization', 'Basic YWRtaW46cGFzcw==')
     print "\n\n\nSession/Cookies:"
-    # take session cookie from previous request
 
     urllib2.urlopen(req, json_packet)
     # new_comment.save()
