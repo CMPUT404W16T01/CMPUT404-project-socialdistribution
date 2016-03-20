@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer, AllAuthorSerializer
-from feed.models import Post, Author, Comment, Friend
+from feed.models import Post, Author, Comment, Friend, CommentAuthor
 
 
 class public_posts(APIView):
@@ -56,8 +56,6 @@ class post_comments(APIView):
                          "previous": "http://previouspageurlhere", "comments": serializer.data})
 
     def post(self, request, pk, format=None):
-        print "\n\n\nRequest:"
-        print request
         comment = request.data.get('comment')
         author_object = request.data.get('author')
         author_name = author_object['displayName']
@@ -65,8 +63,10 @@ class post_comments(APIView):
         published = request.data.get('published')
         contentType = request.data.get('contentType')
         post_object = Post.objects.get(id=pk)
-
-        new_comment = Comment(author=json.dumps(author_object), post_id=post_object,
+        new_comment_author = CommentAuthor(id=author_object['id'], host=author_object['host'], displayName=author_name,
+                                   url=author_object['url'], github=author_object['github'])
+        new_comment_author.save()
+        new_comment = Comment(author=new_comment_author, post_id=post_object,
                               comment=comment, published=published,
                               author_name=author_name, contentType=contentType)
         new_comment.save()
@@ -105,6 +105,7 @@ class author_comments(APIView):
         return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "comments": serializer.data})
 
+
 class author_list(APIView):
     """
     List all authors
@@ -113,10 +114,11 @@ class author_list(APIView):
     # authentication_classes = (SessionAuthentication, BasicAuthentication)
     # permission_classes = (IsAuthenticated,)
 
-    def get(self,request,format=None):
+    def get(self, request, format=None):
         authors = Author.objects.filter(admin_auth=True)
-        serializer = AllAuthorSerializer(authors,many=True)
-        return Response({"authors":serializer.data})
+        serializer = AllAuthorSerializer(authors, many=True)
+        return Response({"authors": serializer.data})
+
 
 class author_detail(APIView):
     """

@@ -48,10 +48,19 @@ class Post(models.Model):
         return str(self.id)
 
 
+class CommentAuthor(models.Model):
+    comment_author_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(editable=False)
+    host = models.URLField(max_length=500)
+    displayName = models.CharField(max_length=60)
+    url = models.CharField(max_length=500)
+    github = models.CharField(max_length=30)
+
+
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    post_id = models.ForeignKey(Post)  # issue?
-    author = models.CharField(max_length=2000, default="")  # issue?
+    post_id = models.ForeignKey(Post)
+    author = models.ForeignKey(CommentAuthor)
     author_name = models.CharField(max_length=1000, default=" ")
     comment = models.CharField(max_length=1000)
     contentType = models.CharField(max_length=50, default=" ")  # not in user stories, but in json spec???
@@ -75,5 +84,3 @@ class ForeignHost(models.Model):
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=60)
     url = models.CharField(primary_key=True, max_length=500)
-
-
