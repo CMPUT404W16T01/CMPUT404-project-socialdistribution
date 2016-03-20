@@ -116,3 +116,6 @@ herokuvenv
 
 # IDE
 .idea
+
+#SQUIGGLY FILES DIE
+*~
