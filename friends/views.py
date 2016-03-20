@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from feed.models import Author
 from django.contrib.auth.models import User
+import requests
 
 
 
@@ -15,6 +16,11 @@ def friends(request):
 	following = Friend.objects.filter(follower_id=author_object.id)
 
 	all_authors = Author.objects.all()
+
+	# send request to other servers to load their friends
+	r = requests.get('http://localhost:8001/api/authors'
+	print r
+
 	context = {
 		'authors': all_authors,
 		'current_author': author_object,
