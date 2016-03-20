@@ -21,9 +21,14 @@ def friends(request):
 	# send request to other servers to load their friends
 	foreign_authors = {'authors':[]}
 	try:
-		r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
+		r = requests.get('http://mighty-cliffs-82717.herokuapp.com/api/authors')
+		print r.text
+
+		#r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
+
 		foreign_authors = json.loads(r.text)
-	except:
+	except Exception as e:
+		print e
 		pass
 
 
