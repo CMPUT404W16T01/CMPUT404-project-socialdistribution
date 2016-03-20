@@ -35,16 +35,16 @@ def feed(request):
 
     # My feed, access all posts that I can see
     self_posts = Post.objects.filter(author_id=author_object)
-    public_posts = Post.objects.filter(visibility="public")
+    public_posts = Post.objects.filter(visibility="PUBLIC")
     all_comments = Comment.objects.all()
     # friend_posts
     # foaf_posts
-    server_posts = Post.objects.filter(visibility="server")
+    server_posts = Post.objects.filter(visibility="SERVER ONLY")
     main_posts = self_posts | public_posts | server_posts
     for post in main_posts:
         # print post.id
         comment_list = []
-        if (str(author_object.id) == str(post.author_id)):
+        if (str(author_object.id) == str(post.author)):
             post.flag = True
         else:
             post.flag = False
@@ -62,7 +62,7 @@ def feed(request):
         comment_list = []
 
         # print post.id
-        if (str(author_object.id) == str(post.author_id)):
+        if (str(author_object.id) == str(post.author)):
             post.flag = True
         else:
             post.flag = False
@@ -79,7 +79,7 @@ def feed(request):
         comment_list = []
 
         # print post.id
-        if (str(author_object.id) == str(post.author_id)):
+        if (str(author_object.id) == str(post.author)):
             post.flag = True
         else:
             post.flag = False
@@ -184,12 +184,10 @@ def create_comment(request):
 
     json_packet = json.dumps(packet)
     # print json_packet
-    url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/?id=" + str(author_object.id)
+    url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"#?id=" + str(author_object.id)
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
     req.add_header('Authorization', 'Basic YWRtaW46cGFzcw==')
-    print "\n\n\nSession/Cookies:"
-
     urllib2.urlopen(req, json_packet)
     # new_comment.save()
     return redirect('/feed')
@@ -221,7 +219,7 @@ def create_post(request):
 
     categories_json = json.dumps(c)
 
-    new_post = Post(published=published, author_id=author_object, content=content, contentType=contentType,
+    new_post = Post(published=published, author=author_object, content=content, contentType=contentType,
                     visibility=visibility, source=DITTO_HOST, origin=DITTO_HOST, categories=categories, title=title,
                     description=description)
     new_post.save()

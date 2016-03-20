@@ -31,7 +31,7 @@ class Git_Post(models.Model):
 # @python_2_unicode_compatible
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    author_id = models.ForeignKey(Author)  # issue here?
+    author = models.ForeignKey(Author)  # issue here?
     published = models.DateTimeField(default=django.utils.timezone.now)  # issue here?
     content = models.CharField(max_length=1000)
     contentType = models.CharField(max_length=50, default=" ")
@@ -71,6 +71,9 @@ class Friend(models.Model):
 
 
 class ForeignHost(models.Model):
-    username = models.CharField(primary_key=True, max_length=20)
+    foreign_username = models.ForeignKey(User)
+    username = models.CharField(max_length=20)
     password = models.CharField(max_length=60)
-    url = models.CharField(max_length=500)
+    url = models.CharField(primary_key=True, max_length=500)
+
+
