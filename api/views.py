@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer
+from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer, AllAuthorSerializer
 from feed.models import Post, Author, Comment, Friend
 
 
@@ -103,6 +103,17 @@ class author_comments(APIView):
         return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "comments": serializer.data})
 
+class author_list(APIView):
+    """
+    List all authors
+    """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self,request,format=None):
+        authors = Author.objects.filter(admin_auth=True)
+        serializer = AllAuthorSerializer(authors,many=True)
+        return Response({"author":serializer.data})
 
 class author_detail(APIView):
     """
