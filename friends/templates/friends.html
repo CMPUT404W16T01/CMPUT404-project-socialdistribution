@@ -19,16 +19,16 @@
   <body>
 
   	<ul id="dropdown1" class="dropdown-content">
-  		<li><a href="#!">Profile</a></li>
+  		<li><a href="/profile">Profile</a></li>
   		<li><a href="/settings">Settings</a></li>
   		<li><a href="/logout">Logout</a></li>
   	</ul>
 
   	<nav>
   		<div class="navbar-fixed">
-  			<a href="#!" class="brand-logo">Ditto logo</a>
+  			<a href="/feed" class="brand-logo center">Ditto</a>
   			<ul class="right hide-on-med-and-down">
-  				<li><a href="/feed">Home</a></li>
+  				<li><a href="/friends">Friends</a></li>
   				<li><a class="dropdown-button" href="#" data-activates="dropdown1"><i class="material-icons">account_circle</i></a></li>
   			</li>
   		</ul>
@@ -70,15 +70,25 @@
         <ul class="collection">
         {% for author in authors %}
           <li class="collection-item avatar">
-            <a id="friend-link" href="#!">
+            <a id="friend-link" href="/author/{{author.id}}/profile">
             <i class="material-icons circle red">perm_identity</i>
             <span class="friend-name">{{author.displayName}}</span>
-
+           </a>
+          </li>
+        {% endfor %}
+        </ul>
+        <ul class="collection">
+        {% for f_author in foreign_authors %}
+          <li class="collection-item avatar">
+            <a id="friend-link" href="/author/{{f_author.id}}/profile">
+            <i class="material-icons circle red">perm_identity</i>
+            <span class="friend-name">{{f_author.displayName}}</span>
            </a>
           </li>
         {% endfor %}
         </ul>
      </div>
+
   </div>
 
 <!--       <hr> -->
