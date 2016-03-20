@@ -21,14 +21,14 @@ class CommentAuthorSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer()
-    comments = serializers.SerializerMethodField('get_comments')
+    author = AuthorSerializer(read_only=True)
+    comments = serializers.SerializerMethodField('get_post_comments')
 
-    def get_comments(self, obj):
-        return CommentSerializer(Comment.objects.filter(post=obj.id), many=True).data
+    def get_post_comments(self, obj):
+        return CommentSerializer(Comment.objects.filter(post_id=obj.id), many=True).data
 
     class Meta:
         model = Post
         fields = (
-            'title', 'source', 'origin', 'description', 'contentType', 'content', 'author', 'comments' 'categories',
+            'title', 'source', 'origin', 'description', 'contentType', 'content', 'author', 'comments', 'categories',
             'published', 'id', 'visibility')
