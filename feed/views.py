@@ -30,6 +30,7 @@ def feed(request):
 	author_object = Author.objects.get(email = user_object)
 
 	github_name = author_object.github
+	github_name = "".join(github_name.split())
 
 	github_posts = create_github_post(github_name)
 
