@@ -19,6 +19,8 @@ from django.shortcuts import redirect, render
 import CommonMark
 import urllib2 
 import feedparser
+from dateutil.parser import parse
+from datetime import datetime
 
 # Create your views here.
 
@@ -106,7 +108,10 @@ def create_github_post(github_id):
 	items = d[ "items" ]
 	git_feed = []
 	for item in items:
-		new_git_post = Git_Post(title = item[ "title" ], date = item[ "date" ], link = item[ "link" ])
+		date = item[ "date" ]
+		time = (parse(date).time()).strftime("%I:%M %p")
+		display_date = ((parse(date).date()).strftime("%B %d, %Y at "+ time))
+		new_git_post = Git_Post(title = item[ "title" ], date = display_date, link = item[ "link" ])
 		git_feed.append(new_git_post)
 	return git_feed
 
