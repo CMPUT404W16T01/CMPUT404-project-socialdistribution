@@ -1,7 +1,5 @@
-from django.conf.urls import url, include, patterns
+from django.conf.urls import url
 from . import views
-from api import views as api_views
-from rest_framework import routers
 
 urlpatterns = [
 

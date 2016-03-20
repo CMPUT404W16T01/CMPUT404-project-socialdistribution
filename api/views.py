@@ -1,17 +1,13 @@
-from feed.models import Post, Author, Comment, Friend
-from django.contrib.auth.models import User
-from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer
+import json
+
 from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import uuid
-import json
 
+from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer, AllAuthorSerializer
+from feed.models import Post, Author, Comment, Friend
 
 
 class public_posts(APIView):
@@ -63,12 +59,10 @@ class post_comments(APIView):
         comment = request.data.get('comment')
         author_object = request.data.get('author')
         author_name = author_object['displayName']
-        # print "here"
 
         published = request.data.get('published')
         contentType = request.data.get('contentType')
         post_object = Post.objects.get(id=pk)
-        # print "zxcv"
 
         new_comment = Comment(author=json.dumps(author_object), post_id=post_object,
                               comment=comment, published=published,
@@ -109,6 +103,17 @@ class author_comments(APIView):
         return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "comments": serializer.data})
 
+class author_list(APIView):
+    """
+    List all authors
+    """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self,request,format=None):
+        authors = Author.objects.filter(admin_auth=True)
+        serializer = AllAuthorSerializer(authors,many=True)
+        return Response({"author":serializer.data})
 
 class author_detail(APIView):
     """
@@ -123,7 +128,6 @@ class author_detail(APIView):
         serializer = AuthorSerializer(author_object)
         return Response({"query": "author", "count": "1", "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "author": serializer.data})
-
 
 
 class check_mutual_friend(APIView):
@@ -182,7 +186,8 @@ class friend_request(APIView):
             pass
         elif (len(friend_to_author) == 0) and (len(author_to_friend) == 0):
             print "3"
-            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"], follower_host=author_host, followed_host=friend_host)
+            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"], follower_host=author_host,
+                                       followed_host=friend_host)
             new_friend_object.save()
             # TODO: SEND SOMETHING TO THE FRIENDS PAGE TO ALERT FRIEND REQUEST
 
