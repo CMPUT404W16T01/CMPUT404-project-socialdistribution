@@ -53,14 +53,15 @@
       <input type="text" placeholder="search for friends">
     </div>
       <ul class="collection">
+        {% for friend in friends %}
         <li class="collection-item avatar">
-          <a id="friend-link" href="#!">
+          <a id="friend-link" href="/author/{{friend.id}}/profile">
           <i class="material-icons circle red">perm_identity</i>
-          <span class="friend-name">Marcin Pietrasik</span>
-          <p>Edmonton AB</p>
+          <span class="friend-name">{{friend.displayName}}</span>
           <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
          </a>
         </li>
+        {% endfor %}
       </ul>
     </div>
 

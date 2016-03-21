@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from feed.models import Author
 from django.contrib.auth.models import User
+import urllib2, base64
 import requests
 import json
 
@@ -20,13 +21,25 @@ def friends(request):
 	all_authors = Author.objects.all()
 
 	friend_requests = list()
+	my_friends = list()
 
 	# Get all friends if they're local
 	for i in followed_by:
 		# if the followed_id == the use id, then add them to our list
 		if (author_object.id == i.followed_id):
+			req = urllib2.Request("http://localhost:8000/api/friends/f5ffc074-dc4a-4ad8-82e2-d498cd251dbe/4b8e9361-53db-4efb-8d78-613c77a23033")
+
+			base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+			req.add_header("Authorization", "Basic %s" % base64string) 
+
+			response = urllib2.urlopen(req).read()
+			loaded = json.loads(response)
+
 			friend = Author.objects.get(id=i.follower_id)
-			friend_requests.append(friend)
+			if friend.id != author_object.id and not loaded.get('friends'):
+				friend_requests.append(friend)
+			else:
+				my_friends.append(friend)
 
 	# For host in hosts:
 		# Grab all authors on their server
@@ -50,6 +63,7 @@ def friends(request):
 	context = {
 		'authors': all_authors,
 		'current_author': author_object,
+		'friends': my_friends,
 		'friend_requests': friend_requests,
 		'foreign_authors': foreign_authors['authors'],
 	}
