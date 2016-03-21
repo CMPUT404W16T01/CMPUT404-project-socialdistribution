@@ -27,6 +27,38 @@ import requests
 
 @login_required
 def feed(request):
+    #requests.get("")
+    req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/posts")
+    response = urllib2.urlopen(req).read()
+    loaded = json.loads(response)
+
+    their_posts = loaded.get('posts')
+    their_post_list = []
+
+    for post in their_posts:
+        comments = []
+        description = post.get("description")
+        title = post.get("title")
+        content = post.get("content")
+        published_raw = post.get("published")
+        published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
+        published  = published.replace(tzinfo=None)
+
+        their_comments = post.get("comments")
+        if len(their_comments) > 0:
+            for comment1 in their_comments:
+                comment_body = comment1.get('comment')
+  
+                comment_author = str(comment1.get('author').get('displayName'))
+
+                new_comment = Comment(author_name = comment_author, comment = comment_body)
+                comments.append(new_comment)
+        new_post = Post( description = description, title = title, content = content, published = published)
+        new_post.comments = comments
+        their_post_list.append(new_post)
+
+
+
     user_object = User.objects.get(username=request.user.username)
     author_object = Author.objects.get(email=user_object)
 
@@ -41,7 +73,10 @@ def feed(request):
     # friend_posts
     # foaf_posts
     server_posts = Post.objects.filter(visibility="SERVER ONLY")
+
+    main_posts_list = []
     main_posts = self_posts | public_posts | server_posts
+    
     for post in main_posts:
         # print post.id
         comment_list = []
@@ -54,9 +89,18 @@ def feed(request):
             if (str(comment.post_id) == str(post.id)):
                 comment_list.append(comment)
         post.comments = comment_list
-        print post.comments
+        main_posts_list.append(post)
+        #print post.comments
     # end of my feed
 
+    main_posts = main_posts_list + their_post_list
+    for x in main_posts:
+        x.published= x.published.replace(tzinfo=None)
+    main_posts.sort(key=lambda x: x.published, reverse=True)
+
+
+
+    public_posts_list = []
     # Begin Public Feed
     # public_posts was already created for use in the other one
     for post in public_posts:
@@ -72,8 +116,17 @@ def feed(request):
             if (str(comment.post_id) == str(post.id)):
                 comment_list.append(comment)
         post.comments = comment_list
+        public_posts_list.append(post)
+
+
+    public_posts = public_posts_list + their_post_list
+    for x in public_posts:
+        x.published= x.published.replace(tzinfo=None)
+    public_posts.sort(key=lambda x: x.published, reverse=True)
+
     # end of public feed
 
+    self_posts_list=[]
     # Begin My Posts
     # self_posts was already created for use
     for post in self_posts:
@@ -89,15 +142,19 @@ def feed(request):
             if (str(comment.post_id) == str(post.id)):
                 comment_list.append(comment)
         post.comments = comment_list
+        self_posts_list.append(post)
     # end of public feed
 
 
+    for x in self_posts_list:
+        x.published= x.published.replace(tzinfo=None)
+    self_posts_list.sort(key=lambda x: x.published, reverse=True)
 
 
     context = {
         'main_posts': main_posts,
         'public_posts': public_posts,
-        'my_posts': self_posts,
+        'my_posts': self_posts_list,
         "github_posts": github_posts,
     }
 
