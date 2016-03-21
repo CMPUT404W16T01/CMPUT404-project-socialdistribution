@@ -64,7 +64,18 @@
       </ul>
     </div>
 
-
+     <div id="friend_requests" class='col s12'>
+        <ul class="collection">
+        {% for request in friend_requests %}
+          <li class="collection-item avatar">
+            <a id="friend-link" href="/author/{{request.id}}/profile">
+            <i class="material-icons circle red">perm_identity</i>
+            <span class="friend-name">{{request.displayName}}</span>
+           </a>
+          </li>
+        {% endfor %}
+        </ul>
+     </div>
 
      <div id="all_users" class='col s12'>
         <ul class="collection">
@@ -76,8 +87,6 @@
            </a>
           </li>
         {% endfor %}
-        </ul>
-        <ul class="collection">
         {% for f_author in foreign_authors %}
           <li class="collection-item avatar">
             <a id="friend-link" href="/author/{{f_author.id}}/profile">
@@ -90,8 +99,6 @@
      </div>
 
   </div>
-
-<!--       <hr> -->
 
 
 
