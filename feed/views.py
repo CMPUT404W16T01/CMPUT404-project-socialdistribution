@@ -182,7 +182,28 @@ def profile(request):
 def get_profile(request, pk):
     user_object = User.objects.get(username=request.user.username)
     us_object = Author.objects.get(email=user_object)
-    them_object = Author.objects.get(id=pk)
+
+    them_object = Author.objects.filter(id=pk)
+
+    if len(them_object) == 0:
+        # this means this profile we want to access is a foreign host
+        try:
+            # TODO: We should be looping all possible hosts here
+
+            # r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
+            r = requests.get('http://mighty-cliffs-82717.herokuapp.com/api/authors')
+            foreign_authors = json.loads(r.text)
+            print foreign_authors
+            for each in foreign_authors['authors']:
+                if each['id'] == pk:
+                    them_object = each
+                    break
+        except:
+            # do something maybe
+            pass
+    else:
+        them_object = them_object[0]
+
 
     context = {
         'sender': us_object,

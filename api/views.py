@@ -7,7 +7,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer, AllAuthorSerializer
-from feed.models import Post, Author, Comment, Friend
+from feed.models import Post, Author, Comment, Friend, CommentAuthor
+
+import requests
 
 
 class public_posts(APIView):
@@ -56,8 +58,6 @@ class post_comments(APIView):
                          "previous": "http://previouspageurlhere", "comments": serializer.data})
 
     def post(self, request, pk, format=None):
-        print "\n\n\nRequest:"
-        print request
         comment = request.data.get('comment')
         author_object = request.data.get('author')
         author_name = author_object['displayName']
@@ -65,8 +65,10 @@ class post_comments(APIView):
         published = request.data.get('published')
         contentType = request.data.get('contentType')
         post_object = Post.objects.get(id=pk)
-
-        new_comment = Comment(author=json.dumps(author_object), post_id=post_object,
+        new_comment_author = CommentAuthor(id=author_object['id'], host=author_object['host'], displayName=author_name,
+                                   url=author_object['url'], github=author_object['github'])
+        new_comment_author.save()
+        new_comment = Comment(author=new_comment_author, post_id=post_object,
                               comment=comment, published=published,
                               author_name=author_name, contentType=contentType)
         new_comment.save()
@@ -105,6 +107,7 @@ class author_comments(APIView):
         return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "comments": serializer.data})
 
+
 class author_list(APIView):
     """
     List all authors
@@ -113,10 +116,11 @@ class author_list(APIView):
     # authentication_classes = (SessionAuthentication, BasicAuthentication)
     # permission_classes = (IsAuthenticated,)
 
-    def get(self,request,format=None):
+    def get(self, request, format=None):
         authors = Author.objects.filter(admin_auth=True)
-        serializer = AllAuthorSerializer(authors,many=True)
-        return Response({"authors":serializer.data})
+        serializer = AllAuthorSerializer(authors, many=True)
+        return Response({"authors": serializer.data})
+
 
 class author_detail(APIView):
     """
@@ -166,35 +170,61 @@ class friend_request(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
-        author = json.loads(request.data.get("author"))
-        friend = json.loads(request.data.get("friend"))
+        try:
+            author = json.loads(request.data.get("author"))
+            friend = json.loads(request.data.get("friend"))
+            print author
+            print friend
+        except:
+            author = request.data.get("author")
+            friend = request.data.get("friend")
+
         author_host = author.get("host")
         friend_host = friend.get("host")
         friend_to_author = Friend.objects.filter(follower_id=friend["id"], followed_id=author["id"])
         author_to_friend = Friend.objects.filter(follower_id=author["id"], followed_id=friend["id"])
-        print friend_to_author
-        print author_to_friend
-        print len(author_to_friend)
         # checks what kind of relationship the two have, intimate or otherwise
+
+        # are they following me?
+        print len(friend_to_author)
+
+        # am I followign them
+        print len(author_to_friend)
+
         if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
             print "you're an idiot you're already friends"
+
         elif (len(friend_to_author) == 1) and (len(author_to_friend) == 0):
-            print "1"
-            new_friend_object = Friend(follower_id=friend["id"], followed_id=author["id"],
-                                       follower_host=friend_host, followed_host=author_host)
+            new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"],
+                                       follower_host=author_host, followed_host=friend_host)
             new_friend_object.save()
             # WE ARE NOW FRIENDS
+
         elif (len(friend_to_author) == 0) and (len(author_to_friend) == 1):
-            print "2"
             pass
+
         elif (len(friend_to_author) == 0) and (len(author_to_friend) == 0):
-            print "3"
             new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"], follower_host=author_host,
                                        followed_host=friend_host)
             new_friend_object.save()
             # TODO: SEND SOMETHING TO THE FRIENDS PAGE TO ALERT FRIEND REQUEST
 
         # CHECK THE USERS, IF ONE OF THEM IS OFF SERVER WE MUST POST TO THEIR SERVER
+        print request.get_host()
+
+        # this gets called even when we don't need to send them requests
+        if ("mighty-cliffs-82717" in author_host) or ("mighty-cliffs-82717" in friend_host):
+            try:
+                #url = 'http://' + 'localhost:8001' + '/api/friendrequest'
+                url = 'http://mighty-cliffs-82717.herokuapp.com/api/friendrequest'
+                print "beep"
+                packet = {"query":"friendrequest", "author":author, "friend":friend }
+                print url
+                print "boop"
+                r = requests.post(url, json=packet)
+                print "ahhh we sent something"
+            except:
+                pass
 
 
         return Response()
