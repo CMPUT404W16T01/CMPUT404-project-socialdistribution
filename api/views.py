@@ -173,8 +173,6 @@ class friend_request(APIView):
         try:
             author = json.loads(request.data.get("author"))
             friend = json.loads(request.data.get("friend"))
-            print author
-            print friend
         except:
             author = request.data.get("author")
             friend = request.data.get("friend")
@@ -186,10 +184,10 @@ class friend_request(APIView):
         # checks what kind of relationship the two have, intimate or otherwise
 
         # are they following me?
-        print len(friend_to_author)
+        #print len(friend_to_author)
 
         # am I followign them
-        print len(author_to_friend)
+        #print len(author_to_friend)
 
         if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
             print "you're an idiot you're already friends"
@@ -210,17 +208,12 @@ class friend_request(APIView):
             # TODO: SEND SOMETHING TO THE FRIENDS PAGE TO ALERT FRIEND REQUEST
 
         # CHECK THE USERS, IF ONE OF THEM IS OFF SERVER WE MUST POST TO THEIR SERVER
-        print request.get_host()
-
         # this gets called even when we don't need to send them requests
         if ("mighty-cliffs-82717" in author_host) or ("mighty-cliffs-82717" in friend_host):
             try:
                 #url = 'http://' + 'localhost:8001' + '/api/friendrequest'
                 url = 'http://mighty-cliffs-82717.herokuapp.com/api/friendrequest'
-                print "beep"
                 packet = {"query":"friendrequest", "author":author, "friend":friend }
-                print url
-                print "boop"
                 r = requests.post(url, json=packet)
                 print "ahhh we sent something"
             except:

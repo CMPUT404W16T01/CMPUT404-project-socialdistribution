@@ -41,6 +41,7 @@ def feed(request):
         title = post.get("title")
         content = post.get("content")
         published_raw = post.get("published")
+        origin = post.get("origin")
         published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
         published  = published.replace(tzinfo=None)
 
@@ -53,7 +54,7 @@ def feed(request):
 
                 new_comment = Comment(author_name = comment_author, comment = comment_body)
                 comments.append(new_comment)
-        new_post = Post( description = description, title = title, content = content, published = published)
+        new_post = Post( description = description, title = title, content = content, published = published, origin = origin)
         new_post.comments = comments
         their_post_list.append(new_post)
 
@@ -193,7 +194,6 @@ def get_profile(request, pk):
             # r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
             r = requests.get('http://mighty-cliffs-82717.herokuapp.com/api/authors')
             foreign_authors = json.loads(r.text)
-            print foreign_authors
             for each in foreign_authors['authors']:
                 if each['id'] == pk:
                     them_object = each
@@ -229,20 +229,22 @@ def create_comment(request):
     # text/plain
     comment = request.POST.get('comment-input')
     parent_id = request.POST.get('comment-parent-id')
-    is_markdown = request.POST.get('comment-is-markdown')
+    is_markdown = request.POST.get('comment-is-markdown',default='off')
+    origin = request.POST.get('comment-parent-origin')
 
-    if is_markdown:
+    if is_markdown == 'on':
         comment = CommonMark.commonmark(comment)
         is_markdown = True
     else:
         is_markdown = False
 
-    post_object = Post.objects.get(id=parent_id)
+    
+    #post_object = Post.objects.get(id=parent_id)
     c_username = request.user.username
     user_object = User.objects.get(username=c_username)
     author_object = Author.objects.get(email=user_object)
-    author_name = author_object.displayName
-
+    #author_name = author_object.displayName
+    
     # new_comment = Comment(author_id = author_object, id = post_object, comment = comment, is_markdown = is_markdown, published=published)
     # print("comment made")
 
@@ -262,11 +264,26 @@ def create_comment(request):
     packet['author']['github'] = "http://github.com/" + author_object.github
 
     json_packet = json.dumps(packet)
-    # print json_packet
-    url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"#?id=" + str(author_object.id)
+
+    # WE COULD USE THIS IF THEY GAVE US ORIGIN INSTEAD OF AN EMPTY STRING
+    # "origin":"http://whereitcamefrom.com/api/posts/zzzzz",
+    flag = True
+    if origin == "":
+        print "mighty cliffs scum doesnt give us an origin"
+        flag = False
+        url1 = "http://mighty-cliffs-82717.herokuapp.com/api/posts" + parent_id + "/comments/"
+    else:
+        url1 = origin + "/comments/"
+
+
+    # this works for posting a comment to ourselves
+    #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"#?id=" + str(author_object.id)
+
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
-    req.add_header('Authorization', 'Basic YWRtaW46cGFzcw==')
+    if flag:
+        req.add_header('Authorization', 'Basic YWRtaW46cGFzcw==')
+
     urllib2.urlopen(req, json_packet)
     # new_comment.save()
     return redirect('/feed')
@@ -288,7 +305,8 @@ def create_post(request):
     author_object = Author.objects.get(email=user_object)
     author_name = author_object.displayName
 
-    DITTO_HOST = request.get_host()
+    post_id = uuid.uuid4()
+    DITTO_HOST = 'http://' + request.get_host() + '/api/posts/' + str(post_id)
     title = request.POST.get('title')
     description = request.POST.get('description')
 
@@ -300,7 +318,7 @@ def create_post(request):
 
     new_post = Post(published=published, author=author_object, content=content, contentType=contentType,
                     visibility=visibility, source=DITTO_HOST, origin=DITTO_HOST, categories=categories, title=title,
-                    description=description)
+                    description=description, id = post_id)
     new_post.save()
 
     return HttpResponse(request.POST.get('post_body'))

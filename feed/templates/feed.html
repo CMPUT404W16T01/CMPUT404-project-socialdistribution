@@ -126,7 +126,7 @@
 						<div class="row">
 							<div class="col s11">
 								<a class="modal-trigger"  href="#{{main_post.id}}">
-									{{main_post.title}}      
+									{{main_post.title}}
 								</a>
 							</div>
 							<div class="col s1">
@@ -185,7 +185,9 @@
 						<textarea placeholder="Enter comment here..." name="comment-input" class="materialize-textarea"></textarea>
 						<div class="col s3">
 
-							<input type="hidden" value="{{main_post.id}}" name="comment-parent-id">
+							<input type="hidden" value="{{main_post.id}}" name="comment-parent-id"/>
+							<input type="hidden" value="{{main_post.origin}}" name="comment-parent-origin"/>
+
 
 							<p>
 								<input type="checkbox" id="{{main_post.id}}MAINPOSTMARKDOWN" name="comment-is-markdown"/>
