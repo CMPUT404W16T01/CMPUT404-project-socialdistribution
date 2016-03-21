@@ -86,8 +86,31 @@ class author_posts(APIView):
 
     def get(self, request, pk, format=None):
         author_object = Author.objects.get(id=pk)
-        posts = Post.objects.filter(author=author_object)
-        serializer = PostSerializer(posts, many=True)
+        asker_id = request.GET.get('id')
+
+        public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
+        return_posts = public_posts
+
+        if (pk == asker_id):
+        	private_posts = Posts.objects.filter(author=author_object, visibility="PRIVATE")
+        	return_posts = return_posts | private_posts
+
+        # if the asker is on our server, need to check if they are on our server first
+        if (len(Author.objects.filter(id=asker_id)) > 0):
+        	server_only_posts = Posts.objects.filter(author=author_object, visibility="SERVERONLY")
+        	return_posts = return_posts | server_only_posts
+
+        # if the asker is a friend
+        friend_to_author = Friend.objects.filter(follower_id=pk, followed_id=asker_id)
+        author_to_friend = Friend.objects.filter(follower_id=asker_id, followed_id=pk)
+        if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+        	#then they are friends, because the relationship is mutual
+        	friend_posts = Posts.objects.filter(author=author_object, visibility="FRIENDS")
+        	return_posts = return_posts | server_only_posts
+
+        # TODO: Look at FOAF stuff
+
+        serializer = PostSerializer(return_posts, many=True)
         return Response({"query": "posts", "count": len(posts), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "posts": serializer.data})
 
