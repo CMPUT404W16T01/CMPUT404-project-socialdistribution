@@ -42,6 +42,7 @@ def feed(request):
         content = post.get("content")
         published_raw = post.get("published")
         origin = post.get("origin")
+        id = post.get("id")
         published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
         published  = published.replace(tzinfo=None)
 
@@ -54,7 +55,7 @@ def feed(request):
 
                 new_comment = Comment(author_name = comment_author, comment = comment_body)
                 comments.append(new_comment)
-        new_post = Post( description = description, title = title, content = content, published = published, origin = origin)
+        new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin)
         new_post.comments = comments
         their_post_list.append(new_post)
 
@@ -265,15 +266,18 @@ def create_comment(request):
 
     json_packet = json.dumps(packet)
 
+
     # WE COULD USE THIS IF THEY GAVE US ORIGIN INSTEAD OF AN EMPTY STRING
     # "origin":"http://whereitcamefrom.com/api/posts/zzzzz",
     flag = True
     if origin == "":
         print "mighty cliffs scum doesnt give us an origin"
         flag = False
-        url1 = "http://mighty-cliffs-82717.herokuapp.com/api/posts" + parent_id + "/comments/"
+        url1 = "http://mighty-cliffs-82717.herokuapp.com/api/posts/" + parent_id + "/comments/"
     else:
         url1 = origin + "/comments/"
+
+
 
 
     # this works for posting a comment to ourselves
@@ -283,6 +287,7 @@ def create_comment(request):
     req.add_header('Content-Type', 'application/json')
     if flag:
         req.add_header('Authorization', 'Basic YWRtaW46cGFzcw==')
+
 
     urllib2.urlopen(req, json_packet)
     # new_comment.save()
