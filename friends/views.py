@@ -28,6 +28,11 @@ def friends(request):
 			friend = Author.objects.get(id=i.follower_id)
 			friend_requests.append(friend)
 
+	# For host in hosts:
+		# Grab all authors on their server
+			# If an author id matches the follower_id in one of our friend requests
+				# Append that person to friend_requests
+
 	# send request to other servers to load their friends
 	foreign_authors = {'authors':[]}
 	try:
