@@ -218,6 +218,7 @@
 								<form id="post-form" action="{% url 'delete' %}" method = 'post'>
 									{% csrf_token %}
 									<input type="hidden" value="{{public_post.id}}" name="post_id">
+
 									<span class="card-title activator grey-text text-darken-4">
 										<button class="material-icons right"><i class="material-icons">close</i></button>
 									</span>
@@ -271,6 +272,8 @@
 						<div class="col s3">
 
 							<input type="hidden" value="{{public_post.id}}" name="comment-parent-id">
+							<input type="hidden" value="{{public_post.origin}}" name="comment-parent-origin"/>
+
 
 							<p>
 								<input type="checkbox" id="{{public_post.id}}PUBLICPOSTMARKDOWN" name="comment-is-markdown"/>
@@ -302,6 +305,7 @@
 								<form id="post-form" action="{% url 'delete' %}" method = 'post'>
 									{% csrf_token %}
 									<input type="hidden" value="{{my_post.id}}" name="post_id">
+
 									<span class="card-title activator grey-text text-darken-4">
 										<button class="material-icons right"><i class="material-icons">close</i></button>
 									</span>
@@ -358,6 +362,8 @@
 						<div class="col s3">
 
 							<input type="hidden" value="{{my_post.id}}" name="comment-parent-id">
+							<input type="hidden" value="{{my_post.origin}}" name="comment-parent-origin"/>
+
 
 							<p>
 								<input type="checkbox" id="{{my_post.id}}MYPOSTMARKDOWN" name="comment-is-markdown"/>
