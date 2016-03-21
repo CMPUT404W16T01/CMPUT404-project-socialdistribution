@@ -28,36 +28,41 @@ import requests
 @login_required
 def feed(request):
     #requests.get("")
-    req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/posts")
-    response = urllib2.urlopen(req).read()
-    loaded = json.loads(response)
 
-    their_posts = loaded.get('posts')
     their_post_list = []
+    try:
+        req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/posts")
+        response = urllib2.urlopen(req).read()
+        loaded = json.loads(response)
 
-    for post in their_posts:
-        comments = []
-        description = post.get("description")
-        title = post.get("title")
-        content = post.get("content")
-        published_raw = post.get("published")
-        origin = post.get("origin")
-        id = post.get("id")
-        published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
-        published  = published.replace(tzinfo=None)
+        their_posts = loaded.get('posts')
+        their_post_list = []
 
-        their_comments = post.get("comments")
-        if len(their_comments) > 0:
-            for comment1 in their_comments:
-                comment_body = comment1.get('comment')
-  
-                comment_author = str(comment1.get('author').get('displayName'))
+        for post in their_posts:
+            comments = []
+            description = post.get("description")
+            title = post.get("title")
+            content = post.get("content")
+            published_raw = post.get("published")
+            origin = post.get("origin")
+            id = post.get("id")
+            published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
+            published  = published.replace(tzinfo=None)
 
-                new_comment = Comment(author_name = comment_author, comment = comment_body)
-                comments.append(new_comment)
-        new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin)
-        new_post.comments = comments
-        their_post_list.append(new_post)
+            their_comments = post.get("comments")
+            if len(their_comments) > 0:
+                for comment1 in their_comments:
+                    comment_body = comment1.get('comment')
+      
+                    comment_author = str(comment1.get('author').get('displayName'))
+
+                    new_comment = Comment(author_name = comment_author, comment = comment_body)
+                    comments.append(new_comment)
+            new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin)
+            new_post.comments = comments
+            their_post_list.append(new_post)
+    except:
+        print "couldn't get other hosts posts"
 
 
 
