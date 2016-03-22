@@ -38,6 +38,8 @@ def friends(request):
 			# friend is local
 			try:
 				friend = Author.objects.get(id=i.follower_id)
+				print "Friend:"
+				print friend
 			# friend is foreign
 			except:
 				print i.follower_id
@@ -47,7 +49,7 @@ def friends(request):
 				response = urllib2.urlopen(req).read()
 				print response
 				loaded = json.loads(response)
-				print loaded
+				print loaded['id']
 				friend = loaded
 
 			if friend.id != author_object.id and not loaded.get('friends'):
