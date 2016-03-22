@@ -189,8 +189,8 @@ class friend_request(APIView):
 
     """
 
-    # authentication_classes = (SessionAuthentication, BasicAuthentication)
-    # permission_classes = (IsAuthenticated,)
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
         try:
