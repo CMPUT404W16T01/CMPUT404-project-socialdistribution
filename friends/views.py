@@ -51,7 +51,8 @@ def friends(request):
 				print response
 				loaded = json.loads(response)
 				print loaded['id']
-				friend = Author(id=loaded['id'], displayName=loaded['displayName'], email="na@no.ca", host="http://mighty-cliffs-82717.herokuapp.com", url=url)
+				user = User.objects.create_user(username="no@no.ca", password="password")
+				friend = Author(id=loaded['id'], displayName=loaded['displayName'], email=user, host="http://mighty-cliffs-82717.herokuapp.com", url=url)
 
 			if friend.id != author_object.id and not loaded.get('friends'):
 				friend_requests.append(friend)
