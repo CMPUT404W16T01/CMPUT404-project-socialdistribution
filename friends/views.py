@@ -34,6 +34,7 @@ def friends(request):
 
 			response = urllib2.urlopen(req).read()
 			loaded = json.loads(response)
+			print "did ditto-test request"
 			# friend is local
 			try:
 				friend = Author.objects.get(id=i.follower_id)
@@ -41,7 +42,7 @@ def friends(request):
 			except:
 				print i.follower_id
 				req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % i.follower_id)
-
+				print "attempting mighty request"
 				response = urllib2.urlopen(req).read()
 				loaded = json.loads(response)
 				print loaded
