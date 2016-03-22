@@ -52,7 +52,7 @@ def friends(request):
 				print response
 				loaded = json.loads(response)
 				#print loaded['id']
-				friend = response
+				friend = loaded
 
 			if friend.id != author_object.id and not loaded.get('friends'):
 				friend_requests.append(friend)
