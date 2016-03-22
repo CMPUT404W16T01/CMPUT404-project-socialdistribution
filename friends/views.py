@@ -41,7 +41,8 @@ def friends(request):
 			# friend is foreign
 			except:
 				print i.follower_id
-				req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % i.follower_id)
+				print i.followed_id
+				req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % i.followed_id)
 				print "attempting mighty request"
 				response = urllib2.urlopen(req).read()
 				loaded = json.loads(response)
