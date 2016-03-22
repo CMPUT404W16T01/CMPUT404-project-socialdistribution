@@ -34,22 +34,22 @@ def friends(request):
 
 			response = urllib2.urlopen(req).read()
 			loaded = json.loads(response)
-			print "did ditto-test request"
+			#print "did ditto-test request"
 			# friend is local
 			try:
 				friend = Author.objects.get(id=i.follower_id)
-				print "Friend:"
-				print friend
+				#print "Friend:"
+				#print friend
 			# friend is foreign
 			except:
-				print i.follower_id
-				print i.followed_id
+				# print i.follower_id
+				# print i.followed_id
 				url = "http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % str(i.follower_id)
 				req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % str(i.follower_id))
-				print "attempting mighty request"
+				#print "attempting mighty request"
 				response = urllib2.urlopen(req).read()
-				print "Response: "
-				print response
+				#print "Response: "
+				#print response
 				friend = json.loads(response)
 				#print loaded['id']
 
