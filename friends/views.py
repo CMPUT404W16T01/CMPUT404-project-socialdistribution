@@ -45,8 +45,10 @@ def friends(request):
 				req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % str(i.follower_id))
 				print "attempting mighty request"
 				response = urllib2.urlopen(req).read()
+				print response
 				loaded = json.loads(response)
 				print loaded
+				friend = loaded
 
 			if friend.id != author_object.id and not loaded.get('friends'):
 				friend_requests.append(friend)
