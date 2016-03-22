@@ -54,10 +54,17 @@ def friends(request):
 				#print loaded['id']
 				friend = loaded
 
-			if friend.id != author_object.id and not loaded.get('friends'):
-				friend_requests.append(friend)
+			if type(friend) == type({}):	
+				if friend['id'] != author_object.id and not loaded.get('friends'):
+					friend_requests.append(friend)
+				else:
+					my_friends.append(friend)
+
 			else:
-				my_friends.append(friend)
+				if friend.id != author_object.id and not loaded.get('friends'):
+					friend_requests.append(friend)
+				else:
+					my_friends.append(friend)
 
 	# For host in hosts:
 		# Grab all authors on their server
