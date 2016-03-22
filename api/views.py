@@ -136,8 +136,8 @@ class author_list(APIView):
     List all authors
     """
 
-    # authentication_classes = (SessionAuthentication, BasicAuthentication)
-    # permission_classes = (IsAuthenticated,)
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
         authors = Author.objects.filter(admin_auth=True)
