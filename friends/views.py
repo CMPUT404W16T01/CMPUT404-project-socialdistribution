@@ -39,7 +39,15 @@ def friends(request):
 				friend = Author.objects.get(id=i.follower_id)
 			# friend is foreign
 			except:
-				print "Failed to load their friends"
+				req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % i.follower_id)
+
+				base64string = base64.encodestring('%s:%s' % ("null", "null")).replace('\n', '')
+				req.add_header("Authorization", "Basic %s" % base64string) 
+
+				response = urllib2.urlopen(req).read()
+				loaded = json.loads(response)
+				print loaded
+
 			if friend.id != author_object.id and not loaded.get('friends'):
 				friend_requests.append(friend)
 			else:
