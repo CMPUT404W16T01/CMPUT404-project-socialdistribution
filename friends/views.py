@@ -34,8 +34,12 @@ def friends(request):
 
 			response = urllib2.urlopen(req).read()
 			loaded = json.loads(response)
-
-			friend = Author.objects.get(id=i.follower_id)
+			# friend is local
+			try:
+				friend = Author.objects.get(id=i.follower_id)
+			# friend is foreign
+			except:
+				print "Failed to load their friends"
 			if friend.id != author_object.id and not loaded.get('friends'):
 				friend_requests.append(friend)
 			else:
