@@ -27,7 +27,7 @@ def friends(request):
 	for i in followed_by:
 		# if the followed_id == the use id, then add them to our list
 		if (author_object.id == i.followed_id):
-			req = urllib2.Request("http://localhost:8000/api/friends/f5ffc074-dc4a-4ad8-82e2-d498cd251dbe/4b8e9361-53db-4efb-8d78-613c77a23033")
+			req = urllib2.Request("http://localhost:8000/api/friends/%s/%s" % (i.follower_id, i.followed_id))
 
 			base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
 			req.add_header("Authorization", "Basic %s" % base64string) 
