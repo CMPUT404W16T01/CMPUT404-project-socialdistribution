@@ -44,13 +44,14 @@ def friends(request):
 			except:
 				print i.follower_id
 				print i.followed_id
+				url = "http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % str(i.follower_id)
 				req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % str(i.follower_id))
 				print "attempting mighty request"
 				response = urllib2.urlopen(req).read()
 				print response
 				loaded = json.loads(response)
 				print loaded['id']
-				friend = loaded
+				friend = Author(id=loaded['id'], displayName=loaded['displayName'], email="na@no.ca", host="http://mighty-cliffs-82717.herokuapp.com", url=url)
 
 			if friend.id != author_object.id and not loaded.get('friends'):
 				friend_requests.append(friend)
