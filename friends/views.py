@@ -50,16 +50,16 @@ def friends(request):
 				response = urllib2.urlopen(req).read()
 				print "Response: "
 				print response
-				loaded = json.loads(response)
+				friend = json.loads(response)
 				#print loaded['id']
-				friend = loaded
 
+			# for off host friends
 			if type(friend) == type({}):	
-				if friend['id'] != author_object.id and not loaded.get('friends'):
+				if friend['id'] != author_object.id and not loaded['friends']:
 					friend_requests.append(friend)
 				else:
 					my_friends.append(friend)
-
+			# for local friends
 			else:
 				if friend.id != author_object.id and not loaded.get('friends'):
 					friend_requests.append(friend)
