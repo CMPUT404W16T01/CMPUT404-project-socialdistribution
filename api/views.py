@@ -122,8 +122,8 @@ class author_posts(APIView):
 
         # if the asker is on our server, need to check if they are on our server first
         if (len(Author.objects.filter(id=asker_id)) > 0):
-        	server_only_posts = Post.objects.filter(author=author_object, visibility="SERVERONLY")
-        	return_posts = return_posts | server_only_posts
+            server_only_posts = Post.objects.filter(author=author_object, visibility="SERVERONLY")
+            return_posts = return_posts | server_only_posts
             print "beep"
 
 
