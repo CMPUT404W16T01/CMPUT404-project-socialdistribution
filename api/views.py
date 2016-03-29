@@ -159,6 +159,49 @@ class author_detail(APIView):
         return Response({"query": "author", "count": "1", "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "author": serializer.data})
 
+class check_friends(APIView):
+    """
+    returns who are friends
+    """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    # returns 
+    def get(self, request, pk, format=None):
+        author_id = pk
+        friends = []
+
+        following = Friend.objects.filter(follower_id=author_id)
+
+        for i in following:
+            tmp = Friend.objects.filter(follower_id=i.followed_id, followed_id=i.follower_id)
+            if len(tmp) > 0:
+                friends.append(i.followed_id)
+
+        packet = {"query": "friends",
+                  "authors": friends}
+
+        return Response(packet)
+
+
+
+    def post(self, request, pk, format=None):
+        author_id = pk
+        possible_friends = request.data.get('authors')
+        confirmed_friends = []
+
+        for author_id in possible_friends:
+            author_one_to_two = Friend.objects.filter(follower_id=pk, followed_id=author_id)
+            author_two_to_one = Friend.objects.filter(follower_id=author_id, followed_id=pk)
+            if (len(author_one_to_two) > 0) and (len(author_two_to_one) > 0):
+                confirmed_friends.append(author_id)
+
+        packet = {"query": "friends",
+                  "author": pk,
+                  "authors": confirmed_friends}
+
+        return Response(packet)
+
 
 class check_mutual_friend(APIView):
     """

@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^author/(?P<pk>[0-9a-z-]+)/?comments/$', views.author_comments.as_view()),
 
     # Friend API
+    url(r'^friends/(?P<pk>[0-9a-z-]+)/?$', views.check_friends.as_view()),
     url(r'^friends/(?P<pk1>[0-9a-z-]+)/(?P<pk2>[0-9a-z-]+)/?$', views.check_mutual_friend.as_view()),
     url(r'^friendrequest/?$', views.friend_request.as_view(), name='friendrequest'),
 

@@ -33,16 +33,11 @@ def friends(request):
 
 			response = urllib2.urlopen(req).read()
 			loaded = json.loads(response)
-			#print "did ditto-test request"
 			# friend is local
 			try:
 				friend = Author.objects.get(id=i.follower_id)
-				#print "Friend:"
-				#print friend
 			# friend is foreign
 			except:
-				# print i.follower_id
-				# print i.followed_id
 				url = i.follower_host + ("/api/author/%s" % str(i.follower_id))
 				foreign_hosts = ForeignHost.objects.filter(url=i.follower_host)
 				if (foreign_hosts.username != 'null'):
@@ -50,12 +45,8 @@ def friends(request):
 					req.add_header("Authorization", "Basic %s" % base64string) 
 
 				req = urllib2.Request(url)
-				#print "attempting mighty request"
 				response = urllib2.urlopen(req).read()
-				#print "Response: "
-				#print response
 				friend = json.loads(response)
-				#print loaded['id']
 
 			# for off host friends
 			if type(friend) == type({}):	
