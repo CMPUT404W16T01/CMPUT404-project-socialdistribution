@@ -88,10 +88,8 @@ class author_posts(APIView):
         author_object = Author.objects.get(id=pk)
 
         try:
-            print request.user
             asker_object = Author.objects.get(email=request.user)
             asker_id = str(asker_object.id)
-            print asker_id
         except:
             asker_id = str(request.GET.get('id'))
 
@@ -99,11 +97,6 @@ class author_posts(APIView):
         return_posts = public_posts
 
         # the asker is the user itself, return everything
-        print pk
-        print asker_id
-        print type(pk)
-        print type(asker_id)
-        print pk == asker_id
         if (pk == asker_id):
             all_posts = Post.objects.filter(author=author_object)
             return_posts = all_posts
