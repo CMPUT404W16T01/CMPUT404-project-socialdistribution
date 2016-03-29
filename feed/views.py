@@ -18,6 +18,7 @@ import feedparser
 from dateutil.parser import parse
 from datetime import datetime
 import requests
+import base64
 
 
 # Create your views here.
