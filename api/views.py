@@ -111,7 +111,7 @@ class author_posts(APIView):
         # TODO: Look at FOAF stuff
 
         serializer = PostSerializer(return_posts, many=True)
-        return Response({"query": "posts", "count": len(posts), "size": "10", "next": "http://nextpageurlhere",
+        return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "posts": serializer.data})
 
 
@@ -176,7 +176,11 @@ class check_friends(APIView):
         for i in following:
             tmp = Friend.objects.filter(follower_id=i.followed_id, followed_id=i.follower_id)
             if len(tmp) > 0:
-                friends.append(i.followed_id)
+                print tmp.follower_id
+                print tmp.followed_id
+                print i.follower_id
+                print i.followed_id
+                friends.append(i.follower_id)
 
         packet = {"query": "friends",
                   "authors": friends}
