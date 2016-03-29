@@ -117,7 +117,7 @@ class author_posts(APIView):
         if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
             #then they are friends, because the relationship is mutual
             friend_posts = Post.objects.filter(author=author_object, visibility="FRIENDS")
-            return_posts = return_posts | server_only_posts
+            return_posts = return_posts | friend_posts
             print "get to here"
 
         # if the asker is on our server, need to check if they are on our server first
