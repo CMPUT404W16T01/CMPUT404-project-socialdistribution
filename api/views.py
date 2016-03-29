@@ -99,6 +99,7 @@ class author_posts(APIView):
         return_posts = public_posts
 
         # the asker is the user itself, return everything
+        print pk == asker_id
         if (pk == asker_id):
             all_posts = Post.objects.filter(author=author_object)
             return_posts = all_posts
