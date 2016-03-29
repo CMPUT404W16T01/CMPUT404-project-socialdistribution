@@ -98,22 +98,33 @@ class author_posts(APIView):
         public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
         return_posts = public_posts
 
+
+
+
+        # the asker is the user itself, return everything
         if (pk == asker_id):
-        	private_posts = Post.objects.filter(author=author_object, visibility="PRIVATE")
-        	return_posts = return_posts | private_posts
+        	all_posts = Post.objects.filter(author=author_object)
+        	return_posts = all_posts
+
+
+            
+        # if the asker is a friend
+        friend_to_author = Friend.objects.filter(follower_id=pk, followed_id=asker_id)
+        author_to_friend = Friend.objects.filter(follower_id=asker_id, followed_id=pk)
+        print (len(friend_to_author) == 1) and (len(author_to_friend) == 1)
+        print pk
+        print asker_id
+        if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+            #then they are friends, because the relationship is mutual
+            friend_posts = Post.objects.filter(author=author_object, visibility="FRIENDS")
+            return_posts = return_posts | server_only_posts
 
         # if the asker is on our server, need to check if they are on our server first
         if (len(Author.objects.filter(id=asker_id)) > 0):
         	server_only_posts = Post.objects.filter(author=author_object, visibility="SERVERONLY")
         	return_posts = return_posts | server_only_posts
 
-        # if the asker is a friend
-        friend_to_author = Friend.objects.filter(follower_id=pk, followed_id=asker_id)
-        author_to_friend = Friend.objects.filter(follower_id=asker_id, followed_id=pk)
-        if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
-        	#then they are friends, because the relationship is mutual
-        	friend_posts = Post.objects.filter(author=author_object, visibility="FRIENDS")
-        	return_posts = return_posts | server_only_posts
+
 
         # TODO: Look at FOAF stuff
 
