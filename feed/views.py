@@ -5,10 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from feed.models import Post
-from feed.models import Git_Post
-from feed.models import Author
-from feed.models import Comment
+from feed.models import Post, Git_Post, Author, Comment, ForeignHost
 from django.contrib.auth.models import User
 from django.template import Context, loader, Template
 import uuid
@@ -31,36 +28,40 @@ def feed(request):
 
     their_post_list = []
     try:
-        req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/posts")
-        response = urllib2.urlopen(req).read()
-        loaded = json.loads(response)
+        foreign_hosts = ForeignHost.objects.filter()
+        for i in foreign_hosts:
+            url = i.url + "api/posts"
+            req = urllib2.Request(url)
+            response = urllib2.urlopen(req).read()
+            loaded = json.loads(response)
 
-        their_posts = loaded.get('posts')
-        their_post_list = []
+            their_posts = loaded.get('posts')
+            their_post_list = []
 
-        for post in their_posts:
-            comments = []
-            description = post.get("description")
-            title = post.get("title")
-            content = post.get("content")
-            published_raw = post.get("published")
-            origin = post.get("origin")
-            id = post.get("id")
-            published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
-            published  = published.replace(tzinfo=None)
+            for post in their_posts:
+                comments = []
+                description = post.get("description")
+                title = post.get("title")
+                content = post.get("content")
+                published_raw = post.get("published")
+                origin = post.get("origin")
+                id = post.get("id")
+                published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
+                published  = published.replace(tzinfo=None)
 
-            their_comments = post.get("comments")
-            if len(their_comments) > 0:
-                for comment1 in their_comments:
-                    comment_body = comment1.get('comment')
-      
-                    comment_author = str(comment1.get('author').get('displayName'))
+                their_comments = post.get("comments")
+                if len(their_comments) > 0:
+                    for comment1 in their_comments:
+                        comment_body = comment1.get('comment')
+          
+                        comment_author = str(comment1.get('author').get('displayName'))
 
-                    new_comment = Comment(author_name = comment_author, comment = comment_body)
-                    comments.append(new_comment)
-            new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin)
-            new_post.comments = comments
-            their_post_list.append(new_post)
+                        new_comment = Comment(author_name = comment_author, comment = comment_body)
+                        comments.append(new_comment)
+                new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin)
+                new_post.comments = comments
+                their_post_list.append(new_post)
+
     except:
         print "couldn't get other hosts posts"
 
@@ -196,14 +197,19 @@ def get_profile(request, pk):
         # this means this profile we want to access is a foreign host
         try:
             # TODO: We should be looping all possible hosts here
-
-            # r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
-            r = requests.get('http://mighty-cliffs-82717.herokuapp.com/api/authors')
-            foreign_authors = json.loads(r.text)
-            for each in foreign_authors['authors']:
-                if each['id'] == pk:
-                    them_object = each
-                    break
+            foreign_hosts = ForeignHost.objects.filter()
+            for i in foreign_hosts:
+                # r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
+                url = i.url + "/api/authors"
+                if i.username != 'null':
+                    r = requests.get(url, auth=(i.username, i.password))
+                else:
+                    r = requests.get(url)
+                foreign_authors = json.loads(r.text)
+                for each in foreign_authors['authors']:
+                    if each['id'] == pk:
+                        them_object = each
+                        break
         except:
             # do something maybe
             pass
@@ -276,14 +282,10 @@ def create_comment(request):
     # "origin":"http://whereitcamefrom.com/api/posts/zzzzz",
     flag = True
     if origin == "":
-        print "mighty cliffs scum doesnt give us an origin"
         flag = False
         url1 = "http://mighty-cliffs-82717.herokuapp.com/api/posts/" + parent_id + "/comments/"
     else:
         url1 = origin + "/comments/"
-
-
-
 
     # this works for posting a comment to ourselves
     #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"#?id=" + str(author_object.id)
@@ -291,7 +293,8 @@ def create_comment(request):
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
     if flag:
-        req.add_header('Authorization', 'Basic YWRtaW46cGFzcw==')
+        base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string) 
 
 
     urllib2.urlopen(req, json_packet)

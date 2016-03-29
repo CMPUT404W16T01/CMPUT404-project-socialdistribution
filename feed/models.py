@@ -79,9 +79,12 @@ class Friend(models.Model):
     followed_host = models.URLField(max_length=500)
     followed_id = models.UUIDField()
 
-
+# @python_2_unicode_compatible
 class ForeignHost(models.Model):
     foreign_username = models.ForeignKey(User)
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=60)
     url = models.CharField(primary_key=True, max_length=500)
+
+    def __unicode__(self):
+        return str(self.url)

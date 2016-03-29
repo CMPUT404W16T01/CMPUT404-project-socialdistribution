@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer, AllAuthorSerializer
-from feed.models import Post, Author, Comment, Friend, CommentAuthor
+from feed.models import Post, Author, Comment, Friend, CommentAuthor, ForeignHost
 
 import requests
 
@@ -228,18 +228,20 @@ class friend_request(APIView):
             new_friend_object = Friend(follower_id=author["id"], followed_id=friend["id"], follower_host=author_host,
                                        followed_host=friend_host)
             new_friend_object.save()
-            # TODO: SEND SOMETHING TO THE FRIENDS PAGE TO ALERT FRIEND REQUEST
 
-        # CHECK THE USERS, IF ONE OF THEM IS OFF SERVER WE MUST POST TO THEIR SERVER
-        # this gets called even when we don't need to send them requests
-        if ("mighty-cliffs-82717" in author_host) or ("mighty-cliffs-82717" in friend_host):
+        # CHECK THE USERS, IF FRIEND IS NOT OUR SERVER, WE ARE SENDING A REQUEST OFF SERVER
+        if 'ditto-test' not in friend_host:
             try:
-                #url = 'http://' + 'localhost:8001' + '/api/friendrequest'
-                url = 'http://mighty-cliffs-82717.herokuapp.com/api/friendrequest'
+                url = friend_host + 'api/friendrequest'
                 packet = {"query":"friendrequest", "author":author, "friend":friend }
-                r = requests.post(url, json=packet)
-                print "ahhh we sent something"
-            except:
+                foreign_host = ForeignHost.objects.get(url=friend_host)
+
+                if foreign_host.username != 'null':
+                    r = requests.post(url, json=packet)
+                else:
+                    r = requests.post(url, json=packet, auth=(foreign_host.username, foreign_host.password))
+            except Exception as e:
+                print e
                 pass
 
 

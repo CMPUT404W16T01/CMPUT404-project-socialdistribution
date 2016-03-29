@@ -1,7 +1,6 @@
-from feed.models import Post, Author, Comment, Friend
+from feed.models import Post, Author, Comment, Friend, ForeignHost
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from feed.models import Author
 from django.contrib.auth.models import User
 import urllib2, base64
 import requests
@@ -44,8 +43,13 @@ def friends(request):
 			except:
 				# print i.follower_id
 				# print i.followed_id
-				url = "http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % str(i.follower_id)
-				req = urllib2.Request("http://mighty-cliffs-82717.herokuapp.com/api/author/%s" % str(i.follower_id))
+				url = i.follower_host + ("/api/author/%s" % str(i.follower_id))
+				foreign_hosts = ForeignHost.objects.filter(url=i.follower_host)
+				if (foreign_hosts.username != 'null'):
+					base64string = base64.encodestring('%s:%s' % (foreign_hosts.username, foreign_hosts.password)).replace('\n', '')
+					req.add_header("Authorization", "Basic %s" % base64string) 
+
+				req = urllib2.Request(url)
 				#print "attempting mighty request"
 				response = urllib2.urlopen(req).read()
 				#print "Response: "
@@ -74,12 +78,18 @@ def friends(request):
 	# send request to other servers to load their friends
 	foreign_authors = {'authors':[]}
 	try:
-		r = requests.get('http://mighty-cliffs-82717.herokuapp.com/api/authors')
-		#print r.text
+		# get all foreign hosts
+		foreign_hosts = ForeignHost.objects.filter()
+		for i in foreign_hosts:
+			url = i.url + "api/authors"
+			if i.username != 'null':
+				r = requests.get(url, auth=(i.username, i.password))
+			else:
+				r = requests.get(url)
 
-		#r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
+			retrieved_authors = json.loads(r.text)
+			foreign_authors['authors'].extend(retrieved_authors['authors'])
 
-		foreign_authors = json.loads(r.text)
 	except Exception as e:
 		print e
 		pass
