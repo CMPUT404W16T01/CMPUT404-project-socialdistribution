@@ -5,7 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from feed.models import Post, Git_Post, Author, Comment, ForeignHost
+from feed.models import Post, Git_Post, Author, Comment, ForeignHost, Image
 from django.contrib.auth.models import User
 from django.template import Context, loader, Template
 import uuid
@@ -302,15 +302,27 @@ def create_comment(request):
     return redirect('/feed')
 
 
+def add_image(request):
+
+    return HttpResponse("OK")
+
 def create_post(request):
-    content = request.POST.get('post_body')
+    print "here"
+    print request.FILES.get('file')
+    print type(request.FILES.get('file'))
+    image = request.FILES.get('file')
+    content = request.POST.get('post-input')
     published = datetime.now()
-    is_markdown = json.loads(request.POST.get('is_markdown'))
+    is_markdown = json.loads(request.POST.get('is-markdown-post'))
     if is_markdown:
         contentType = "text/x-markdown"
         content = CommonMark.commonmark(content)
     else:
         contentType = "text/plain"
+
+
+
+    
 
     visibility = request.POST.get('visibility')
     c_username = request.user.username
@@ -332,6 +344,16 @@ def create_post(request):
     new_post = Post(published=published, author=author_object, content=content, contentType=contentType,
                     visibility=visibility, source=DITTO_HOST, origin=DITTO_HOST, categories=categories, title=title,
                     description=description, id = post_id)
+
+    if image:
+        image_blob = image.read()
+        print image_blob
+        new_image = Image(image_blob = image_blob, parent_post=new_post)
+        new_image.save()
+
+
     new_post.save()
+
+
 
     return HttpResponse(request.POST.get('post_body'))

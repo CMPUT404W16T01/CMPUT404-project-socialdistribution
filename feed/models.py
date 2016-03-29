@@ -88,3 +88,8 @@ class ForeignHost(models.Model):
 
     def __unicode__(self):
         return str(self.url)
+
+class Image(models.Model):
+    primary_key = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    image_blob = models.BinaryField()
+    parent = models.ForeignKey(Post)

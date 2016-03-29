@@ -58,7 +58,7 @@
 			<h4>Create a new post</h4>
 			<!--THIS WILL HAVE TO GET INTEGRATED INTO THE CARDS-->
 			<div style="padding-right: 10%; padding-left: 10%;">
-				<form id="create-post" action="{% url 'feed:create_post' %}" method = 'post'>
+				<form id="create-post" action="{% url 'feed:create_post' %}" method = 'post' enctype="multipart/form-data">
 					{% csrf_token %}
 
 					<div class="input-field" id = "post-title">
@@ -100,6 +100,9 @@
 
 						</div>
 					</div>
+
+					<input type="file" name="file" id="file"/>
+
 					<div class="modal-footer">
 						<button class="modal-action modal-close waves-effect btn-flat" type="submit">CREATE POST
 						</button>
