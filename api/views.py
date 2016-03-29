@@ -91,6 +91,7 @@ class author_posts(APIView):
             print request.user
             asker_object = Author.objects.get(email=request.user)
             asker_id = asker_object.id
+            print asker_id
         except:
             asker_id = request.GET.get('id')
 
