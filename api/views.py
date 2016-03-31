@@ -97,10 +97,12 @@ class author_posts(APIView):
         print "really"
 
         try:
+            print "a"
             asker_object = Author.objects.get(email=request.user)
             asker_id = str(asker_object.id)
             print "WHYYY"
         except:
+            print "b"
             asker_id = str(request.GET.get('id'))
             print "PLEASE"
 
