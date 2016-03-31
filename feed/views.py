@@ -247,7 +247,36 @@ def get_profile(request, pk):
 
             response = urllib2.urlopen(req).read()
             loaded = json.loads(response)
-            print loaded
+            their_posts = loaded.get('posts')
+            their_post_list = []
+
+            for post in their_posts:
+                comments = []
+                description = post.get("description")
+                title = post.get("title")
+                content = post.get("content")
+                published_raw = post.get("published")
+                origin = post.get("origin")
+                id = post.get("id")
+                published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
+                published  = published.replace(tzinfo=None)
+
+                their_comments = post.get("comments")
+                if len(their_comments) > 0:
+                    for comment1 in their_comments:
+                        comment_body = comment1.get('comment')
+                        comment_author = str(comment1.get('author').get('displayName'))
+                        new_comment = Comment(author_name = comment_author, comment = comment_body)
+                        comments.append(new_comment)
+                new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin)
+                new_post.comments = comments
+                their_post_list.append(new_post)
+
+            return_posts = their_post_list
+            for x in return_posts:
+                x.published= x.published.replace(tzinfo=None)
+            return_posts.sort(key=lambda x: x.published, reverse=True)
+
 
             context = {
                 "sender": us_object,
@@ -359,6 +388,19 @@ def get_profile(request, pk):
                     foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
                     return_posts = return_posts | foaf_posts
                     break
+
+
+
+        for a in return_posts:
+            current_post_id = a.id
+            comments_list = Comment.objects.filter(post_id=current_post_id)
+            posts_comments = []
+            for com in comments_list:
+                comment_body = com.comment
+                comment_author = com.author_name
+                new_comment = Comment(author_name=comment_author, comment=comment_body)
+                posts_comments.append(new_comment)
+            a.comments = posts_comments
 
         context = {
             'sender': us_object,
