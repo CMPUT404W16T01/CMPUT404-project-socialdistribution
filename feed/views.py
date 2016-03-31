@@ -390,7 +390,8 @@ def get_profile(request, pk):
                     break
 
 
-
+        print "beep"
+        print len(return_posts)
         for a in return_posts:
             current_post_id = a.id
             comments_list = Comment.objects.filter(post_id=current_post_id)
