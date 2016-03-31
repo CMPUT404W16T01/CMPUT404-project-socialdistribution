@@ -39,6 +39,7 @@ def friends(request):
 				friend = Author.objects.get(id=i.follower_id)
 			# friend is foreign
 			except:
+				print i.follower_host
 				url = i.follower_host + ("/api/author/%s" % str(i.follower_id))
 				foreign_hosts = ForeignHost.objects.get(url=i.follower_host)
 				base64string = base64.encodestring('%s:%s' % (foreign_hosts.username, foreign_hosts.password)).replace('\n', '')
