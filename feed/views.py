@@ -5,7 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from feed.models import Post, Git_Post, Author, Comment, ForeignHost
+from feed.models import Post, Git_Post, Author, Comment, ForeignHost, Friend
 from django.contrib.auth.models import User
 from django.template import Context, loader, Template
 import uuid
