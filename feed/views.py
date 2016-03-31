@@ -250,6 +250,11 @@ def create_comment(request):
     is_markdown = request.POST.get('comment-is-markdown',default='off')
     origin = request.POST.get('comment-parent-origin')
 
+    print comment
+    print parent_id
+    print is_markdown
+    print origin
+
     if is_markdown == 'on':
         comment = CommonMark.commonmark(comment)
         is_markdown = True
