@@ -90,8 +90,6 @@ class author_posts(APIView):
     def get(self, request, pk, format=None):
         author_object = Author.objects.get(id=pk)
 
-        print "I at least got over here"
-
         asker_host = request.META.get("HTTP_HOST")
 
         try:
@@ -101,17 +99,10 @@ class author_posts(APIView):
             asker_id = request.GET.get('id', default=None)
             print asker_id
             if asker_id == None:
-                print "beep"
-                #packet = {"details": "give an ?id=xxxxx"}
-                #packet = json.loads(packet)
                 return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                print "boop"
                 asker_id = str(asker_id)
-                print "doop"
 
-
-        print "WHYYYY"
 
         public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
         return_posts = public_posts
@@ -147,6 +138,8 @@ class author_posts(APIView):
         # fetch list of A's friends
         print " do I still work here?"
         url = "http://" + asker_host + "/api/friends/" + asker_id
+        print url
+
         req = urllib2.Request(url)
         # assume we are sending to ourselves to begin with, if we are getting this from
         # another host then we will update after

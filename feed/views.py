@@ -202,10 +202,8 @@ def get_profile(request, pk):
     if len(them_object) == 0:
         # this means this profile we want to access is a foreign host
         try:
-            # TODO: We should be looping all possible hosts here
             foreign_hosts = ForeignHost.objects.filter()
             for i in foreign_hosts:
-                # r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
                 url = i.url + "/api/authors"
                 if i.username != 'null':
                     r = requests.get(url, auth=(i.username, i.password))
@@ -233,8 +231,7 @@ def get_profile(request, pk):
 
 
     url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
-    url = them_host + "api/author/" + them_id + "/posts/"
-    print url
+    print  "feed views.py with url ",url
     req = urllib2.Request(url)
 
     
