@@ -96,8 +96,10 @@ class author_posts(APIView):
         print asker_host
         print "really"
 
+
         try:
             print "a"
+            print request.user
             asker_object = Author.objects.get(email=request.user)
             asker_id = str(asker_object.id)
             print "WHYYY"
