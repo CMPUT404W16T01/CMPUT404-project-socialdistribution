@@ -48,6 +48,7 @@ def friends(request):
 				req = urllib2.Request(url)
 				response = urllib2.urlopen(req).read()
 				friend = json.loads(response)
+				print friend
 
 			# for off host friends
 			if type(friend) == type({}):	
