@@ -394,6 +394,8 @@ def get_profile(request, pk):
         for a in return_posts:
             current_post_id = a.id
             comments_list = Comment.objects.filter(post_id=current_post_id)
+            print current_post_id
+            print len(comments_list)
             posts_comments = []
             for com in comments_list:
                 comment_body = com.comment
