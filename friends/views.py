@@ -42,6 +42,7 @@ def friends(request):
 				print i.follower_host
 				url = i.follower_host + ("/api/author/%s" % str(i.follower_id))
 				foreign_hosts = ForeignHost.objects.get(url=i.follower_host)
+				print foreign_hosts.username, foreign_hosts.password
 				base64string = base64.encodestring('%s:%s' % (foreign_hosts.username, foreign_hosts.password)).replace('\n', '')
 				req.add_header("Authorization", "Basic %s" % base64string) 
 
