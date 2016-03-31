@@ -96,20 +96,26 @@ class author_posts(APIView):
 
         try:
             if request.user != 'admin':
+                print "what"
                 asker_object = Author.objects.get(email=request.user)
+                print "the"
                 asker_id = str(asker_object.id)
+                print "heck"
             else:
+                print "gah" 
                 raise
         except:
             try:
+                print "kill"
                 asker_id = str(request.GET.get('id'))
+                print "me"
             except:
                 print "beep"
                 packet = {"detail": "give an ?id=xxxx"}
                 print "boop"
                 return Response(packet, status=status.HTTP_400_BAD_REQUEST)
 
-
+        print "WHYYYY"
 
         public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
         return_posts = public_posts
