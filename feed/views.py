@@ -285,22 +285,34 @@ def create_comment(request):
 
 
     # WE COULD USE THIS IF THEY GAVE US ORIGIN INSTEAD OF AN EMPTY STRING
-    # "origin":"http://whereitcamefrom.com/api/posts/zzzzz",
+    # if "origin":"http://whereitcamefrom.com/api/posts/zzzzz", 
+
+    url1 = origin + "/comments/"
+
+    '''
     flag = True
     if origin == "":
         flag = False
         url1 = "http://mighty-cliffs-82717.herokuapp.com/api/posts/" + parent_id + "/comments/"
     else:
         url1 = origin + "/comments/"
+    '''
 
     # this works for posting a comment to ourselves
     #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"
 
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
-    if flag:
-        base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
-        req.add_header("Authorization", "Basic %s" % base64string) 
+
+    foreign_hosts = ForeignHost.objects.filter()
+
+    for host in foreign_hosts:
+        if origin in host.url:
+            base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+            req.add_header("Authorization", "Basic %s" % base64string) 
+            print host.url
+
+
 
 
     urllib2.urlopen(req, json_packet)
