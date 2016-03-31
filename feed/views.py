@@ -33,6 +33,10 @@ def feed(request):
         for i in foreign_hosts:
             url = i.url + "api/posts"
             req = urllib2.Request(url)
+
+            base64string = base64.encodestring('%s:%s' % (i.username, i.password)).replace('\n', '')
+            req.add_header("Authorization", "Basic %s" % base64string) 
+
             response = urllib2.urlopen(req).read()
             loaded = json.loads(response)
 
