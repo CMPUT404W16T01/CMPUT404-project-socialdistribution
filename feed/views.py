@@ -224,18 +224,7 @@ def get_profile(request, pk):
 
     print them_object['url']
 
-'''
-    url = i.url + "api/posts"
-    req = urllib2.Request(url)
 
-    base64string = base64.encodestring('%s:%s' % (i.username, i.password)).replace('\n', '')
-    req.add_header("Authorization", "Basic %s" % base64string) 
-
-    response = urllib2.urlopen(req).read()
-    loaded = json.loads(response)
-
-    their_posts = loaded.get('posts')
-    their_post_list = []'''
 
 
     context = {
