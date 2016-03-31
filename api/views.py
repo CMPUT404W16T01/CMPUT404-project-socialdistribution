@@ -88,7 +88,7 @@ class all_auth_posts(APIView):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, pk, format=None):
+    def get(self, request, format=None):
         author_object = Author.objects.get(id=pk)
 
         asker_host = request.META.get("HTTP_HOST")
