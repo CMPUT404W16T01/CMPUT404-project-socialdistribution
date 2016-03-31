@@ -233,9 +233,11 @@ def get_profile(request, pk):
 
 
     url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
+    url = "http://ditto-test.herokuapp.com/api/authors"
     print url
     req = urllib2.Request(url)
 
+    '''
     if 'ditto-test' in them_host:
         base64string = base64.encodestring('%s:%s' % ('admin', 'pass')).replace('\n', '')
         req.add_header("Authorization", "Basic %s" % base64string)
@@ -247,6 +249,8 @@ def get_profile(request, pk):
             if (them_host in host.url) or (host.url in them_host):
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string)
+    '''
+    
 
     print "here"
     response = urllib2.urlopen(req).read()
