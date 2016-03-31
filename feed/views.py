@@ -287,7 +287,8 @@ def create_comment(request):
     # WE COULD USE THIS IF THEY GAVE US ORIGIN INSTEAD OF AN EMPTY STRING
     # if "origin":"http://whereitcamefrom.com/api/posts/zzzzz", 
 
-    url1 = origin + "/comments/"
+    # url1 = origin + "/comments/"
+    url1 = origin + "/api/posts/" + parent_id + "/comments"
 
     '''
     flag = True
