@@ -296,3 +296,28 @@ class friend_request(APIView):
 
 
         return Response()
+
+class unfriend(APIView):
+    """
+    Unfriend people here
+    """
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, format=None):
+        # get friend object where followed_id = the person we're unfriending.
+        author = request.data.get("author")
+        unfriend_id = request.data.get("unfriending")
+        print author, unfriend_id
+        try:
+            friend = Friend.objects.get(follower_id=str(author), followed_id=str(unfriend_id))
+            #print friend.follower_id, friend.followed_id
+            friend.delete()
+        except e:
+            print e
+
+
+        return Response()
+
+

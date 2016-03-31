@@ -294,7 +294,7 @@ def create_comment(request):
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
     if flag:
-        base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+        base64string = base64.encodestring('%s:%s' % ("TeamDitto", "teamditto")).replace('\n', '')
         req.add_header("Authorization", "Basic %s" % base64string) 
 
 

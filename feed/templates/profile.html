@@ -91,7 +91,16 @@
 
       OR<br>
 
-      <a href="#" style="color:salmon"><i class="fa fa-user-times fa-3x" style="color:salmon"></i><br>Unfriend</a>
+      <form id="unfriend-form" name="unfriend-form" action="{% url 'api:unfriend' %}" method='post'>
+        {% csrf_token %}
+        <input id='sender_id' value='{{sender.id}}' hidden></input>
+        <input id='friend_id' value='{{them.id}}' hidden></input>
+        <button id="unfriend_button" type="submit" style="color:salmon"><i class="fa fa-user-times fa-3x" style="color:salmon"></i><br>Unfriend</button>
+      </form>
+
+
+
+
     </div>
   </div></center>
       </div>
