@@ -215,18 +215,24 @@ def get_profile(request, pk):
                 for each in foreign_authors['authors']:
                     if each['id'] == pk:
                         them_object = each
+                        them_id = them_object.get('id')
+                        them_host = them_object.get('host')
                         break
         except:
             # do something maybe
             pass
     else:
         them_object = them_object[0]
+        them_id = them_object.id
+        them_host = them_object.host
 
-    print them_object.get('host')
 
-    them_host = them_object.get('host')
 
-    url = them_host + "api/author/" + them_object.get('id') + "/posts?id=" + us_object.get('id')
+    print them_id
+    print them_host
+
+
+    url = them_host + "api/author/" + them_id + "/posts?id=" + us_object.id
     print url
     req = urllib2.Request(url)
 
