@@ -248,8 +248,11 @@ def get_profile(request, pk):
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string)
 
+    print "here"
     response = urllib2.urlopen(req).read()
+    print "beep"
     loaded = json.loads(response)
+    print "boop"
 
     their_posts = loaded.get('posts')
     their_post_list = []
@@ -265,6 +268,7 @@ def get_profile(request, pk):
         'main_posts': main_posts,
     }
 
+    print "only render is failing"
     return render(request, 'profile.html', context)
 
 
