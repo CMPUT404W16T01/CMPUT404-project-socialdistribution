@@ -288,7 +288,13 @@ def create_comment(request):
     # if "origin":"http://whereitcamefrom.com/api/posts/zzzzz", 
 
     # url1 = origin + "/comments/"
-    url1 = origin + "/api/posts/" + parent_id + "/comments"
+
+    # janky stuff, we should just fix our api for the url
+
+    if 'ditto-test' in origin:
+        url1 = origin + "/comments/"
+    else:
+        url1 = origin + "/api/posts/" + parent_id + "/comments"
 
 
     # this works for posting a comment to ourselves
