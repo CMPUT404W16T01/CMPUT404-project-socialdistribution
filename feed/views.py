@@ -252,8 +252,6 @@ def get_profile(request, pk):
         all_posts = Post.objects.filter(author=author_object)
         return_posts = all_posts
 
-        serializer = PostSerializer(return_posts, many=True)
-
         context = {
             'sender': us_object,
             'them': them_object,
