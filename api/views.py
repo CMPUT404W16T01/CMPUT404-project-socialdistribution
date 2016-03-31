@@ -102,9 +102,9 @@ class author_posts(APIView):
             print asker_id
             if asker_id == None:
                 print "beep"
-                packet = {"details": "give an ?id=xxxxx"}
-                packet = json.loads(packet)
-                return Response(packet, status=status.HTTP_400_BAD_REQUEST)
+                #packet = {"details": "give an ?id=xxxxx"}
+                #packet = json.loads(packet)
+                return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 print "boop"
                 asker_id = str(asker_id)
