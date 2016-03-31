@@ -233,7 +233,7 @@ def get_profile(request, pk):
 
 
     url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
-    url = "http://ditto-test.herokuapp.com/api/authors"
+    url = them_host + "api/author/" + them_id + "/posts"
     print url
     req = urllib2.Request(url)
 
