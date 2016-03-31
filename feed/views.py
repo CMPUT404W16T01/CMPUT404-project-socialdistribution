@@ -311,7 +311,7 @@ def create_comment(request):
     for host in foreign_hosts:
         print host.url
         print origin
-        if origin in host.url:
+        if origin == host.url:
             base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
             req.add_header("Authorization", "Basic %s" % base64string) 
             print host.url
