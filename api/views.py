@@ -99,6 +99,9 @@ class author_posts(APIView):
         except:
             asker_id = str(request.GET.get('id'))
 
+        print asker_id
+        print "I guess this one is broken"
+
         public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
         return_posts = public_posts
 
