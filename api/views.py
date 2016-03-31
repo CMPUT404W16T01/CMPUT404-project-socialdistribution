@@ -171,12 +171,6 @@ class author_posts(APIView):
                     break
 
 
-
-
-
-
-
-
         serializer = PostSerializer(return_posts, many=True)
         return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "posts": serializer.data})

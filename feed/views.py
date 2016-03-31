@@ -222,10 +222,26 @@ def get_profile(request, pk):
     else:
         them_object = them_object[0]
 
+    print them_object['url']
+
+'''
+    url = i.url + "api/posts"
+    req = urllib2.Request(url)
+
+    base64string = base64.encodestring('%s:%s' % (i.username, i.password)).replace('\n', '')
+    req.add_header("Authorization", "Basic %s" % base64string) 
+
+    response = urllib2.urlopen(req).read()
+    loaded = json.loads(response)
+
+    their_posts = loaded.get('posts')
+    their_post_list = []'''
+
 
     context = {
         'sender': us_object,
         'them': them_object,
+        'main_posts': main_posts,
     }
 
     return render(request, 'profile.html', context)
