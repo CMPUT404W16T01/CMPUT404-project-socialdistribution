@@ -102,7 +102,8 @@ class author_posts(APIView):
             try:
                 asker_id = str(request.GET.get('id'))
             except:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                packet = {"detail": "give an ?id=xxxx"}
+                return Response(packet, status=status.HTTP_400_BAD_REQUEST)
 
 
 
