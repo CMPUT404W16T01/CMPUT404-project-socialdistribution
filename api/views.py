@@ -167,7 +167,7 @@ class all_auth_posts(APIView):
 
             for author in loaded['authors']:
                 # if we are directly friends lets just give it to them
-                if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+                if ((len(friend_to_author) == 1) and (len(author_to_friend) == 1)) or (each_id == asker_id):
                     foaf_posts = Post.objects.filter(author=each, visibility="FOAF")
                     return_posts = return_posts | foaf_posts
                     break
@@ -281,7 +281,7 @@ class author_posts(APIView):
 
         for author in loaded['authors']:
             # if we are directly friends lets just give it to them
-            if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+            if ((len(friend_to_author) == 1) and (len(author_to_friend) == 1)) or (pk == asker_id):
                 foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
                 return_posts = return_posts | foaf_posts
                 break
