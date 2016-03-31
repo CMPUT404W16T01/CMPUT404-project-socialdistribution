@@ -87,7 +87,7 @@ class author_posts(APIView):
     def get(self, request, pk, format=None):
         author_object = Author.objects.get(id=pk)
 
-        print request.meta
+        print request.META
 
 
         try:
