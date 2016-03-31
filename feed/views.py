@@ -400,6 +400,7 @@ def get_profile(request, pk):
                 comment_author = com.author_name
                 new_comment = Comment(author_name=comment_author, comment=comment_body)
                 posts_comments.append(new_comment)
+                print comment_body
             a.comments = posts_comments
 
         context = {
