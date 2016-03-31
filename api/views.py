@@ -93,11 +93,16 @@ class author_posts(APIView):
 
         asker_host = request.META.get("HTTP_HOST")
 
+        print asker_host
+        print "really"
+
         try:
             asker_object = Author.objects.get(email=request.user)
             asker_id = str(asker_object.id)
+            print "WHYYY"
         except:
             asker_id = str(request.GET.get('id'))
+            print "PLEASE"
 
         print asker_id
         print "I guess this one is broken"
