@@ -5,7 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from feed.models import Post, Git_Post, Author, Comment, ForeignHost, Image
+from feed.models import Post, Git_Post, Author, Comment, ForeignHost, Img
 from django.contrib.auth.models import User
 from django.template import Context, loader, Template
 import uuid
@@ -18,6 +18,9 @@ import feedparser
 from dateutil.parser import parse
 from datetime import datetime
 import requests
+import os
+import uuid
+import base64
 
 
 # Create your views here.
@@ -302,15 +305,13 @@ def create_comment(request):
     return redirect('/feed')
 
 
-def add_image(request):
-
-    return HttpResponse("OK")
 
 def create_post(request):
     print "here"
     print request.FILES.get('file')
     print type(request.FILES.get('file'))
     image = request.FILES.get('file')
+
     content = request.POST.get('post-input')
     published = datetime.now()
     is_markdown = json.loads(request.POST.get('is-markdown-post'))
@@ -346,11 +347,16 @@ def create_post(request):
                     description=description, id = post_id)
 
     if image:
-        image_blob = image.read()
-        print image_blob
-        new_image = Image(image_blob = image_blob, parent_post=new_post)
+        print image.content_type
+        image.name = str(uuid.uuid4())
+        print image.name
+        new_image = Img(actual_image= image, parent_post=new_post)
         new_image.save()
 
+        new_post.content = new_post.content + ' <br>   <img src="http://127.0.0.1:8000/ditto/media/images/'+image.name+'" >'
+
+
+    print new_post.content
 
     new_post.save()
 

@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 import uuid
 from django.contrib.auth.models import User
+import os
 
 
 # Create your models here.
@@ -89,7 +90,10 @@ class ForeignHost(models.Model):
     def __unicode__(self):
         return str(self.url)
 
-class Image(models.Model):
+class Img(models.Model):
     primary_key = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    image_blob = models.BinaryField()
-    parent = models.ForeignKey(Post)
+    actual_image = models.ImageField(upload_to = os.path.join("images"))
+    parent_post = models.ForeignKey(Post)
+
+    def __unicode__(self):
+        return str(self.id)
