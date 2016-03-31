@@ -11,6 +11,7 @@ from feed.models import Post, Author, Comment, Friend, CommentAuthor, ForeignHos
 
 import requests
 import urllib2
+import base64
 
 
 class public_posts(APIView):
