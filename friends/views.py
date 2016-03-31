@@ -39,10 +39,9 @@ def friends(request):
 			# friend is foreign
 			except:
 				url = i.follower_host + ("/api/author/%s" % str(i.follower_id))
-				foreign_hosts = ForeignHost.objects.filter(url=i.follower_host)
-				if (foreign_hosts.username != 'null'):
-					base64string = base64.encodestring('%s:%s' % (foreign_hosts.username, foreign_hosts.password)).replace('\n', '')
-					req.add_header("Authorization", "Basic %s" % base64string) 
+				foreign_hosts = ForeignHost.objects.get(url=i.follower_host)
+				base64string = base64.encodestring('%s:%s' % (foreign_hosts.username, foreign_hosts.password)).replace('\n', '')
+				req.add_header("Authorization", "Basic %s" % base64string) 
 
 				req = urllib2.Request(url)
 				response = urllib2.urlopen(req).read()
