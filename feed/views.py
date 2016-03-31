@@ -238,7 +238,7 @@ def get_profile(request, pk):
 
             # get the posts from that user
             foreign_host = ForeignHost.objects.get(url=them_host)
-            url = them_host + "/api/author/posts/?" + them_id
+            url = them_host + "/api/author/" + them_id + "/posts/"
             print url
             req = urllib2.Request(url)
 
@@ -250,6 +250,12 @@ def get_profile(request, pk):
             response = urllib2.urlopen(req).read()
             loaded = json.loads(response)
             print loaded
+
+            context = {
+                "sender": us_object,
+                "them": them_object,
+                "main_posts": return_posts
+            }
 
         except:
             # do something maybe
