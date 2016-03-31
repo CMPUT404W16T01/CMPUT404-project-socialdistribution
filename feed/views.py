@@ -222,7 +222,7 @@ def get_profile(request, pk):
     else:
         them_object = them_object[0]
 
-    print them_object['url']
+    print them_object
 
 
 
