@@ -140,24 +140,34 @@ class author_posts(APIView):
         url = "http://" + asker_host + "/api/friends/" + asker_id
         print url
 
-        req = urllib2.Request(url)
+                
+        #req = urllib2.Request(url)
+
+
         # assume we are sending to ourselves to begin with, if we are getting this from
         # another host then we will update after
-        base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
-        req.add_header("Authorization", "Basic %s" % base64string)
+        #base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+        #req.add_header("Authorization", "Basic %s" % base64string)
+
+        r = requests.get(url, auth=("admin", "pass"))
+
 
         foreign_hosts = ForeignHost.objects.filter()
         for host in foreign_hosts:
             # if the sender host, which is a clipped version of the full host path, is part of it, then that host
             # is the correct one we're looking for
             if asker_host in host.url:
-                base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
-                req.add_header("Authorization", "Basic %s" % base64string)
+                #base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+                #req.add_header("Authorization", "Basic %s" % base64string)
+                r = requests.get(url, auth=(host.username, host.password))
 
         print "how about now"
-        response = urllib2.urlopen(req).read()
+
+
+        #response = urllib2.urlopen(req).read()
         print "i would think this one fails"
-        loaded = json.loads(response)
+        #loaded = json.loads(response)
+        loaded = json.loads(r.text)
 
         print loaded['authors']
 
