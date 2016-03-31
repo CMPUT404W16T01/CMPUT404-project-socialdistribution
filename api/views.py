@@ -174,8 +174,8 @@ class all_auth_posts(APIView):
                 else:
                     # we should check if we are friends of any of A's friends
                     #author is a string of a uuid
-                    a_to_b = Friend.objects.filter(follower_id=pk, followed_id=author)
-                    b_to_a = Friend.objects.filter(follower_id=author, followed_id=pk)
+                    a_to_b = Friend.objects.filter(follower_id=asker_id, followed_id=author)
+                    b_to_a = Friend.objects.filter(follower_id=author, followed_id=asker_id)
                     if (len(a_to_b) == 1) and (len(b_to_a) == 1):
                         # we are friends with one of their friends
                         foaf_posts = Post.objects.filter(author=each, visibility="FOAF")
