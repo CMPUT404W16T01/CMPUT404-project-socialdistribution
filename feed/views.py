@@ -238,12 +238,10 @@ def get_profile(request, pk):
 
             # get the posts from that user
             foreign_host = ForeignHost.objects.get(url=them_host)
-            url = them_host + "/api/author/" + them_id + "/posts/"
+            url = them_host + "/api/author/" + them_id + "/posts?id=" + str(us_object.id)
             print url
             req = urllib2.Request(url)
 
-            # # assume we are sending to ourselves to begin with, if we are getting this from
-            # # another host then we will update after
             base64string = base64.encodestring('%s:%s' % (foreign_host.username, foreign_host.password)).replace('\n', '')
             req.add_header("Authorization", "Basic %s" % base64string)
 

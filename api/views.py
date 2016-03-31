@@ -184,9 +184,6 @@ class all_auth_posts(APIView):
 
 
 
-
-
-
         # we need to get all the posts 
         serializer = PostSerializer(return_posts, many=True)
         return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
