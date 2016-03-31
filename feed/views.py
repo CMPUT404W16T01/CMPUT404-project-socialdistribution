@@ -222,7 +222,34 @@ def get_profile(request, pk):
     else:
         them_object = them_object[0]
 
-    print them_object
+    print them_object['host']
+    print them_object.get('host')
+
+    them_host = them_object.get('host')
+
+    url = them_host + "api/author/" + them_object.get('id') + "/posts?id=" + us_object.get('id')
+    print url
+    req = urllib2.Request(url)
+
+    if 'ditto-test' in them_host:
+        base64string = base64.encodestring('%s:%s' % ('admin', 'pass')).replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string)
+    else:
+        foreign_hosts = ForeignHost.objects.filter()
+        for host in foreign_hosts:
+            # if the sender host, which is a clipped version of the full host path, is part of it, then that host
+            # is the correct one we're looking for
+            if (them_host in host.url) or (host.url in them_host):
+                base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+                req.add_header("Authorization", "Basic %s" % base64string)
+
+    response = urllib2.urlopen(req).read()
+    loaded = json.loads(response)
+
+    their_posts = loaded.get('posts')
+    their_post_list = []
+
+    main_posts = []
 
 
 
