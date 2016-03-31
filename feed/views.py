@@ -318,20 +318,15 @@ def get_profile(request, pk):
             all_posts = Post.objects.filter(author=author_object)
             return_posts = all_posts
 
-            print "beep"
-            print len(return_posts)
             for a in return_posts:
                 current_post_id = a.id
                 comments_list = Comment.objects.filter(post_id=current_post_id)
-                print current_post_id
-                print len(comments_list)
                 posts_comments = []
                 for com in comments_list:
                     comment_body = com.comment
                     comment_author = com.author_name
                     new_comment = Comment(author_name=comment_author, comment=comment_body)
                     posts_comments.append(new_comment)
-                    print comment_body
                 a.comments = posts_comments
 
             context = {
@@ -405,14 +400,9 @@ def get_profile(request, pk):
                     return_posts = return_posts | foaf_posts
                     break
 
-
-        print "beep"
-        print len(return_posts)
         for a in return_posts:
             current_post_id = a.id
             comments_list = Comment.objects.filter(post_id=current_post_id)
-            print current_post_id
-            print len(comments_list)
             posts_comments = []
             for com in comments_list:
                 comment_body = com.comment
