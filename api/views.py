@@ -125,12 +125,15 @@ class author_posts(APIView):
         # fetch list of A's friends
         url = "http://" + asker_host + "/api/friends/" + asker_id
         req = urllib2.Request(url)
+        # assume we are sending to ourselves to begin with, if we are getting this from
+        # another host then we will update after
+        base64string = base64.encodestring('%s:%s' % ("admin", "pass").replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string)
+
         foreign_hosts = ForeignHost.objects.filter()
         for host in foreign_hosts:
             # if the sender host, which is a clipped version of the full host path, is part of it, then that host
             # is the correct one we're looking for
-            print asker_host
-            print host.url
             if asker_host in host.url:
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string)
