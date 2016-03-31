@@ -318,6 +318,7 @@ def create_comment(request):
 
 
 
+    print "I get out"
 
     urllib2.urlopen(req, json_packet)
     # new_comment.save()
