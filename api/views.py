@@ -104,6 +104,11 @@ class author_posts(APIView):
         if (pk == asker_id):
             all_posts = Post.objects.filter(author=author_object)
             return_posts = all_posts
+
+            serializer = PostSerializer(return_posts, many=True)
+
+            return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
+                         "previous": "http://previouspageurlhere", "posts": serializer.data})
       
         # if the asker is a friend
         friend_to_author = Friend.objects.filter(follower_id=pk, followed_id=asker_id)
@@ -142,7 +147,32 @@ class author_posts(APIView):
         response = urllib2.urlopen(req).read()
         loaded = json.loads(response)
 
-        print loaded
+        print loaded['authors']
+
+        # we now have a list of authors who are friends with the asker
+        # if we are friends with any of them then we can give them our FOAF marked posts
+        # or if we were friends to begin with they can also see FOAF marked posts
+
+        for author in loaded['authors']:
+            # if we are directly friends lets just give it to them
+            if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+                foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
+                return_posts = return_posts | foaf_posts
+                break
+            else:
+                # we should check if we are friends of any of A's friends
+                #author is a string of a uuid
+                a_to_b = Friend.objects.filter(follower_id=pk, followed_id=author)
+                b_to_a = Friend.objects.filter(follower_id=author, followed_id=pk)
+                if (len(a_to_b) == 1) and (len(b_to_a) == 1):
+                    # we are friends with one of their friends
+                    foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
+                    return_posts = return_posts | foaf_posts
+                    break
+
+
+
+
 
 
 
