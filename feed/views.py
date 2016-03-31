@@ -250,11 +250,6 @@ def create_comment(request):
     is_markdown = request.POST.get('comment-is-markdown',default='off')
     origin = request.POST.get('comment-parent-origin')
 
-    print comment
-    print parent_id
-    print is_markdown
-    print origin
-
     if is_markdown == 'on':
         comment = CommonMark.commonmark(comment)
         is_markdown = True
@@ -299,7 +294,7 @@ def create_comment(request):
         url1 = origin + "/comments/"
 
     # this works for posting a comment to ourselves
-    #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"#?id=" + str(author_object.id)
+    #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"
 
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
