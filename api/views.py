@@ -5,6 +5,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
 
 from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer, AllAuthorSerializer
 from feed.models import Post, Author, Comment, Friend, CommentAuthor, ForeignHost
@@ -93,23 +94,17 @@ class author_posts(APIView):
 
         asker_host = request.META.get("HTTP_HOST")
 
-        print asker_host
-        print "really"
-
-
         try:
-            print "a"
-            print request.user
-            asker_object = Author.objects.get(email=request.user)
-            asker_id = str(asker_object.id)
-            print "WHYYY"
+            if request.user != 'admin':
+                asker_object = Author.objects.get(email=request.user)
+                asker_id = str(asker_object.id)
         except:
-            print "b"
-            asker_id = str(request.GET.get('id'))
-            print "PLEASE"
+            try:
+                asker_id = str(request.GET.get('id'))
+            except:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        print asker_id
-        print "I guess this one is broken"
+
 
         public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
         return_posts = public_posts
