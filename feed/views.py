@@ -301,15 +301,16 @@ def create_comment(request):
     # this works for posting a comment to ourselves
     #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"
 
-    print "it stops here doesnt it"
 
     req = urllib2.Request(url1)
-    print "maybe not"
     req.add_header('Content-Type', 'application/json')
 
     foreign_hosts = ForeignHost.objects.filter()
 
+
     for host in foreign_hosts:
+        print host.url
+        print origin
         if origin in host.url:
             base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
             req.add_header("Authorization", "Basic %s" % base64string) 
