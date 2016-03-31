@@ -129,9 +129,12 @@ class author_posts(APIView):
         for host in foreign_hosts:
             # if the sender host, which is a clipped version of the full host path, is part of it, then that host
             # is the correct one we're looking for
+            print asker_host
+            print host.url
             if asker_host in host.url:
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string)
+
         response = urllib2.urlopen(req).read()
         loaded = json.loads(response)
 
