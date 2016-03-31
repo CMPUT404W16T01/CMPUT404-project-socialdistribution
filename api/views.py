@@ -5,11 +5,14 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
 
 from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer, AllAuthorSerializer
 from feed.models import Post, Author, Comment, Friend, CommentAuthor, ForeignHost
 
 import requests
+import urllib2
+import base64
 
 
 class public_posts(APIView):
@@ -76,9 +79,125 @@ class post_comments(APIView):
         return Response({})
 
 
+
+class all_auth_posts(APIView):
+    """
+    List all posts that the current asking author can see, hosted on our server
+    """
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        asker_host = request.META.get("HTTP_HOST")
+
+        try:
+            asker_object = Author.objects.get(email=request.user)
+            asker_id = str(asker_object.id)
+        except:
+            asker_id = request.GET.get('id', default=None)
+            if asker_id == None:
+                return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                asker_id = str(asker_id)
+
+        asker_object = Author.objects.get(id=asker_id)
+
+        public_posts = Post.objects.filter(visibility="PUBLIC")
+        return_posts = public_posts
+
+
+        all_authors = Author.objects.filter()
+
+        for each in all_authors:
+            each_id = str(each.id)
+
+            # the asker is the user itself, add in what only they could see
+            if (each_id == asker_id):
+                private_posts = Post.objects.filter(author=asker_object, visibility="PRIVATE")
+                return_posts = return_posts | private_posts
+                continue
+          
+            # if the asker is a friend
+            friend_to_author = Friend.objects.filter(follower_id=each_id, followed_id=asker_id)
+            author_to_friend = Friend.objects.filter(follower_id=asker_id, followed_id=each_id)
+
+            if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+                #then they are friends, because the relationship is mutual
+                friend_posts = Post.objects.filter(author=each, visibility="FRIENDS")
+                return_posts = return_posts | friend_posts
+
+            # if the asker is on our server, and a friend
+            if (len(Author.objects.filter(id=asker_id)) > 0) and (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+                server_friends_posts = Post.objects.filter(author=each, visibility="SERVERONLY")
+                return_posts = return_posts | server_friends_posts
+
+            # TODO: Look at FOAF stuff
+            # asker_id is person A
+            # as ditto, we need to ask person A's host who A is friends with
+
+            # fetch list of A's friends
+            url = "http://" + asker_host + "/api/friends/" + asker_id
+            req = urllib2.Request(url)
+
+
+            # assume we are sending to ourselves to begin with, if we are getting this from
+            # another host then we will update after
+            base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+            req.add_header("Authorization", "Basic %s" % base64string)
+
+
+            foreign_hosts = ForeignHost.objects.filter()
+            for host in foreign_hosts:
+                # if the sender host, which is a clipped version of the full host path, is part of it, then that host
+                # is the correct one we're looking for
+                if asker_host in host.url:
+                    base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+                    req.add_header("Authorization", "Basic %s" % base64string)
+
+
+            response = urllib2.urlopen(req).read()
+            loaded = json.loads(response)
+
+            print loaded['authors']
+
+            # we now have a list of authors who are friends with the asker
+            # if we are friends with any of them then we can give them our FOAF marked posts
+            # or if we were friends to begin with they can also see FOAF marked posts
+
+            for author in loaded['authors']:
+                # if we are directly friends lets just give it to them
+                if ((len(friend_to_author) == 1) and (len(author_to_friend) == 1)) or (each_id == asker_id):
+                    foaf_posts = Post.objects.filter(author=each, visibility="FOAF")
+                    return_posts = return_posts | foaf_posts
+                    break
+                else:
+                    # we should check if we are friends of any of A's friends
+                    #author is a string of a uuid
+                    a_to_b = Friend.objects.filter(follower_id=asker_id, followed_id=author)
+                    b_to_a = Friend.objects.filter(follower_id=author, followed_id=asker_id)
+                    if (len(a_to_b) == 1) and (len(b_to_a) == 1):
+                        # we are friends with one of their friends
+                        foaf_posts = Post.objects.filter(author=each, visibility="FOAF")
+                        return_posts = return_posts | foaf_posts
+                        break
+
+
+
+
+
+
+        # we need to get all the posts 
+        serializer = PostSerializer(return_posts, many=True)
+        return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
+                         "previous": "http://previouspageurlhere", "posts": serializer.data})
+
+
+
+
 class author_posts(APIView):
     """
-    List all posts.
+    List all posts of an author that can be seen by the authenticated user
     """
 
     authentication_classes = (SessionAuthentication, BasicAuthentication)
@@ -87,11 +206,18 @@ class author_posts(APIView):
     def get(self, request, pk, format=None):
         author_object = Author.objects.get(id=pk)
 
+        asker_host = request.META.get("HTTP_HOST")
+
         try:
             asker_object = Author.objects.get(email=request.user)
             asker_id = str(asker_object.id)
         except:
-            asker_id = str(request.GET.get('id'))
+            asker_id = request.GET.get('id', default=None)
+            if asker_id == None:
+                return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                asker_id = str(asker_id)
+
 
         public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
         return_posts = public_posts
@@ -100,6 +226,11 @@ class author_posts(APIView):
         if (pk == asker_id):
             all_posts = Post.objects.filter(author=author_object)
             return_posts = all_posts
+
+            serializer = PostSerializer(return_posts, many=True)
+
+            return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
+                         "previous": "http://previouspageurlhere", "posts": serializer.data})
       
         # if the asker is a friend
         friend_to_author = Friend.objects.filter(follower_id=pk, followed_id=asker_id)
@@ -110,12 +241,61 @@ class author_posts(APIView):
             friend_posts = Post.objects.filter(author=author_object, visibility="FRIENDS")
             return_posts = return_posts | friend_posts
 
-        # if the asker is on our server, need to check if they are on our server first
-        if (len(Author.objects.filter(id=asker_id)) > 0):
-            server_only_posts = Post.objects.filter(author=author_object, visibility="SERVERONLY")
-            return_posts = return_posts | server_only_posts
+        # if the asker is on our server, and a friend
+        if (len(Author.objects.filter(id=asker_id)) > 0) and (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+            server_friends_posts = Post.objects.filter(author=author_object, visibility="SERVERONLY")
+            return_posts = return_posts | server_friends_posts
 
         # TODO: Look at FOAF stuff
+        # asker_id is person A
+        # as ditto, we need to ask person A's host who A is friends with
+
+        # fetch list of A's friends
+        url = "http://" + asker_host + "/api/friends/" + asker_id
+        req = urllib2.Request(url)
+
+
+        # assume we are sending to ourselves to begin with, if we are getting this from
+        # another host then we will update after
+        base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string)
+
+
+        foreign_hosts = ForeignHost.objects.filter()
+        for host in foreign_hosts:
+            # if the sender host, which is a clipped version of the full host path, is part of it, then that host
+            # is the correct one we're looking for
+            if asker_host in host.url:
+                base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+                req.add_header("Authorization", "Basic %s" % base64string)
+
+
+        response = urllib2.urlopen(req).read()
+        loaded = json.loads(response)
+
+        print loaded['authors']
+
+        # we now have a list of authors who are friends with the asker
+        # if we are friends with any of them then we can give them our FOAF marked posts
+        # or if we were friends to begin with they can also see FOAF marked posts
+
+        for author in loaded['authors']:
+            # if we are directly friends lets just give it to them
+            if ((len(friend_to_author) == 1) and (len(author_to_friend) == 1)) or (pk == asker_id):
+                foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
+                return_posts = return_posts | foaf_posts
+                break
+            else:
+                # we should check if we are friends of any of A's friends
+                #author is a string of a uuid
+                a_to_b = Friend.objects.filter(follower_id=pk, followed_id=author)
+                b_to_a = Friend.objects.filter(follower_id=author, followed_id=pk)
+                if (len(a_to_b) == 1) and (len(b_to_a) == 1):
+                    # we are friends with one of their friends
+                    foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
+                    return_posts = return_posts | foaf_posts
+                    break
+
 
         serializer = PostSerializer(return_posts, many=True)
         return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
