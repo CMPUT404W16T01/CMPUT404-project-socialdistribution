@@ -79,9 +79,10 @@ class post_comments(APIView):
         return Response({})
 
 
-class author_posts(APIView):
+
+class all_auth_posts(APIView):
     """
-    List all posts.
+    List all posts that the current asking author can see
     """
 
     authentication_classes = (SessionAuthentication, BasicAuthentication)
@@ -97,7 +98,40 @@ class author_posts(APIView):
             asker_id = str(asker_object.id)
         except:
             asker_id = request.GET.get('id', default=None)
-            print asker_id
+            if asker_id == None:
+                return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                asker_id = str(asker_id)
+
+        public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
+        return_posts = public_posts
+
+        # we need to get all the posts 
+        serializer = PostSerializer(return_posts, many=True)
+        return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
+                         "previous": "http://previouspageurlhere", "posts": serializer.data})
+
+
+
+
+class author_posts(APIView):
+    """
+    List all posts of an author that can be seen by the authenticated user
+    """
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, pk, format=None):
+        author_object = Author.objects.get(id=pk)
+
+        asker_host = request.META.get("HTTP_HOST")
+
+        try:
+            asker_object = Author.objects.get(email=request.user)
+            asker_id = str(asker_object.id)
+        except:
+            asker_id = request.GET.get('id', default=None)
             if asker_id == None:
                 return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -136,11 +170,7 @@ class author_posts(APIView):
         # as ditto, we need to ask person A's host who A is friends with
 
         # fetch list of A's friends
-        print " do I still work here?"
         url = "http://" + asker_host + "/api/friends/" + asker_id
-        print url
-
-                
         req = urllib2.Request(url)
 
 
@@ -158,11 +188,8 @@ class author_posts(APIView):
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string)
 
-        print "how about now"
-
 
         response = urllib2.urlopen(req).read()
-        print "i would think this one fails"
         loaded = json.loads(response)
 
         print loaded['authors']
