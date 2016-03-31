@@ -10,6 +10,7 @@ from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer,
 from feed.models import Post, Author, Comment, Friend, CommentAuthor, ForeignHost
 
 import requests
+import urllib2
 
 
 class public_posts(APIView):
@@ -87,8 +88,7 @@ class author_posts(APIView):
     def get(self, request, pk, format=None):
         author_object = Author.objects.get(id=pk)
 
-        print request.META.get("HTTP_HOST")
-
+        asker_host = request.META.get("HTTP_HOST")
 
         try:
             asker_object = Author.objects.get(email=request.user)
@@ -121,6 +121,22 @@ class author_posts(APIView):
         # TODO: Look at FOAF stuff
         # asker_id is person A
         # as ditto, we need to ask person A's host who A is friends with
+
+        # fetch list of A's friends
+        url = "http://" + asker_host + "/api/friends/" + asker_id
+        req = urllib2.Request(url)
+        foreign_hosts = ForeignHost.objects.filter()
+        for host in foreign_hosts:
+            # if the sender host, which is a clipped version of the full host path, is part of it, then that host
+            # is the correct one we're looking for
+            if asker_host in host.url:
+                base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+                req.add_header("Authorization", "Basic %s" % base64string)
+        response = urllib2.urlopen(req).read()
+        loaded = json.loads(response)
+
+        print loaded
+
 
 
 
