@@ -223,7 +223,7 @@ def get_profile(request, pk):
             pass
     else:
         them_object = them_object[0]
-        them_id = them_object.id
+        them_id = str(them_object.id)
         them_host = them_object.host
 
 
