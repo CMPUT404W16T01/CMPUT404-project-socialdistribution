@@ -95,25 +95,13 @@ class author_posts(APIView):
         asker_host = request.META.get("HTTP_HOST")
 
         try:
-            if request.user != 'admin':
-                print "what"
-                asker_object = Author.objects.get(email=request.user)
-                print "the"
-                asker_id = str(asker_object.id)
-                print "heck"
-            else:
-                print "gah" 
-                raise
+            asker_object = Author.objects.get(email=request.user)
+            asker_id = str(asker_object.id)
         except:
-            try:
-                print "kill"
-                asker_id = str(request.GET.get('id'))
-                print "me"
-            except:
-                print "beep"
-                packet = {"detail": "give an ?id=xxxx"}
-                print "boop"
+            asker_id = str(request.GET.get('id', default=None))
+            if asker_id == None:
                 return Response(packet, status=status.HTTP_400_BAD_REQUEST)
+
 
         print "WHYYYY"
 
