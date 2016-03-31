@@ -89,8 +89,6 @@ class all_auth_posts(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
-        author_object = Author.objects.get(id=pk)
-
         asker_host = request.META.get("HTTP_HOST")
 
         try:
@@ -103,7 +101,9 @@ class all_auth_posts(APIView):
             else:
                 asker_id = str(asker_id)
 
-        public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
+        asker_object = Author.objects.get(id=asker_id)
+
+        public_posts = Post.objects.filter(visibility="PUBLIC")
         return_posts = public_posts
 
 
@@ -114,7 +114,7 @@ class all_auth_posts(APIView):
 
             # the asker is the user itself, add in what only they could see
             if (each_id == asker_id):
-                private_posts = Post.objects.filter(author=author_object, visibility="PRIVATE")
+                private_posts = Post.objects.filter(author=asker_object, visibility="PRIVATE")
                 return_posts = return_posts | private_posts
                 continue
           
@@ -124,12 +124,12 @@ class all_auth_posts(APIView):
 
             if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
                 #then they are friends, because the relationship is mutual
-                friend_posts = Post.objects.filter(author=author_object, visibility="FRIENDS")
+                friend_posts = Post.objects.filter(author=each, visibility="FRIENDS")
                 return_posts = return_posts | friend_posts
 
             # if the asker is on our server, and a friend
             if (len(Author.objects.filter(id=asker_id)) > 0) and (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
-                server_friends_posts = Post.objects.filter(author=author_object, visibility="SERVERONLY")
+                server_friends_posts = Post.objects.filter(author=each, visibility="SERVERONLY")
                 return_posts = return_posts | server_friends_posts
 
             # TODO: Look at FOAF stuff
@@ -168,7 +168,7 @@ class all_auth_posts(APIView):
             for author in loaded['authors']:
                 # if we are directly friends lets just give it to them
                 if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
-                    foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
+                    foaf_posts = Post.objects.filter(author=each, visibility="FOAF")
                     return_posts = return_posts | foaf_posts
                     break
                 else:
@@ -178,7 +178,7 @@ class all_auth_posts(APIView):
                     b_to_a = Friend.objects.filter(follower_id=author, followed_id=pk)
                     if (len(a_to_b) == 1) and (len(b_to_a) == 1):
                         # we are friends with one of their friends
-                        foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
+                        foaf_posts = Post.objects.filter(author=each, visibility="FOAF")
                         return_posts = return_posts | foaf_posts
                         break
 
