@@ -243,7 +243,10 @@ def get_profile(request, pk):
         them_id = str(them_object.id)
         them_host = them_object.host
 
-    author_object = Author.objects.get(id=pk)
+    try:
+        author_object = Author.objects.get(id=pk)
+    except: 
+        print "Author is offhost"
 
     asker_host = request.META.get("HTTP_HOST")
 
