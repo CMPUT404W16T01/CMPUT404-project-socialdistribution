@@ -127,7 +127,7 @@ class author_posts(APIView):
         req = urllib2.Request(url)
         # assume we are sending to ourselves to begin with, if we are getting this from
         # another host then we will update after
-        base64string = base64.encodestring('%s:%s' % ("admin", "pass").replace('\n', '')
+        base64string = base64.encodestring('%s:%s' % ("admin", "pass").replace('\n', ''))
         req.add_header("Authorization", "Basic %s" % base64string)
 
         foreign_hosts = ForeignHost.objects.filter()
