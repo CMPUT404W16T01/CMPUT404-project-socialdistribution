@@ -98,6 +98,8 @@ class author_posts(APIView):
             if request.user != 'admin':
                 asker_object = Author.objects.get(email=request.user)
                 asker_id = str(asker_object.id)
+            else:
+                raise
         except:
             try:
                 asker_id = str(request.GET.get('id'))
