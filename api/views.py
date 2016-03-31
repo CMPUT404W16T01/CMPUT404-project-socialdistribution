@@ -104,7 +104,9 @@ class author_posts(APIView):
             try:
                 asker_id = str(request.GET.get('id'))
             except:
+                print "beep"
                 packet = {"detail": "give an ?id=xxxx"}
+                print "boop"
                 return Response(packet, status=status.HTTP_400_BAD_REQUEST)
 
 
