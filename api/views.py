@@ -107,7 +107,7 @@ class all_auth_posts(APIView):
         return_posts = public_posts
 
 
-        all_authors = Author.objects.get()
+        all_authors = Author.objects.filter()
 
         for each in all_authors:
             each_id = str(each.id)
