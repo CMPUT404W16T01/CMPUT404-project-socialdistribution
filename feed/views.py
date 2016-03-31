@@ -300,6 +300,8 @@ def create_comment(request):
 
     foreign_hosts = ForeignHost.objects.filter()
 
+
+
     if 'ditto-test' in origin:
         base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
         req.add_header("Authorization", "Basic %s" % base64string)
@@ -309,7 +311,7 @@ def create_comment(request):
             print host.url
             print origin == host.url
             print origin in host.url
-            if origin == host.url:
+            if host.url in origin:
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string) 
 
