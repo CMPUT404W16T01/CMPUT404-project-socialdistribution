@@ -131,6 +131,7 @@ class author_posts(APIView):
         # as ditto, we need to ask person A's host who A is friends with
 
         # fetch list of A's friends
+        print " do I still work here?"
         url = "http://" + asker_host + "/api/friends/" + asker_id
         req = urllib2.Request(url)
         # assume we are sending to ourselves to begin with, if we are getting this from
@@ -146,7 +147,9 @@ class author_posts(APIView):
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string)
 
+        print "how about now"
         response = urllib2.urlopen(req).read()
+        print "i would think this one fails"
         loaded = json.loads(response)
 
         print loaded['authors']
