@@ -290,14 +290,6 @@ def create_comment(request):
     # url1 = origin + "/comments/"
     url1 = origin + "/api/posts/" + parent_id + "/comments"
 
-    '''
-    flag = True
-    if origin == "":
-        flag = False
-        url1 = "http://mighty-cliffs-82717.herokuapp.com/api/posts/" + parent_id + "/comments/"
-    else:
-        url1 = origin + "/comments/"
-    '''
 
     # this works for posting a comment to ourselves
     #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"
@@ -308,14 +300,18 @@ def create_comment(request):
 
     foreign_hosts = ForeignHost.objects.filter()
 
-
-    for host in foreign_hosts:
-        print host.url
-        print origin
-        if origin == host.url:
-            base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
-            req.add_header("Authorization", "Basic %s" % base64string) 
+    if 'ditto-test' in origin:
+        base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string)
+    else:
+        for host in foreign_hosts:
+            print origin
             print host.url
+            print origin == host.url
+            print origin in host.url
+            if origin == host.url:
+                base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+                req.add_header("Authorization", "Basic %s" % base64string) 
 
 
 
