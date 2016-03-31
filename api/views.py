@@ -89,6 +89,8 @@ class author_posts(APIView):
     def get(self, request, pk, format=None):
         author_object = Author.objects.get(id=pk)
 
+        print "I at least got over here"
+
         asker_host = request.META.get("HTTP_HOST")
 
         try:
