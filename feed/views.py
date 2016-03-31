@@ -245,54 +245,37 @@ def get_profile(request, pk):
 
     try:
         author_object = Author.objects.get(id=pk)
-        asker_host = request.META.get("HTTP_HOST")
-
-        try:
-            asker_object = Author.objects.get(email=request.user)
-            asker_id = str(asker_object.id)
-
-            public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
-            return_posts = public_posts
-
-            # the asker is the user itself, return everything
-            if (pk == asker_id):
-                all_posts = Post.objects.filter(author=author_object)
-                return_posts = all_posts
-
-                context = {
-                    'sender': us_object,
-                    'them': them_object,
-                    'main_posts': return_posts,
-                }
-
-                return render(request, 'profile.html', context)
-        except:
-            asker_id = request.GET.get('id', default=None)
-            if asker_id == None:
-                return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                asker_id = str(asker_id)
-
     except: 
         print "Author is offhost and is causing errors later in this code"
 
+    asker_host = request.META.get("HTTP_HOST")
+
+    try:
+        asker_object = Author.objects.get(email=request.user)
+        asker_id = str(asker_object.id)
+    except:
+        asker_id = request.GET.get('id', default=None)
+        if asker_id == None:
+            return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            asker_id = str(asker_id)
 
 
-    # public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
-    # return_posts = public_posts
+    public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
+    return_posts = public_posts
 
-    # # the asker is the user itself, return everything
-    # if (pk == asker_id):
-    #     all_posts = Post.objects.filter(author=author_object)
-    #     return_posts = all_posts
+    # the asker is the user itself, return everything
+    if (pk == asker_id):
+        all_posts = Post.objects.filter(author=author_object)
+        return_posts = all_posts
 
-    #     context = {
-    #         'sender': us_object,
-    #         'them': them_object,
-    #         'main_posts': return_posts,
-    #     }
+        context = {
+            'sender': us_object,
+            'them': them_object,
+            'main_posts': return_posts,
+        }
 
-    #     return render(request, 'profile.html', context)
+        return render(request, 'profile.html', context)
 
       
     # if the asker is a friend
