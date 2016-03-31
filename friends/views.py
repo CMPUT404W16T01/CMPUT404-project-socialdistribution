@@ -26,8 +26,8 @@ def friends(request):
 	for i in followed_by:
 		# if the followed_id == the use id, then add them to our list
 		if (author_object.id == i.followed_id):
-			#req = urllib2.Request("http://ditto-test.herokuapp.com/api/friends/%s/%s" % (str(i.follower_id), str(i.followed_id)))
-			req = urllib2.Request("http://localhost:8000/api/friends/%s/%s" % (str(i.follower_id), str(i.followed_id)))
+			req = urllib2.Request("http://ditto-test.herokuapp.com/api/friends/%s/%s" % (str(i.follower_id), str(i.followed_id)))
+			#req = urllib2.Request("http://localhost:8000/api/friends/%s/%s" % (str(i.follower_id), str(i.followed_id)))
 
 			base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
 			req.add_header("Authorization", "Basic %s" % base64string) 
