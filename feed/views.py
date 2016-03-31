@@ -63,7 +63,7 @@ def feed(request):
                 new_post.comments = comments
                 their_post_list.append(new_post)
 
-    except Exception e:
+    except Exception as e:
         print e
         print "couldn't get other hosts posts"
 
