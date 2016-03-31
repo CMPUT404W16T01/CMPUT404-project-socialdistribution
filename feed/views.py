@@ -25,7 +25,26 @@ import base64
 
 @login_required
 def feed(request):
-    #requests.get("")
+
+    # TODO: YOU MARCIN. DO THIS. 
+    # calling http://ditto-test.herokuapp.com/api/author/posts?id=ASKING_USERS_ID
+    # SHOULD just return all posts hosted by OUR server that the dude is supposed to see
+    # so you can hopefully cut away all the manual parsing done here so far and do something like
+
+    # url = http://ditto-test.herokuapp.com/api/author/posts?id=ASKING_USERS_ID
+    # req = urllib2.Request(url)
+    # base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+    # req.add_header("Authorization", "Basic %s" % base64string)
+    # response = urllib2.urlopen(req).read()
+    # loaded = json.loads(response)
+    # loaded['posts'] <- should be a list of all the posts
+    # or try loaded.get('posts') 
+
+    # assuming that happens, and that the other servers return the same thing all we have to do is call
+    # this url once on every server and we are good to go, maybe parsing out duplicates
+
+
+
 
     their_post_list = []
     try:
@@ -224,10 +243,6 @@ def get_profile(request, pk):
         them_id = str(them_object.id)
         them_host = them_object.host
 
-
-
-
-
     author_object = Author.objects.get(id=pk)
 
     asker_host = request.META.get("HTTP_HOST")
@@ -237,7 +252,6 @@ def get_profile(request, pk):
         asker_id = str(asker_object.id)
     except:
         asker_id = request.GET.get('id', default=None)
-        print asker_id
         if asker_id == None:
             return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -280,13 +294,9 @@ def get_profile(request, pk):
     # as ditto, we need to ask person A's host who A is friends with
 
     # fetch list of A's friends
-    print " do I still work here?"
     url = "http://" + asker_host + "/api/friends/" + asker_id
-    print url
-
-                
+         
     req = urllib2.Request(url)
-
 
     # assume we are sending to ourselves to begin with, if we are getting this from
     # another host then we will update after
@@ -302,14 +312,9 @@ def get_profile(request, pk):
             base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
             req.add_header("Authorization", "Basic %s" % base64string)
 
-    print "how about now"
-
-
     response = urllib2.urlopen(req).read()
-    print "i would think this one fails"
     loaded = json.loads(response)
 
-    print loaded['authors']
 
     # we now have a list of authors who are friends with the asker
     # if we are friends with any of them then we can give them our FOAF marked posts
@@ -332,16 +337,12 @@ def get_profile(request, pk):
                 return_posts = return_posts | foaf_posts
                 break
 
-
-
-
     context = {
         'sender': us_object,
         'them': them_object,
         'main_posts': return_posts,
     }
 
-    print "only render is failing"
     return render(request, 'profile.html', context)
 
 
