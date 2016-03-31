@@ -313,17 +313,10 @@ def create_comment(request):
         req.add_header("Authorization", "Basic %s" % base64string)
     else:
         for host in foreign_hosts:
-            print origin
-            print host.url
-            print origin == host.url
-            print origin in host.url
             if host.url in origin:
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string) 
 
-
-
-    print "I get out"
 
     urllib2.urlopen(req, json_packet)
     # new_comment.save()
