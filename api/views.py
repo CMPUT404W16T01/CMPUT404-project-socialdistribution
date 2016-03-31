@@ -99,10 +99,14 @@ class author_posts(APIView):
             asker_id = str(asker_object.id)
         except:
             asker_id = request.GET.get('id', default=None)
+            print asker_id
             if asker_id == None:
+                print "beep"
                 return Response(packet, status=status.HTTP_400_BAD_REQUEST)
             else:
+                print "boop"
                 asker_id = str(asker_id)
+                print "doop"
 
 
         print "WHYYYY"
