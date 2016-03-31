@@ -232,7 +232,7 @@ def get_profile(request, pk):
     print them_host
 
 
-    url = them_host + "api/author/" + them_id + "/posts?id=" + us_object.id
+    url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
     print url
     req = urllib2.Request(url)
 
