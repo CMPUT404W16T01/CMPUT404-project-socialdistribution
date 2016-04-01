@@ -95,13 +95,15 @@ class all_auth_posts(APIView):
             asker_object = Author.objects.get(email=request.user)
             asker_id = str(asker_object.id)
         except:
+            print "beep"
             asker_id = request.GET.get('id', default=None)
+            print asker_id
             if asker_id == None:
                 return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 asker_id = str(asker_id)
 
-        asker_object = Author.objects.get(id=asker_id)
+
 
         public_posts = Post.objects.filter(visibility="PUBLIC")
         return_posts = public_posts
