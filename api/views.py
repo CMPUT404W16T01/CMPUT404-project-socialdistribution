@@ -160,7 +160,6 @@ class all_auth_posts(APIView):
             response = urllib2.urlopen(req).read()
             loaded = json.loads(response)
 
-            print loaded['authors']
 
             # we now have a list of authors who are friends with the asker
             # if we are friends with any of them then we can give them our FOAF marked posts
@@ -270,8 +269,6 @@ class author_posts(APIView):
 
         response = urllib2.urlopen(req).read()
         loaded = json.loads(response)
-
-        print loaded['authors']
 
         # we now have a list of authors who are friends with the asker
         # if we are friends with any of them then we can give them our FOAF marked posts
@@ -467,6 +464,7 @@ class friend_request(APIView):
                 if foreign_host.username != 'null':
                     r = requests.post(url, json=packet)
                 else:
+                    print foreign_host.username, foreign_host.password
                     r = requests.post(url, json=packet, auth=(foreign_host.username, foreign_host.password))
             except Exception as e:
                 print e
