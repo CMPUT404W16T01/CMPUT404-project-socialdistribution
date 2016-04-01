@@ -73,6 +73,7 @@ def feed(request):
                 published_raw = post.get("published")
                 origin = post.get("origin")
                 id = post.get("id")
+                visibility = post.get("visibility")
                 published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
                 published  = published.replace(tzinfo=None)
 
@@ -85,7 +86,7 @@ def feed(request):
 
                         new_comment = Comment(author_name = comment_author, comment = comment_body)
                         comments.append(new_comment)
-                new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin)
+                new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
                 new_post.comments = comments
                 their_post_list.append(new_post)
 
@@ -100,14 +101,15 @@ def feed(request):
 
     github_name = "".join((author_object.github).split())
 
-    github_posts = create_github_post(github_name)
+
+
+
+
 
     # My feed, access all posts that I can see
     self_posts = Post.objects.filter(author_id=author_object)
     public_posts = Post.objects.filter(visibility="PUBLIC")
     all_comments = Comment.objects.all()
-    # friend_posts
-    # foaf_posts
     server_posts = Post.objects.filter(visibility="SERVER ONLY")
 
     main_posts_list = []
@@ -127,12 +129,22 @@ def feed(request):
         post.comments = comment_list
         main_posts_list.append(post)
         #print post.comments
-    # end of my feed
+
 
     main_posts = main_posts_list + their_post_list
     for x in main_posts:
         x.published= x.published.replace(tzinfo=None)
     main_posts.sort(key=lambda x: x.published, reverse=True)
+    # end of my feed
+
+
+
+
+
+
+
+
+
 
 
 
@@ -162,6 +174,17 @@ def feed(request):
 
     # end of public feed
 
+
+
+
+
+
+
+
+
+
+
+
     self_posts_list=[]
     # Begin My Posts
     # self_posts was already created for use
@@ -179,13 +202,16 @@ def feed(request):
                 comment_list.append(comment)
         post.comments = comment_list
         self_posts_list.append(post)
-    # end of public feed
-
 
     for x in self_posts_list:
         x.published= x.published.replace(tzinfo=None)
     self_posts_list.sort(key=lambda x: x.published, reverse=True)
 
+    # end of self feed
+
+    # start of github feed
+    github_posts = create_github_post(github_name)
+    # end of github feed
 
     context = {
         'main_posts': main_posts,
