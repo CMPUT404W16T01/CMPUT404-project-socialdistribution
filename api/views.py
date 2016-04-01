@@ -463,11 +463,14 @@ class friend_request(APIView):
                 print "AHHH"
                 print foreign_host.username
                 print foreign_host.password
+                r = requests.post(url, json=packet, auth=(foreign_host.username, foreign_host.password))
+                '''
                 if foreign_host.username != 'null':
                     r = requests.post(url, json=packet)
                 else:
                     print foreign_host.username, foreign_host.password
                     r = requests.post(url, json=packet, auth=(foreign_host.username, foreign_host.password))
+                '''
             except Exception as e:
                 print e
                 pass
