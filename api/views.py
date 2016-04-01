@@ -96,12 +96,13 @@ class all_auth_posts(APIView):
             asker_id = str(asker_object.id)
         except:
             asker_id = request.GET.get('id', default=None)
+            asker_id = asker_id.strip("/")
             if asker_id == None:
                 return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 asker_id = str(asker_id)
 
-        asker_object = Author.objects.get(id=asker_id)
+
 
         public_posts = Post.objects.filter(visibility="PUBLIC")
         return_posts = public_posts
@@ -159,7 +160,6 @@ class all_auth_posts(APIView):
             response = urllib2.urlopen(req).read()
             loaded = json.loads(response)
 
-            print loaded['authors']
 
             # we now have a list of authors who are friends with the asker
             # if we are friends with any of them then we can give them our FOAF marked posts
@@ -269,8 +269,6 @@ class author_posts(APIView):
 
         response = urllib2.urlopen(req).read()
         loaded = json.loads(response)
-
-        print loaded['authors']
 
         # we now have a list of authors who are friends with the asker
         # if we are friends with any of them then we can give them our FOAF marked posts
@@ -462,11 +460,7 @@ class friend_request(APIView):
                 url = friend_host + 'api/friendrequest'
                 packet = {"query":"friendrequest", "author":author, "friend":friend }
                 foreign_host = ForeignHost.objects.get(url=friend_host)
-
-                if foreign_host.username != 'null':
-                    r = requests.post(url, json=packet)
-                else:
-                    r = requests.post(url, json=packet, auth=(foreign_host.username, foreign_host.password))
+                r = requests.post(url, json=packet, auth=(foreign_host.username, foreign_host.password))
             except Exception as e:
                 print e
                 pass

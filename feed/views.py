@@ -5,7 +5,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from feed.models import Post, Git_Post, Author, Comment, ForeignHost, Friend
+
+from feed.models import Post, Git_Post, Author, Comment, ForeignHost, Friend, Img
 from django.contrib.auth.models import User
 from django.template import Context, loader, Template
 import uuid
@@ -18,6 +19,8 @@ import feedparser
 from dateutil.parser import parse
 from datetime import datetime
 import requests
+import os
+import uuid
 import base64
 
 
@@ -70,6 +73,7 @@ def feed(request):
                 published_raw = post.get("published")
                 origin = post.get("origin")
                 id = post.get("id")
+                visibility = post.get("visibility")
                 published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
                 published  = published.replace(tzinfo=None)
 
@@ -82,7 +86,7 @@ def feed(request):
 
                         new_comment = Comment(author_name = comment_author, comment = comment_body)
                         comments.append(new_comment)
-                new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin)
+                new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
                 new_post.comments = comments
                 their_post_list.append(new_post)
 
@@ -97,14 +101,15 @@ def feed(request):
 
     github_name = "".join((author_object.github).split())
 
-    github_posts = create_github_post(github_name)
+
+
+
+
 
     # My feed, access all posts that I can see
     self_posts = Post.objects.filter(author_id=author_object)
     public_posts = Post.objects.filter(visibility="PUBLIC")
     all_comments = Comment.objects.all()
-    # friend_posts
-    # foaf_posts
     server_posts = Post.objects.filter(visibility="SERVER ONLY")
 
     main_posts_list = []
@@ -124,12 +129,22 @@ def feed(request):
         post.comments = comment_list
         main_posts_list.append(post)
         #print post.comments
-    # end of my feed
+
 
     main_posts = main_posts_list + their_post_list
     for x in main_posts:
         x.published= x.published.replace(tzinfo=None)
     main_posts.sort(key=lambda x: x.published, reverse=True)
+    # end of my feed
+
+
+
+
+
+
+
+
+
 
 
 
@@ -159,6 +174,17 @@ def feed(request):
 
     # end of public feed
 
+
+
+
+
+
+
+
+
+
+
+
     self_posts_list=[]
     # Begin My Posts
     # self_posts was already created for use
@@ -176,13 +202,16 @@ def feed(request):
                 comment_list.append(comment)
         post.comments = comment_list
         self_posts_list.append(post)
-    # end of public feed
-
 
     for x in self_posts_list:
         x.published= x.published.replace(tzinfo=None)
     self_posts_list.sort(key=lambda x: x.published, reverse=True)
 
+    # end of self feed
+
+    # start of github feed
+    github_posts = create_github_post(github_name)
+    # end of github feed
 
     context = {
         'main_posts': main_posts,
@@ -510,15 +539,25 @@ def create_comment(request):
     return redirect('/feed')
 
 
+
 def create_post(request):
-    content = request.POST.get('post_body')
+    print "here"
+    print request.FILES.get('file')
+    print type(request.FILES.get('file'))
+    image = request.FILES.get('file')
+
+    content = request.POST.get('post-input')
     published = datetime.now()
-    is_markdown = json.loads(request.POST.get('is_markdown'))
+    is_markdown = json.loads(request.POST.get('is-markdown-post'))
     if is_markdown:
         contentType = "text/x-markdown"
         content = CommonMark.commonmark(content)
     else:
         contentType = "text/plain"
+
+
+
+    
 
     visibility = request.POST.get('visibility')
     c_username = request.user.username
@@ -540,6 +579,21 @@ def create_post(request):
     new_post = Post(published=published, author=author_object, content=content, contentType=contentType,
                     visibility=visibility, source=DITTO_HOST, origin=DITTO_HOST, categories=categories, title=title,
                     description=description, id = post_id)
+
+    if image:
+        print image.content_type
+        image.name = str(uuid.uuid4())
+        print image.name
+        new_image = Img(actual_image= image, parent_post=new_post)
+        new_image.save()
+
+        new_post.content = new_post.content + ' <br>   <img src="http://ditto-test.herokuapp.com/ditto/media/images/'+image.name+'" >'
+
+
+    print new_post.content
+
     new_post.save()
+
+
 
     return HttpResponse(request.POST.get('post_body'))

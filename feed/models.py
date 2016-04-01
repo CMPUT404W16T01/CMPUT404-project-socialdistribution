@@ -3,6 +3,9 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 import uuid
 from django.contrib.auth.models import User
+import os
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
 
 
 # Create your models here.
@@ -88,3 +91,17 @@ class ForeignHost(models.Model):
 
     def __unicode__(self):
         return str(self.url)
+
+class Img(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    actual_image = models.ImageField(upload_to = os.path.join("images"))
+    parent_post = models.ForeignKey(Post)
+
+    def __unicode__(self):
+        return str(self.id)
+
+#taken from darrinm at
+#http://stackoverflow.com/questions/5372934/how-do-i-get-django-admin-to-delete-files-when-i-remove-an-object-from-the-datab
+@receiver(pre_delete, sender=Img)
+def img_delete(sender, instance, **kwargs):
+    instance.actual_image.delete(False)
