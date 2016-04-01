@@ -584,8 +584,9 @@ def create_post(request):
         print image.content_type
         #image.name = str(uuid.uuid4())
         print image.name
-        print "before saving"
+        print "before creating"
         new_image = Img(actual_image= image, parent_post=new_post)
+        print "before saving"
         new_image.save()
         print "after saving"
 
