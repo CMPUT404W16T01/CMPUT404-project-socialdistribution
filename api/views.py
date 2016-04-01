@@ -460,7 +460,9 @@ class friend_request(APIView):
                 url = friend_host + 'api/friendrequest'
                 packet = {"query":"friendrequest", "author":author, "friend":friend }
                 foreign_host = ForeignHost.objects.get(url=friend_host)
-
+                print "AHHH"
+                print foreign_host.username
+                print foreign_host.password
                 if foreign_host.username != 'null':
                     r = requests.post(url, json=packet)
                 else:
