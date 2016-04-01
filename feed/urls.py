@@ -15,8 +15,8 @@ urlpatterns = [
 ]
 
 #http://stackoverflow.com/questions/5517950/django-media-url-and-media-root
-'''
+
 if settings.DEBUG:
      urlpatterns += patterns('',
          (r'^ditto/media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),) 
-'''
+
