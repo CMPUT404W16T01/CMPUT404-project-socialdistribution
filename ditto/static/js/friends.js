@@ -9,9 +9,13 @@ $(document).ready(function () {
         this.reset();
     });
 
-    // $('#add_friend_button').click(function() {
-    //     send_friend_request();
-    // });
+    $('#unfriend-form').on('submit', function(event){
+        event.preventDefault();
+        unfriend();
+        this.reset();
+    });
+
+
     //From the official django documentation: https://docs.djangoproject.com/en/1.9/ref/csrf/
     function getCookie(name) {
         var cookieValue = null;
@@ -77,6 +81,45 @@ function send_friend_request() {
 
     });
 }
+
+function unfriend() {
+    var csrftoken = getCookie('csrftoken');
+    //From the official django documentation: https://docs.djangoproject.com/en/1.9/ref/csrf/
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+
+
+    $.ajax({
+        url : "/api/unfriend/", 
+        type : "POST", 
+        data : { 
+            query : "unfriend",
+            author: $('#sender_id').val(),
+            unfriending: $('#friend_id').val()
+        },
+        
+        success : function(json) {  
+            // var active = $("u1.tabs").tabs('option', 'active');
+            // $('ul.tabs').tabs('select_tab', active);
+            //location.reload();
+            console.log("AJAX L");
+
+        },
+        
+        error : function(xhr,errmsg,err) {
+            console.log("AJAX ERROR");
+            console.log(errmsg);
+        }
+
+    });
+}
+
 
 
 

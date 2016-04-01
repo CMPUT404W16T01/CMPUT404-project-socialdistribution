@@ -5,7 +5,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from feed.models import Post, Git_Post, Author, Comment, ForeignHost, Img
+
+from feed.models import Post, Git_Post, Author, Comment, ForeignHost, Friend, Img
 from django.contrib.auth.models import User
 from django.template import Context, loader, Template
 import uuid
@@ -27,7 +28,26 @@ import base64
 
 @login_required
 def feed(request):
-    #requests.get("")
+
+    # TODO: YOU MARCIN. DO THIS. 
+    # calling http://ditto-test.herokuapp.com/api/author/posts?id=ASKING_USERS_ID
+    # SHOULD just return all posts hosted by OUR server that the dude is supposed to see
+    # so you can hopefully cut away all the manual parsing done here so far and do something like
+
+    # url = http://ditto-test.herokuapp.com/api/author/posts?id=ASKING_USERS_ID
+    # req = urllib2.Request(url)
+    # base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+    # req.add_header("Authorization", "Basic %s" % base64string)
+    # response = urllib2.urlopen(req).read()
+    # loaded = json.loads(response)
+    # loaded['posts'] <- should be a list of all the posts
+    # or try loaded.get('posts') 
+
+    # assuming that happens, and that the other servers return the same thing all we have to do is call
+    # this url once on every server and we are good to go, maybe parsing out duplicates
+
+
+
 
     their_post_list = []
     try:
@@ -35,6 +55,10 @@ def feed(request):
         for i in foreign_hosts:
             url = i.url + "api/posts"
             req = urllib2.Request(url)
+
+            base64string = base64.encodestring('%s:%s' % (i.username, i.password)).replace('\n', '')
+            req.add_header("Authorization", "Basic %s" % base64string) 
+
             response = urllib2.urlopen(req).read()
             loaded = json.loads(response)
 
@@ -65,7 +89,8 @@ def feed(request):
                 new_post.comments = comments
                 their_post_list.append(new_post)
 
-    except:
+    except Exception as e:
+        print e
         print "couldn't get other hosts posts"
 
 
@@ -199,10 +224,8 @@ def get_profile(request, pk):
     if len(them_object) == 0:
         # this means this profile we want to access is a foreign host
         try:
-            # TODO: We should be looping all possible hosts here
             foreign_hosts = ForeignHost.objects.filter()
             for i in foreign_hosts:
-                # r = requests.get('http://localhost:8001/api/authors', auth=("admin", "pass"))
                 url = i.url + "/api/authors"
                 if i.username != 'null':
                     r = requests.get(url, auth=(i.username, i.password))
@@ -212,18 +235,191 @@ def get_profile(request, pk):
                 for each in foreign_authors['authors']:
                     if each['id'] == pk:
                         them_object = each
+                        them_id = them_object.get('id')
+                        them_host = them_object.get('host')
                         break
+
+            # get the posts from that user
+            foreign_host = ForeignHost.objects.get(url=them_host)
+            url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
+            print url
+            req = urllib2.Request(url)
+
+            base64string = base64.encodestring('%s:%s' % (foreign_host.username, foreign_host.password)).replace('\n', '')
+            req.add_header("Authorization", "Basic %s" % base64string)
+
+            response = urllib2.urlopen(req).read()
+            loaded = json.loads(response)
+            their_posts = loaded.get('posts')
+            their_post_list = []
+
+            for post in their_posts:
+                comments = []
+                description = post.get("description")
+                title = post.get("title")
+                content = post.get("content")
+                published_raw = post.get("published")
+                origin = post.get("origin")
+                id = post.get("id")
+                published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
+                published  = published.replace(tzinfo=None)
+
+                their_comments = post.get("comments")
+                if len(their_comments) > 0:
+                    for comment1 in their_comments:
+                        comment_body = comment1.get('comment')
+                        comment_author = str(comment1.get('author').get('displayName'))
+                        new_comment = Comment(author_name = comment_author, comment = comment_body)
+                        comments.append(new_comment)
+                new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin)
+                new_post.comments = comments
+                their_post_list.append(new_post)
+
+            return_posts = their_post_list
+            for x in return_posts:
+                x.published= x.published.replace(tzinfo=None)
+            return_posts.sort(key=lambda x: x.published, reverse=True)
+
+
+            context = {
+                "sender": us_object,
+                "them": them_object,
+                "main_posts": return_posts
+            }
+
         except:
             # do something maybe
             pass
     else:
         them_object = them_object[0]
+        them_id = str(them_object.id)
+        them_host = them_object.host
+
+        try:
+            author_object = Author.objects.get(id=pk)
+        except: 
+            print "Author is offhost and is causing errors later in this code"
+
+        asker_host = request.META.get("HTTP_HOST")
+
+        try:
+            asker_object = Author.objects.get(email=request.user)
+            asker_id = str(asker_object.id)
+        except:
+            asker_id = request.GET.get('id', default=None)
+            if asker_id == None:
+                return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                asker_id = str(asker_id)
 
 
-    context = {
-        'sender': us_object,
-        'them': them_object,
-    }
+        public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
+        return_posts = public_posts
+
+        # the asker is the user itself, return everything
+        if (pk == asker_id):
+            all_posts = Post.objects.filter(author=author_object)
+            return_posts = all_posts
+
+            for a in return_posts:
+                current_post_id = a.id
+                comments_list = Comment.objects.filter(post_id=current_post_id)
+                posts_comments = []
+                for com in comments_list:
+                    comment_body = com.comment
+                    comment_author = com.author_name
+                    new_comment = Comment(author_name=comment_author, comment=comment_body)
+                    posts_comments.append(new_comment)
+                a.comments = posts_comments
+
+            context = {
+                'sender': us_object,
+                'them': them_object,
+                'main_posts': return_posts,
+            }
+
+            return render(request, 'profile.html', context)
+
+          
+        # if the asker is a friend
+        friend_to_author = Friend.objects.filter(follower_id=pk, followed_id=asker_id)
+        author_to_friend = Friend.objects.filter(follower_id=asker_id, followed_id=pk)
+
+        if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+            #then they are friends, because the relationship is mutual
+            friend_posts = Post.objects.filter(author=author_object, visibility="FRIENDS")
+            return_posts = return_posts | friend_posts
+
+        # if the asker is on our server, and a friend
+        if (len(Author.objects.filter(id=asker_id)) > 0) and (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+            server_friends_posts = Post.objects.filter(author=author_object, visibility="SERVERONLY")
+            return_posts = return_posts | server_friends_posts
+
+        # TODO: Look at FOAF stuff
+        # asker_id is person A
+        # as ditto, we need to ask person A's host who A is friends with
+
+        # fetch list of A's friends
+        url = "http://" + asker_host + "/api/friends/" + asker_id
+             
+        req = urllib2.Request(url)
+
+        # assume we are sending to ourselves to begin with, if we are getting this from
+        # another host then we will update after
+        base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string)
+
+
+        foreign_hosts = ForeignHost.objects.filter()
+        for host in foreign_hosts:
+            # if the sender host, which is a clipped version of the full host path, is part of it, then that host
+            # is the correct one we're looking for
+            if asker_host in host.url:
+                base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+                req.add_header("Authorization", "Basic %s" % base64string)
+
+        response = urllib2.urlopen(req).read()
+        loaded = json.loads(response)
+
+
+        # we now have a list of authors who are friends with the asker
+        # if we are friends with any of them then we can give them our FOAF marked posts
+        # or if we were friends to begin with they can also see FOAF marked posts
+
+        for author in loaded['authors']:
+            # if we are directly friends lets just give it to them
+            if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+                foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
+                return_posts = return_posts | foaf_posts
+                break
+            else:
+                # we should check if we are friends of any of A's friends
+                #author is a string of a uuid
+                a_to_b = Friend.objects.filter(follower_id=pk, followed_id=author)
+                b_to_a = Friend.objects.filter(follower_id=author, followed_id=pk)
+                if (len(a_to_b) == 1) and (len(b_to_a) == 1):
+                    # we are friends with one of their friends
+                    foaf_posts = Post.objects.filter(author=author_object, visibility="FOAF")
+                    return_posts = return_posts | foaf_posts
+                    break
+
+        for a in return_posts:
+            current_post_id = a.id
+            comments_list = Comment.objects.filter(post_id=current_post_id)
+            posts_comments = []
+            for com in comments_list:
+                comment_body = com.comment
+                comment_author = com.author_name
+                new_comment = Comment(author_name=comment_author, comment=comment_body)
+                posts_comments.append(new_comment)
+                print comment_body
+            a.comments = posts_comments
+
+        context = {
+            'sender': us_object,
+            'them': them_object,
+            'main_posts': return_posts,
+        }
 
     return render(request, 'profile.html', context)
 
@@ -282,22 +478,34 @@ def create_comment(request):
 
 
     # WE COULD USE THIS IF THEY GAVE US ORIGIN INSTEAD OF AN EMPTY STRING
-    # "origin":"http://whereitcamefrom.com/api/posts/zzzzz",
-    flag = True
-    if origin == "":
-        flag = False
-        url1 = "http://mighty-cliffs-82717.herokuapp.com/api/posts/" + parent_id + "/comments/"
-    else:
+    # if "origin":"http://whereitcamefrom.com/api/posts/zzzzz", 
+
+    # url1 = origin + "/comments/"
+
+    # janky stuff, we should just fix our api for the url
+
+    if 'ditto-test' in origin:
         url1 = origin + "/comments/"
+    else:
+        url1 = origin + "/api/posts/" + parent_id + "/comments"
+
 
     # this works for posting a comment to ourselves
-    #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"#?id=" + str(author_object.id)
+    #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"
+
 
     req = urllib2.Request(url1)
     req.add_header('Content-Type', 'application/json')
-    if flag:
+    foreign_hosts = ForeignHost.objects.filter()
+
+    if 'ditto-test' in origin:
         base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
-        req.add_header("Authorization", "Basic %s" % base64string) 
+        req.add_header("Authorization", "Basic %s" % base64string)
+    else:
+        for host in foreign_hosts:
+            if host.url in origin:
+                base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+                req.add_header("Authorization", "Basic %s" % base64string) 
 
 
     urllib2.urlopen(req, json_packet)
@@ -353,7 +561,7 @@ def create_post(request):
         new_image = Img(actual_image= image, parent_post=new_post)
         new_image.save()
 
-        new_post.content = new_post.content + ' <br>   <img src="http://127.0.0.1:8000/ditto/media/images/'+image.name+'" >'
+        new_post.content = new_post.content + ' <br>   <img src="http://ditto-test.herokuapp.com/ditto/media/images/'+image.name+'" >'
 
 
     print new_post.content

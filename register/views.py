@@ -36,7 +36,7 @@ def sign_up(request):
         user = User.objects.create_user(username=email, password=password)
         user.save()
 
-        url = DITTO_HOST + "author/" + str(id)
+        url = DITTO_HOST + "api/author/" + str(id)
         new_author = Author(id=id, displayName=displayName, email=user, host=DITTO_HOST, url=url)
         new_author.save()
         return redirect("/register/confirm")

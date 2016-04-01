@@ -27,35 +27,29 @@ def friends(request):
 		# if the followed_id == the use id, then add them to our list
 		if (author_object.id == i.followed_id):
 			req = urllib2.Request("http://ditto-test.herokuapp.com/api/friends/%s/%s" % (str(i.follower_id), str(i.followed_id)))
+			#req = urllib2.Request("http://localhost:8000/api/friends/%s/%s" % (str(i.follower_id), str(i.followed_id)))
 
 			base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
 			req.add_header("Authorization", "Basic %s" % base64string) 
 
 			response = urllib2.urlopen(req).read()
 			loaded = json.loads(response)
-			#print "did ditto-test request"
 			# friend is local
 			try:
 				friend = Author.objects.get(id=i.follower_id)
-				#print "Friend:"
-				#print friend
 			# friend is foreign
 			except:
-				# print i.follower_id
-				# print i.followed_id
+				print i.follower_host
 				url = i.follower_host + ("/api/author/%s" % str(i.follower_id))
-				foreign_hosts = ForeignHost.objects.filter(url=i.follower_host)
-				if (foreign_hosts.username != 'null'):
-					base64string = base64.encodestring('%s:%s' % (foreign_hosts.username, foreign_hosts.password)).replace('\n', '')
-					req.add_header("Authorization", "Basic %s" % base64string) 
-
+				foreign_hosts = ForeignHost.objects.get(url=i.follower_host)
+				print foreign_hosts.username, foreign_hosts.password, foreign_hosts.url
 				req = urllib2.Request(url)
-				#print "attempting mighty request"
+				base64string = base64.encodestring('%s:%s' % (foreign_hosts.username, foreign_hosts.password)).replace('\n', '')
+				req.add_header("Authorization", "Basic %s" % base64string) 
+
 				response = urllib2.urlopen(req).read()
-				#print "Response: "
-				#print response
 				friend = json.loads(response)
-				#print loaded['id']
+				print friend
 
 			# for off host friends
 			if type(friend) == type({}):	
