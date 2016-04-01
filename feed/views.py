@@ -587,8 +587,8 @@ def create_post(request):
         new_image = Img(actual_image= image, parent_post=new_post)
         new_image.save()
 
-        #new_post.content = new_post.content + ' <br>   <img src="http://ditto-test.herokuapp.com/ditto/media/images/'+image.name+'" >'
-        new_post.content = new_post.content + ' <br>   <img src="http://localhost:8000/ditto/media/images/'+image.name+'" >'
+        new_post.content = new_post.content + ' <br>   <img src="http://ditto-test.herokuapp.com/ditto/media/'+image.name+'" >'
+        #new_post.content = new_post.content + ' <br>   <img src="http://localhost:8000/ditto/media/images/'+image.name+'" >'
 
 
     print new_post.content
