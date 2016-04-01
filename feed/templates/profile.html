@@ -16,6 +16,7 @@
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="profile.css"  media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{% static 'css/profile.css' %}"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/feed.css' %}"  media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.css' %}" media="screen,projection"/>
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -61,13 +62,9 @@
     </div>
     <div class="card-content">
       <h3>{{them.displayName}}</h3>
-
-
       <br>
       <a href="#"><i class="fa fa-github fa-2x" style="color:salmon"></i></a>
       <br>
-      <br>
-      <h4>Example Bio</h4>
       <br>
       <div class="card-footer">
       </div>
@@ -108,17 +105,9 @@
 
        <div id="author_feed" class="col s12">
 
-
-
-
-
-
-
-
-
-    <div id="my_feed" class="col s12">
       {% for main_post in main_posts %}
-      <div class="card">
+
+      <center>      <div class="card">
         <div class="card-content black-text">
           <span class="card-title">
             <div class="row">
@@ -143,8 +132,7 @@
               <p><i>{{main_post.description}}</i></p>
             </div>
           </div>
-        </div>
-      </div>
+        </div></center>
       <div id="{{main_post.id}}" class="modal">
         <div class="modal-content">
           <div class="row">
@@ -198,15 +186,6 @@
         </div>
       </div>
       {% endfor %}
-    </div>
-
-
-
-
-
-
-
-
 
        </div>
 
