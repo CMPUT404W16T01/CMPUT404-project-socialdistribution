@@ -93,16 +93,17 @@ class ForeignHost(models.Model):
         return str(self.url)
 
 class Img(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    #id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     #actual_image = models.ImageField(upload_to = os.path.join("images"))
-    actual_image = models.ImageField(upload_to ='images/')
-    parent_post = models.ForeignKey(Post)
+    actual_image = models.ImageField(upload_to ='images/',default='images/None/none.jpg')
+    parent_post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None)
 
-    def __unicode__(self):
-        return str(self.id)
-
+#    def __unicode__(self):
+#        return str(self.id)
+'''
 #taken from darrinm at
 #http://stackoverflow.com/questions/5372934/how-do-i-get-django-admin-to-delete-files-when-i-remove-an-object-from-the-datab
 @receiver(pre_delete, sender=Img)
 def img_delete(sender, instance, **kwargs):
     instance.actual_image.delete(False)
+    '''

@@ -585,7 +585,9 @@ def create_post(request):
         #image.name = str(uuid.uuid4())
         print image.name
         print "before creating"
-        new_image = Img(actual_image= image, parent_post=new_post)
+        new_image = Img(actual_image= image)
+        new_image.parent_post = new_post
+        
         print "before saving"
         new_image.save()
         print "after saving"
