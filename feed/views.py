@@ -582,7 +582,7 @@ def create_post(request):
 
     if image:
         print image.content_type
-        image.name = str(uuid.uuid4())
+        #image.name = str(uuid.uuid4())
         print image.name
         new_image = Img(actual_image= image, parent_post=new_post)
         new_image.save()
