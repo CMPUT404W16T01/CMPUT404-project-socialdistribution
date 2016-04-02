@@ -1,6 +1,7 @@
 import json
 
 from django.http import Http404
+from django.core.paginator import Paginator
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,6 +15,9 @@ import requests
 import urllib2
 import base64
 
+DEFAULT_PAGE_NUM = 0
+DEFAULT_PAGE_SIZE = 10
+
 
 class public_posts(APIView):
     """
@@ -21,10 +25,24 @@ class public_posts(APIView):
     """
 
     def get(self, request, format=None):
+
+        page_num = int(request.GET.get('page', DEFAULT_PAGE_NUM))
+        page_size = int(request.GET.get('size', DEFAULT_PAGE_SIZE))
+
         posts = Post.objects.filter(visibility="PUBLIC")
-        serializer = PostSerializer(posts, many=True)
-        return Response({"query": "posts", "count": len(posts), "size": "", "next": "",
-                         "previous": "http://previouspageurlhere", "posts": serializer.data})
+        pages = Paginator(posts, page_size)
+        page = pages.page(page_num+1)
+        page_data = page.object_list
+        serializer = PostSerializer(page_data, many=True)
+
+        response = {"query": "posts", "count": len(posts), "size": page_size, "posts": serializer.data}
+
+        if page.has_next():
+            response['next'] = 'http://localhost:8000/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
+        if page.has_previous():
+            response['previous'] = 'http://localhost:8000/api/posts/?page=' + str(page_num -1) + '&size=' + str(page_size)
+
+        return Response(response)
 
 
 class post_detail(APIView):
@@ -54,11 +72,25 @@ class post_comments(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk, format=None):
+
+        page_num = int(request.GET.get('page', DEFAULT_PAGE_NUM))
+        page_size = int(request.GET.get('size', DEFAULT_PAGE_SIZE))
+
         post_object = Post.objects.get(id=pk)
         comments = Comment.objects.filter(id=post_object)
-        serializer = CommentSerializer(comments, many=True)
-        return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
-                         "previous": "http://previouspageurlhere", "comments": serializer.data})
+        pages = Paginator(comments, page_size)
+        page = pages.page(page_num+1)
+        page_data = page.object_list
+        serializer = CommentSerializer(page_data, many=True)
+
+        response = {"query": "comments", "count": len(comments), "size": page_size, "comments": serializer.data}
+
+        if page.has_next():
+            response['next'] = 'http://localhost:8000/api/posts/' + pk + '/comments/?page=' + str(page_num + 1) + '&size=' + str(page_size)
+        if page.has_previous():
+            response['previous'] = 'http://localhost:8000/api/posts/' + pk + '/comments/?page=' + str(page_num - 1) + '&size=' + str(page_size)
+
+        return Response(response)
 
     def post(self, request, pk, format=None):
         comment = request.data.get('comment')
@@ -69,7 +101,7 @@ class post_comments(APIView):
         contentType = request.data.get('contentType')
         post_object = Post.objects.get(id=pk)
         new_comment_author = CommentAuthor(id=author_object['id'], host=author_object['host'], displayName=author_name,
-                                   url=author_object['url'], github=author_object['github'])
+                                           url=author_object['url'], github=author_object['github'])
         new_comment_author.save()
         new_comment = Comment(author=new_comment_author, post_id=post_object,
                               comment=comment, published=published,
@@ -77,7 +109,6 @@ class post_comments(APIView):
         new_comment.save()
 
         return Response({})
-
 
 
 class all_auth_posts(APIView):
@@ -89,6 +120,9 @@ class all_auth_posts(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
+        page_num = int(request.GET.get('page', DEFAULT_PAGE_NUM))
+        page_size = int(request.GET.get('size', DEFAULT_PAGE_SIZE))
+
         asker_host = request.META.get("HTTP_HOST")
 
         try:
@@ -102,11 +136,8 @@ class all_auth_posts(APIView):
             else:
                 asker_id = str(asker_id)
 
-
-
         public_posts = Post.objects.filter(visibility="PUBLIC")
         return_posts = public_posts
-
 
         all_authors = Author.objects.filter()
 
@@ -118,18 +149,19 @@ class all_auth_posts(APIView):
                 all_posts = Post.objects.filter(author=asker_object)
                 return_posts = return_posts | all_posts
                 continue
-          
+
             # if the asker is a friend
             friend_to_author = Friend.objects.filter(follower_id=each_id, followed_id=asker_id)
             author_to_friend = Friend.objects.filter(follower_id=asker_id, followed_id=each_id)
 
             if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
-                #then they are friends, because the relationship is mutual
+                # then they are friends, because the relationship is mutual
                 friend_posts = Post.objects.filter(author=each, visibility="FRIENDS")
                 return_posts = return_posts | friend_posts
 
             # if the asker is on our server, and a friend
-            if (len(Author.objects.filter(id=asker_id)) > 0) and (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+            if (len(Author.objects.filter(id=asker_id)) > 0) and (len(friend_to_author) == 1) and (
+                len(author_to_friend) == 1):
                 server_friends_posts = Post.objects.filter(author=each, visibility="SERVERONLY")
                 return_posts = return_posts | server_friends_posts
 
@@ -141,12 +173,10 @@ class all_auth_posts(APIView):
             url = "http://" + asker_host + "/api/friends/" + asker_id
             req = urllib2.Request(url)
 
-
             # assume we are sending to ourselves to begin with, if we are getting this from
             # another host then we will update after
             base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
             req.add_header("Authorization", "Basic %s" % base64string)
-
 
             foreign_hosts = ForeignHost.objects.filter()
             for host in foreign_hosts:
@@ -156,10 +186,8 @@ class all_auth_posts(APIView):
                     base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                     req.add_header("Authorization", "Basic %s" % base64string)
 
-
             response = urllib2.urlopen(req).read()
             loaded = json.loads(response)
-
 
             # we now have a list of authors who are friends with the asker
             # if we are friends with any of them then we can give them our FOAF marked posts
@@ -173,7 +201,7 @@ class all_auth_posts(APIView):
                     break
                 else:
                     # we should check if we are friends of any of A's friends
-                    #author is a string of a uuid
+                    # author is a string of a uuid
                     a_to_b = Friend.objects.filter(follower_id=asker_id, followed_id=author)
                     b_to_a = Friend.objects.filter(follower_id=author, followed_id=asker_id)
                     if (len(a_to_b) == 1) and (len(b_to_a) == 1):
@@ -182,14 +210,19 @@ class all_auth_posts(APIView):
                         return_posts = return_posts | foaf_posts
                         break
 
+        pages = Paginator(return_posts, page_size)
+        page = pages.page(page_num + 1)
+        page_data = page.object_list
+        serializer = PostSerializer(page_data, many=True)
 
+        response = {"query": "posts", "count": len(return_posts), "size": page_size, "posts": serializer.data}
 
-        # we need to get all the posts 
-        serializer = PostSerializer(return_posts, many=True)
-        return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
-                         "previous": "http://previouspageurlhere", "posts": serializer.data})
+        if page.has_next():
+            response['next'] = 'http://localhost:8000/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
+        if page.has_previous():
+            response['previous'] = 'http://localhost:8000/api/posts/?page=' + str(page_num - 1) + '&size=' + str(page_size)
 
-
+        return Response(response)
 
 
 class author_posts(APIView):
@@ -201,6 +234,9 @@ class author_posts(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk, format=None):
+        page_num = int(request.GET.get('page', DEFAULT_PAGE_NUM))
+        page_size = int(request.GET.get('size', DEFAULT_PAGE_SIZE))
+
         author_object = Author.objects.get(id=pk)
 
         asker_host = request.META.get("HTTP_HOST")
@@ -215,7 +251,6 @@ class author_posts(APIView):
             else:
                 asker_id = str(asker_id)
 
-
         public_posts = Post.objects.filter(author=author_object, visibility="PUBLIC")
         return_posts = public_posts
 
@@ -226,20 +261,22 @@ class author_posts(APIView):
 
             serializer = PostSerializer(return_posts, many=True)
 
-            return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
-                         "previous": "http://previouspageurlhere", "posts": serializer.data})
-      
+            return Response(
+                {"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
+                 "previous": "http://previouspageurlhere", "posts": serializer.data})
+
         # if the asker is a friend
         friend_to_author = Friend.objects.filter(follower_id=pk, followed_id=asker_id)
         author_to_friend = Friend.objects.filter(follower_id=asker_id, followed_id=pk)
 
         if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
-            #then they are friends, because the relationship is mutual
+            # then they are friends, because the relationship is mutual
             friend_posts = Post.objects.filter(author=author_object, visibility="FRIENDS")
             return_posts = return_posts | friend_posts
 
         # if the asker is on our server, and a friend
-        if (len(Author.objects.filter(id=asker_id)) > 0) and (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+        if (len(Author.objects.filter(id=asker_id)) > 0) and (len(friend_to_author) == 1) and (
+            len(author_to_friend) == 1):
             server_friends_posts = Post.objects.filter(author=author_object, visibility="SERVERONLY")
             return_posts = return_posts | server_friends_posts
 
@@ -251,12 +288,10 @@ class author_posts(APIView):
         url = "http://" + asker_host + "/api/friends/" + asker_id
         req = urllib2.Request(url)
 
-
         # assume we are sending to ourselves to begin with, if we are getting this from
         # another host then we will update after
         base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
         req.add_header("Authorization", "Basic %s" % base64string)
-
 
         foreign_hosts = ForeignHost.objects.filter()
         for host in foreign_hosts:
@@ -265,7 +300,6 @@ class author_posts(APIView):
             if asker_host in host.url:
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string)
-
 
         response = urllib2.urlopen(req).read()
         loaded = json.loads(response)
@@ -282,7 +316,7 @@ class author_posts(APIView):
                 break
             else:
                 # we should check if we are friends of any of A's friends
-                #author is a string of a uuid
+                # author is a string of a uuid
                 a_to_b = Friend.objects.filter(follower_id=pk, followed_id=author)
                 b_to_a = Friend.objects.filter(follower_id=author, followed_id=pk)
                 if (len(a_to_b) == 1) and (len(b_to_a) == 1):
@@ -291,10 +325,20 @@ class author_posts(APIView):
                     return_posts = return_posts | foaf_posts
                     break
 
+        pages = Paginator(return_posts, page_size)
+        page = pages.page(page_num + 1)
+        page_data = page.object_list
+        serializer = PostSerializer(page_data, many=True)
 
-        serializer = PostSerializer(return_posts, many=True)
-        return Response({"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
-                         "previous": "http://previouspageurlhere", "posts": serializer.data})
+        response = {"query": "posts", "count": len(return_posts), "size": page_size, "posts": serializer.data}
+
+        if page.has_next():
+            response['next'] = 'http://localhost:8000/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
+        if page.has_previous():
+            response['previous'] = 'http://localhost:8000/api/posts/?page=' + str(page_num - 1) + '&size=' + str(
+                page_size)
+
+        return Response(response)   
 
 
 class author_comments(APIView):
@@ -306,11 +350,26 @@ class author_comments(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk, format=None):
+        page_num = int(request.GET.get('page', DEFAULT_PAGE_NUM))
+        page_size = int(request.GET.get('size', DEFAULT_PAGE_SIZE))
+
         author_object = Author.objects.get(id=pk)
         comments = Comment.objects.filter(author=author_object)
-        serializer = CommentSerializer(comments, many=True)
-        return Response({"query": "comments", "count": len(comments), "size": "10", "next": "http://nextpageurlhere",
-                         "previous": "http://previouspageurlhere", "comments": serializer.data})
+        pages = Paginator(comments, page_size)
+        page = pages.page(page_num + 1)
+        page_data = page.object_list
+        serializer = CommentSerializer(page_data, many=True)
+
+        response = {"query": "comments", "count": len(comments), "size": page_size, "comments": serializer.data}
+
+        if page.has_next():
+            response['next'] = 'http://localhost:8000/api/posts/' + pk + '/comments/?page=' + str(
+                page_num + 1) + '&size=' + str(page_size)
+        if page.has_previous():
+            response['previous'] = 'http://localhost:8000/api/posts/' + pk + '/comments/?page=' + str(
+                page_num - 1) + '&size=' + str(page_size)
+
+        return Response(response)
 
 
 class author_list(APIView):
@@ -341,6 +400,7 @@ class author_detail(APIView):
         return Response({"query": "author", "count": "1", "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "author": serializer.data})
 
+
 class check_friends(APIView):
     """
     returns who are friends
@@ -364,8 +424,6 @@ class check_friends(APIView):
                   "authors": friends}
 
         return Response(packet)
-
-
 
     def post(self, request, pk, format=None):
         author_id = pk
@@ -432,10 +490,10 @@ class friend_request(APIView):
         # checks what kind of relationship the two have, intimate or otherwise
 
         # are they following me?
-        #print len(friend_to_author)
+        # print len(friend_to_author)
 
         # am I followign them
-        #print len(author_to_friend)
+        # print len(author_to_friend)
 
         if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
             print "you're an idiot you're already friends"
@@ -458,15 +516,15 @@ class friend_request(APIView):
         if 'ditto-test' not in friend_host:
             try:
                 url = friend_host + 'api/friendrequest'
-                packet = {"query":"friendrequest", "author":author, "friend":friend }
+                packet = {"query": "friendrequest", "author": author, "friend": friend}
                 foreign_host = ForeignHost.objects.get(url=friend_host)
                 r = requests.post(url, json=packet, auth=(foreign_host.username, foreign_host.password))
             except Exception as e:
                 print e
                 pass
 
-
         return Response()
+
 
 class unfriend(APIView):
     """
@@ -483,12 +541,9 @@ class unfriend(APIView):
         print author, unfriend_id
         try:
             friend = Friend.objects.get(follower_id=str(author), followed_id=str(unfriend_id))
-            #print friend.follower_id, friend.followed_id
+            # print friend.follower_id, friend.followed_id
             friend.delete()
         except e:
             print e
 
-
         return Response()
-
-
