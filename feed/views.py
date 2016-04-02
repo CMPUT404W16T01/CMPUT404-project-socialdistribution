@@ -29,7 +29,6 @@ import base64
 @login_required
 def feed(request):
 
-    # TODO: YOU MARCIN. DO THIS. 
     # calling http://ditto-test.herokuapp.com/api/author/posts?id=ASKING_USERS_ID
     # SHOULD just return all posts hosted by OUR server that the dude is supposed to see
     # so you can hopefully cut away all the manual parsing done here so far and do something like
@@ -160,10 +159,7 @@ def feed(request):
         friends_list.append(str(friend.followed_id))
 
     for post in main_posts:
-        print author_object.id, post.magic_author
-        print friends_list
         if str(author_object.id) == str(post.magic_author):
-            print "beep"
             return_main_posts.append(post)
         elif str(post.magic_author) in friends_list:
             return_main_posts.append(post)
