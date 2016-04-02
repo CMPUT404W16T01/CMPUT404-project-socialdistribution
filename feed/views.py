@@ -236,7 +236,7 @@ def feed(request):
     return render(request, 'feed.html', context)
 
 def getOurShit(request, author_object):
-    
+
     # url = author_object.host + "api/author/posts?id=" + str(author_object.id)
     # req = urllib2.Request(url)
 
@@ -344,16 +344,15 @@ def getOurShit(request, author_object):
 
 
 
-    # we need to get all the posts 
-    #serializer = PostSerializer(return_posts, many=True)
+    response = PostSerializer(return_posts, many=True)
 
 
     #---------------
-    #loaded = json.loads(response)
+    loaded = json.loads(response)
 
 
-    our_posts = return_posts
-    #our_posts = loaded.get('posts')
+    #our_posts = return_posts
+    our_posts = loaded.get('posts')
 
     return_public_posts = []
     return_main_posts = []
@@ -367,6 +366,15 @@ def getOurShit(request, author_object):
         origin = post.get("origin")
         id = post.get("id")
         visibility = post.get("visibility")
+
+        # description = post.description
+        # title = post.title
+        # content = post.content
+        # published_raw = post.published
+        # origin = post.origin
+        # id = post.id
+        # visibility = post.visibility
+
         published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
         published  = published.replace(tzinfo=None)
 
