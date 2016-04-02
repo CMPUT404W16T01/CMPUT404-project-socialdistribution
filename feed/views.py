@@ -119,10 +119,10 @@ def feed(request):
     public_posts.sort(key=lambda x: x.published, reverse=True)
 
     # # My feed, access all posts that I can see
-    # self_posts = Post.objects.filter(author_id=author_object)
-    # public_posts = Post.objects.filter(visibility="PUBLIC")
-    # all_comments = Comment.objects.all()
-    # server_posts = Post.objects.filter(visibility="SERVER ONLY")
+    self_posts = Post.objects.filter(author_id=author_object)
+    #public_posts = Post.objects.filter(visibility="PUBLIC")
+    all_comments = Comment.objects.all()
+    #server_posts = Post.objects.filter(visibility="SERVERONLY")
 
     # main_posts_list = []
     # main_posts = self_posts | public_posts | server_posts
