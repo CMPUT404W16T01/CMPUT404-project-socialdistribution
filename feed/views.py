@@ -348,10 +348,14 @@ def getOurShit(request, author_object):
 
     print "9"
     response = PostSerializer(return_posts, many=True)
-    print response.data
+    beep = {"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
+                         "previous": "http://previouspageurlhere", "posts": response.data}
+
+    boop = json.dumps(beep)
+
 
     #---------------
-    loaded = json.loads(json.dumps(response.data))
+    loaded = json.loads(boop)
     print loaded
 
     print "10"
