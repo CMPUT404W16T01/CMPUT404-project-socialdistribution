@@ -345,15 +345,23 @@ def get_profile(request, pk):
                 else:
                     url = i.url + "/api/authors"
                 r = requests.get(url, auth=(i.username, i.password))
-                if 'project' in i.url:
-                    continue
+
                 foreign_authors = json.loads(r.text)
-                for each in foreign_authors['authors']:
-                    if each['id'] == pk:
-                        them_object = each
-                        them_id = them_object.get('id')
-                        them_host = them_object.get('host')
-                        break
+
+                if 'project' in i.url:
+                    for each in foreign_authors['authors']:
+                        if each['id'] == pk:
+                            them_object = each
+                            them_id = them_object.get('id')
+                            them_host = them_object.get('host')
+                            break 
+                else:
+                    for each in foreign_authors['authors']:
+                        if each['id'] == pk:
+                            them_object = each
+                            them_id = them_object.get('id')
+                            them_host = them_object.get('host')
+                            break
 
             # get the posts from that user
             print them_host
