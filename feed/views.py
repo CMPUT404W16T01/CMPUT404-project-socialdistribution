@@ -579,7 +579,7 @@ def create_post(request):
     new_post = Post(published=published, author=author_object, content=content, contentType=contentType,
                     visibility=visibility, source=DITTO_HOST, origin=DITTO_HOST, categories=categories, title=title,
                     description=description, id = post_id)
-
+    new_post.save()
     if image:
         print image.content_type
         #image.name = str(uuid.uuid4())
@@ -594,12 +594,5 @@ def create_post(request):
 
         new_post.content = new_post.content + ' <br>   <img src="http://ditto-test.herokuapp.com/ditto/media/images/'+image.name+'" >'
         #new_post.content = new_post.content + ' <br>   <img src="http://localhost:8000/ditto/media/images/'+image.name+'" >'
-
-
-    print new_post.content
-
-    new_post.save()
-
-
 
     return HttpResponse(request.POST.get('post_body'))
