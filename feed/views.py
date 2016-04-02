@@ -351,7 +351,8 @@ def getOurShit(request, author_object):
     print response.data
 
     #---------------
-    loaded = json.loads(response.data)
+    loaded = json.loads(json.dumps(response.data))
+    print loaded
 
     print "10"
     #our_posts = return_posts
