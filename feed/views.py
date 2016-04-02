@@ -341,10 +341,7 @@ def get_profile(request, pk):
             foreign_hosts = ForeignHost.objects.filter()
             for i in foreign_hosts:
                 url = i.url + "/api/authors"
-                if i.username != 'null':
-                    r = requests.get(url, auth=(i.username, i.password))
-                else:
-                    r = requests.get(url)
+                r = requests.get(url, auth=(i.username, i.password))
                 foreign_authors = json.loads(r.text)
                 for each in foreign_authors['authors']:
                     if each['id'] == pk:
