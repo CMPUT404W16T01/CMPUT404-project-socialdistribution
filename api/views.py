@@ -115,8 +115,8 @@ class all_auth_posts(APIView):
 
             # the asker is the user itself, add in what only they could see
             if (each_id == asker_id):
-                private_posts = Post.objects.filter(author=asker_object, visibility="PRIVATE")
-                return_posts = return_posts | private_posts
+                all_posts = Post.objects.filter(author=asker_object)
+                return_posts = return_posts | all_posts
                 continue
           
             # if the asker is a friend

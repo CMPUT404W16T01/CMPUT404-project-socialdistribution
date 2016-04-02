@@ -54,6 +54,7 @@ def feed(request):
     try:
         foreign_hosts = ForeignHost.objects.filter()
         their_post_list, public_post_list = getOurShit(request, author_object)
+        print 
         print "Put a print after our call"
         
         for i in foreign_hosts:
@@ -122,81 +123,7 @@ def feed(request):
 
     # # My feed, access all posts that I can see
     self_posts = Post.objects.filter(author_id=author_object)
-    #public_posts = Post.objects.filter(visibility="PUBLIC")
     all_comments = Comment.objects.all()
-    #server_posts = Post.objects.filter(visibility="SERVERONLY")
-
-    # main_posts_list = []
-    # main_posts = self_posts | public_posts | server_posts
-    
-    # for post in main_posts:
-    #     # print post.id
-    #     comment_list = []
-    #     if (str(author_object.id) == str(post.author)):
-    #         post.flag = True
-    #     else:
-    #         post.flag = False
-
-    #     for comment in all_comments:
-    #         if (str(comment.post_id) == str(post.id)):
-    #             comment_list.append(comment)
-    #     post.comments = comment_list
-    #     main_posts_list.append(post)
-    #     #print post.comments
-
-
-    # main_posts = main_posts_list + their_post_list
-    # for x in main_posts:
-    #     x.published= x.published.replace(tzinfo=None)
-    # main_posts.sort(key=lambda x: x.published, reverse=True)
-    # # end of my feed
-
-
-
-
-
-
-
-
-
-
-
-
-    # public_posts_list = []
-    # # Begin Public Feed
-    # # public_posts was already created for use in the other one
-    # for post in public_posts:
-    #     comment_list = []
-
-    #     # print post.id
-    #     if (str(author_object.id) == str(post.author)):
-    #         post.flag = True
-    #     else:
-    #         post.flag = False
-
-    #     for comment in all_comments:
-    #         if (str(comment.post_id) == str(post.id)):
-    #             comment_list.append(comment)
-    #     post.comments = comment_list
-    #     public_posts_list.append(post)
-
-
-    # public_posts = public_posts_list + their_post_list
-    # for x in public_posts:
-    #     x.published= x.published.replace(tzinfo=None)
-    # public_posts.sort(key=lambda x: x.published, reverse=True)
-
-    # end of public feed
-
-
-
-
-
-
-
-
-
-
 
 
     self_posts_list=[]
@@ -237,49 +164,33 @@ def feed(request):
     return render(request, 'feed.html', context)
 
 def getOurShit(request, author_object):
-
-    # url = author_object.host + "api/author/posts?id=" + str(author_object.id)
-    # req = urllib2.Request(url)
-
-    # base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
-    # req.add_header("Authorization", "Basic %s" % base64string) 
-
-    # response = urllib2.urlopen(req).read()
-
-
-
-
-    #---------------
     asker_host = request.META.get("HTTP_HOST")
-    print "1"
     try:
         asker_object = Author.objects.get(email=request.user)
         asker_id = str(asker_object.id)
     except:
-        print "2"
         asker_id = request.GET.get('id', default=None)
         asker_id = asker_id.strip("/")
-        print "3"
         if asker_id == None:
             return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             asker_id = str(asker_id)
 
-    print "4"
+
 
     public_posts = Post.objects.filter(visibility="PUBLIC")
     return_posts = public_posts
 
 
     all_authors = Author.objects.filter()
-    print "5"
+
     for each in all_authors:
         each_id = str(each.id)
 
         # the asker is the user itself, add in what only they could see
         if (each_id == asker_id):
-            private_posts = Post.objects.filter(author=asker_object, visibility="PRIVATE")
-            return_posts = return_posts | private_posts
+            own_posts = Post.objects.filter(author=asker_object)
+            return_posts = return_posts | own_posts
             continue
       
         # if the asker is a friend
@@ -296,10 +207,9 @@ def getOurShit(request, author_object):
             server_friends_posts = Post.objects.filter(author=each, visibility="SERVERONLY")
             return_posts = return_posts | server_friends_posts
 
-        # TODO: Look at FOAF stuff
         # asker_id is person A
         # as ditto, we need to ask person A's host who A is friends with
-        print "6"
+
         # fetch list of A's friends
         url = "http://" + asker_host + "/api/friends/" + asker_id
         req = urllib2.Request(url)
@@ -310,7 +220,6 @@ def getOurShit(request, author_object):
         base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
         req.add_header("Authorization", "Basic %s" % base64string)
 
-        print "7"
         foreign_hosts = ForeignHost.objects.filter()
         for host in foreign_hosts:
             # if the sender host, which is a clipped version of the full host path, is part of it, then that host
@@ -322,7 +231,7 @@ def getOurShit(request, author_object):
 
         response = urllib2.urlopen(req).read()
         loaded = json.loads(response)
-        print "8"
+
 
         # we now have a list of authors who are friends with the asker
         # if we are friends with any of them then we can give them our FOAF marked posts
@@ -346,20 +255,14 @@ def getOurShit(request, author_object):
                     break
 
 
-    print "9"
     response = PostSerializer(return_posts, many=True)
     beep = {"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
                          "previous": "http://previouspageurlhere", "posts": response.data}
 
     boop = json.dumps(beep)
-
-
-    #---------------
     loaded = json.loads(boop)
-    print loaded
 
-    print "10"
-    #our_posts = return_posts
+
     our_posts = loaded.get('posts')
 
     return_public_posts = []
@@ -375,14 +278,6 @@ def getOurShit(request, author_object):
         id = post.get("id")
         visibility = post.get("visibility")
 
-        # description = post.description
-        # title = post.title
-        # content = post.content
-        # published_raw = post.published
-        # origin = post.origin
-        # id = post.id
-        # visibility = post.visibility
-        print "11"
         published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
         published  = published.replace(tzinfo=None)
 
@@ -397,7 +292,6 @@ def getOurShit(request, author_object):
                 comments.append(new_comment)
         new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
         new_post.comments = comments
-        print "12"
         if post.get("visibility") == "PUBLIC":
             return_public_posts.append(new_post)
         return_main_posts.append(new_post)
