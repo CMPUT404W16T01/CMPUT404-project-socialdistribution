@@ -610,7 +610,7 @@ def create_comment(request):
     else:
         url1 = origin + "/api/posts/" + parent_id + "/comments"
 
-
+    print url1
     # this works for posting a comment to ourselves
     #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"
 
@@ -627,7 +627,6 @@ def create_comment(request):
             if host.url in origin:
                 base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
                 req.add_header("Authorization", "Basic %s" % base64string) 
-
 
     urllib2.urlopen(req, json_packet)
     # new_comment.save()
