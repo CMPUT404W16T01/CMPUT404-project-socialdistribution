@@ -54,6 +54,7 @@ def feed(request):
     try:
         foreign_hosts = ForeignHost.objects.filter()
         their_post_list, public_post_list = getOurShit(request, author_object)
+        print "Put a print after our call"
         
         for i in foreign_hosts:
             # url = i.url + "api/author/posts?id=" + str(author_object.id) 
