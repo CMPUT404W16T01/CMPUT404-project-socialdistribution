@@ -53,7 +53,8 @@ def feed(request):
     try:
         foreign_hosts = ForeignHost.objects.filter()
         for i in foreign_hosts:
-            url = i.url + "api/author/posts?id=" + str(author_object.id)
+            # url = i.url + "api/author/posts?id=" + str(author_object.id)
+            url = i.url + "api/post"
             req = urllib2.Request(url)
 
             base64string = base64.encodestring('%s:%s' % (i.username, i.password)).replace('\n', '')
@@ -315,7 +316,11 @@ def get_profile(request, pk):
 
         except:
             # do something maybe
-            pass
+            context = {
+                "sender": us_object,
+                "them": them_object,
+                "main_posts": []
+            }
     else:
         them_object = them_object[0]
         them_id = str(them_object.id)
