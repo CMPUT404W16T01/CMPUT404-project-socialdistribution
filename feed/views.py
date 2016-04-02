@@ -160,7 +160,10 @@ def feed(request):
         friends_list.append(friend.followed_id)
 
     for post in main_posts:
+        print author_object.id, post.magic_author
+        print friends_list
         if author_object.id == post.magic_author:
+            print "beep"
             return_main_posts.append(post)
         elif post.magic_author in friends_list:
             return_main_posts.append(post)
