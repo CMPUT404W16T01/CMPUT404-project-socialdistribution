@@ -162,10 +162,10 @@ def feed(request):
     for post in main_posts:
         print author_object.id, post.magic_author
         print friends_list
-        if author_object.id == post.magic_author:
+        if str(author_object.id) == str(post.magic_author):
             print "beep"
             return_main_posts.append(post)
-        elif post.magic_author in friends_list:
+        elif str(post.magic_author) in friends_list:
             return_main_posts.append(post)
 
 
