@@ -92,6 +92,7 @@ def feed(request):
                         comments.append(new_comment)
                 new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
                 new_post.comments = comments
+                new_post.magic_author = post.get("author").get("id")
 
                 if post.get("visibility"):
                     public_post_list.append(new_post)
@@ -109,10 +110,7 @@ def feed(request):
 
     github_name = "".join((author_object.github).split())
 
-    main_posts = their_post_list
-    for x in main_posts:
-      x.published= x.published.replace(tzinfo=None)
-    main_posts.sort(key=lambda x: x.published, reverse=True)
+
 
 
     public_posts = public_post_list
@@ -153,8 +151,29 @@ def feed(request):
     github_posts = create_github_post(github_name)
     # end of github feed
 
+    main_posts = their_post_list
+
+    return_main_posts = []
+    friends = Friends.object.filter(follower_id=author_object.id)
+    friends_list = []
+    for friend in friends:
+        friends_list.append(friend.followed_id)
+
+    for post in main_posts:
+        if author_object.id == post.magic_author:
+            return_main_posts.append(post)
+        elif post.magic_author in friends_list:
+            return_main_posts.append(post)
+
+
+
+    for x in return_main_posts:
+      x.published= x.published.replace(tzinfo=None)
+    return_main_posts.sort(key=lambda x: x.published, reverse=True)
+
+    
     context = {
-        'main_posts': main_posts,
+        'main_posts': return_main_posts,
         'public_posts': public_posts,
         'my_posts': self_posts_list,
         "github_posts": github_posts,
@@ -291,6 +310,8 @@ def getOurShit(request, author_object):
                 comments.append(new_comment)
         new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
         new_post.comments = comments
+        new_post.magic_author = post.get("author").get("id")
+
 
         if (str(author_object.id) == str(post.get('author').get('id'))):
             new_post.flag = True
