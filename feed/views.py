@@ -340,7 +340,10 @@ def get_profile(request, pk):
         try:
             foreign_hosts = ForeignHost.objects.filter()
             for i in foreign_hosts:
-                url = i.url + "/api/authors"
+                if 'project' in i.url:
+                    url = i.url + "/api/author"
+                else:
+                    url = i.url + "/api/authors"
                 r = requests.get(url, auth=(i.username, i.password))
                 if 'project' in i.url:
                     continue
