@@ -605,7 +605,7 @@ def create_comment(request):
 
     if 'ditto-test' in origin:
         url1 = origin + "/comments/"
-    elif "4" in origin:
+    elif 'mighty' not in origin:
         url1 = "http://project-c404.rhcloud.com/api/posts/" + parent_id + "/comments" 
     else:
         url1 = origin + "/api/posts/" + parent_id + "/comments"
