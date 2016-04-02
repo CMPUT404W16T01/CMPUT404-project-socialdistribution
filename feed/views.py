@@ -95,7 +95,7 @@ def feed(request):
                 if post.get("visibility"):
                     public_post_list.append(new_post)
                 their_post_list.append(new_post)
-                print "Main:" + en(their_post_list) + " Pub: " + len(public_post_list)
+                # print "Main:" + en(their_post_list) + " Pub: " + len(public_post_list)
 
     except Exception as e:
         print e
