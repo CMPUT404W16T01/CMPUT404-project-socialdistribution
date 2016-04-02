@@ -541,7 +541,6 @@ def create_comment(request):
 
 
 def create_post(request):
-    print "here"
     print request.FILES.get('file')
     print type(request.FILES.get('file'))
     image = request.FILES.get('file')
@@ -585,14 +584,15 @@ def create_post(request):
         #image.name = str(uuid.uuid4())
         print image.name
         print "before creating"
-        new_image = Img(actual_image= image)
+        new_image = Img(actual_image = image)
         new_image.parent_post = new_post
 
         print "before saving"
         new_image.save()
         print "after saving"
 
-        new_post.content = new_post.content + ' <br>   <img src="http://ditto-test.herokuapp.com/ditto/media/images/'+image.name+'" >'
+        new_post.content = new_post.content + ' <br>   <img src="http://ditto-img.herokuapp.com/ditto/media/images/'+image.name+'" >'
         #new_post.content = new_post.content + ' <br>   <img src="http://localhost:8000/ditto/media/images/'+image.name+'" >'
         new_post.save()
+
     return HttpResponse(request.POST.get('post_body'))
