@@ -46,14 +46,14 @@ def feed(request):
     # assuming that happens, and that the other servers return the same thing all we have to do is call
     # this url once on every server and we are good to go, maybe parsing out duplicates
 
-
-
+    user_object = User.objects.get(username=request.user.username)
+    author_object = Author.objects.get(email=user_object)
 
     their_post_list = []
     try:
         foreign_hosts = ForeignHost.objects.filter()
         for i in foreign_hosts:
-            url = i.url + "api/posts"
+            url = i.url + "api/author/posts?id=" + str(author_object.id)
             req = urllib2.Request(url)
 
             base64string = base64.encodestring('%s:%s' % (i.username, i.password)).replace('\n', '')
@@ -96,8 +96,8 @@ def feed(request):
 
 
 
-    user_object = User.objects.get(username=request.user.username)
-    author_object = Author.objects.get(email=user_object)
+    # user_object = User.objects.get(username=request.user.username)
+    # author_object = Author.objects.get(email=user_object)
 
     github_name = "".join((author_object.github).split())
 
