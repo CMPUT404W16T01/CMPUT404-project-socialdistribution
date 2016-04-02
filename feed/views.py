@@ -611,6 +611,7 @@ def create_comment(request):
         url1 = origin + "/api/posts/" + parent_id + "/comments"
 
     print url1
+    print json_packet
     # this works for posting a comment to ourselves
     #url1 = "http://" + request.get_host() + "/api/posts/" + parent_id + "/comments/"
 
