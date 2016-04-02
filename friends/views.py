@@ -79,7 +79,7 @@ def friends(request):
 
 		for i in foreign_hosts:
 			print "beep"
-			if 'project' in i:
+			if 'project' in i.url:
 				url = i.url + "api/author"
 			else:
 				url = i.url + "api/authors"
