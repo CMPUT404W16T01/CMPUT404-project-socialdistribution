@@ -587,13 +587,13 @@ def create_post(request):
         print "before creating"
         new_image = Img(actual_image= image)
         new_image.parent_post = new_post
-        
+
         print "before saving"
         new_image.save()
         print "after saving"
 
-        new_post.content = new_post.content + ' <br>   <img src="http://ditto-test.herokuapp.com/ditto/media/images/'+image.name+'" >'
-        #new_post.content = new_post.content + ' <br>   <img src="http://localhost:8000/ditto/media/images/'+image.name+'" >'
+        #new_post.content = new_post.content + ' <br>   <img src="http://ditto-test.herokuapp.com/ditto/media/images/'+image.name+'" >'
+        new_post.content = new_post.content + ' <br>   <img src="http://localhost:8000/ditto/media/images/'+image.name+'" >'
 
 
     print new_post.content

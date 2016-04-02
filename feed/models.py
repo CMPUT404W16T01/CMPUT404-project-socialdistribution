@@ -95,8 +95,9 @@ class ForeignHost(models.Model):
 class Img(models.Model):
     #id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     #actual_image = models.ImageField(upload_to = os.path.join("images"))
-    actual_image = models.ImageField(upload_to ='images/',default='images/None/none.jpg')
     parent_post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None)
+    actual_image = models.ImageField(upload_to ='images/',default='images/None/none.jpg')
+
 
 #    def __unicode__(self):
 #        return str(self.id)

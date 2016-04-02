@@ -79,6 +79,13 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Img',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('actual_image', models.ImageField(default=b'images/None/none.jpg', upload_to=b'images/')),
+            ],
+        ),
+        migrations.CreateModel(
             name='Post',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
@@ -95,6 +102,11 @@ class Migration(migrations.Migration):
                 ('categories', models.CharField(default=b' ', max_length=1000)),
                 ('author', models.ForeignKey(to='feed.Author')),
             ],
+        ),
+        migrations.AddField(
+            model_name='img',
+            name='parent_post',
+            field=models.ForeignKey(default=None, to='feed.Post'),
         ),
         migrations.AddField(
             model_name='comment',
