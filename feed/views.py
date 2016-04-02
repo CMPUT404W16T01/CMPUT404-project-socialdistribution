@@ -56,8 +56,8 @@ def feed(request):
 
         
         for i in foreign_hosts:
-            # url = i.url + "api/author/posts?id=" + str(author_object.id) 
-            url = i.url + "api/posts"
+            # url = i.url + "api/author/posts?id=" + str(author_object.id) + "&size=100"
+            url = i.url + "api/posts?size=100"
             req = urllib2.Request(url)
 
             base64string = base64.encodestring('%s:%s' % (i.username, i.password)).replace('\n', '')
@@ -228,7 +228,7 @@ def getOurShit(request, author_object):
         # as ditto, we need to ask person A's host who A is friends with
 
         # fetch list of A's friends
-        url = "http://" + asker_host + "/api/friends/" + asker_id
+        url = "http://" + asker_host + "/api/friends/" + asker_id + "?size=100"
         req = urllib2.Request(url)
 
 
