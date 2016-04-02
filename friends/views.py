@@ -76,9 +76,9 @@ def friends(request):
 		foreign_hosts = ForeignHost.objects.filter()
 		print type(foreign_hosts)
 		print type(foreign_hosts[0])
+
 		for i in foreign_hosts:
-			print i
-		for i in foreign_hosts:
+			print "beep"
 			if 'project' in i:
 				url = i.url + "api/author"
 			else:
