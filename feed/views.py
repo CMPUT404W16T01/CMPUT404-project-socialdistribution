@@ -348,7 +348,7 @@ def getOurShit(request, author_object):
 
     print "9"
     response = PostSerializer(return_posts, many=True)
-
+    print response.data
 
     #---------------
     loaded = json.loads(response.data)
