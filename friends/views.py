@@ -85,6 +85,8 @@ def friends(request):
 
 			if 'project' in i:
 				foreign_authors['authors'].extend(retrieved_authors)
+				print retrieved_authors
+				print type(retrieved_authors)
 			else:
 				foreign_authors['authors'].extend(retrieved_authors['authors'])
 
