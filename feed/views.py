@@ -239,7 +239,7 @@ def getOurShit(author_object):
     url = author_object.host + "api/author/posts?id=" + str(author_object.id)
     req = urllib2.Request(url)
 
-    base64string = base64.encodestring('%s:%s' % ("admin", "")).replace('\n', '')
+    base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
     req.add_header("Authorization", "Basic %s" % base64string) 
 
     response = urllib2.urlopen(req).read()
