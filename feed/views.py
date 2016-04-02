@@ -294,9 +294,9 @@ def getOurShit(request, author_object):
         new_post.comments = comments
 
         if (str(author_object.id) == str(post.get('author').get('id'))):
-            post.flag = True
+            new_post.flag = True
         else:
-            post.flag = False
+            new_post.flag = False
 
 
         if post.get("visibility") == "PUBLIC":
