@@ -354,6 +354,7 @@ def get_profile(request, pk):
                         break
 
             # get the posts from that user
+            print them_host
             foreign_host = ForeignHost.objects.get(url=them_host)
             url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
             print url
