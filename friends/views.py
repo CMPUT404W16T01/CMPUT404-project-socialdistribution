@@ -74,22 +74,17 @@ def friends(request):
 	try:
 		# get all foreign hosts
 		foreign_hosts = ForeignHost.objects.filter()
-		print type(foreign_hosts)
-		print type(foreign_hosts[0])
 
 		for i in foreign_hosts:
-			print "beep"
 			if 'project' in i.url:
 				url = i.url + "api/author"
 			else:
 				url = i.url + "api/authors"
 
-			print "boop"
 			r = requests.get(url, auth=(i.username, i.password))
 
 			retrieved_authors = json.loads(r.text)
 
-			print "eep"
 			if 'project' in i.url:
 				foreign_authors['authors'].extend(retrieved_authors)
 				print retrieved_authors
