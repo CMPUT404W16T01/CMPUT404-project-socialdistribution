@@ -293,7 +293,7 @@ def getOurShit(request, author_object):
         new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
         new_post.comments = comments
 
-        if (str(author_object.id) == str(post.get('author').get('id')):
+        if (str(author_object.id) == str(post.get('author').get('id'))):
             post.flag = True
         else:
             post.flag = False
