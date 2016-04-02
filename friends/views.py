@@ -82,7 +82,11 @@ def friends(request):
 			r = requests.get(url, auth=(i.username, i.password))
 
 			retrieved_authors = json.loads(r.text)
-			foreign_authors['authors'].extend(retrieved_authors['authors'])
+
+			if 'project' in i:
+				foreign_authors['authors'].extend(retrieved_authors)
+			else:
+				foreign_authors['authors'].extend(retrieved_authors['authors'])
 
 	except Exception as e:
 		print e
