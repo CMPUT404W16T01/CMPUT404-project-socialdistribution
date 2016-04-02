@@ -292,9 +292,19 @@ def getOurShit(request, author_object):
                 comments.append(new_comment)
         new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
         new_post.comments = comments
+        
+        if (str(author_object.id) == str(post.author)):
+            post.flag = True
+        else:
+            post.flag = False
+
+
         if post.get("visibility") == "PUBLIC":
             return_public_posts.append(new_post)
         return_main_posts.append(new_post)
+
+
+
 
 
     return return_main_posts, return_public_posts
