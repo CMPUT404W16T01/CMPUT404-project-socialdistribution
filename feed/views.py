@@ -49,11 +49,14 @@ def feed(request):
     user_object = User.objects.get(username=request.user.username)
     author_object = Author.objects.get(email=user_object)
 
+    public_post_list = []
     their_post_list = []
     try:
         foreign_hosts = ForeignHost.objects.filter()
+        their_post_list, public_post_list = getOurShit(author_object)
+        
         for i in foreign_hosts:
-            # url = i.url + "api/author/posts?id=" + str(author_object.id)
+            # url = i.url + "api/author/posts?id=" + str(author_object.id) 
             url = i.url + "api/post"
             req = urllib2.Request(url)
 
@@ -64,7 +67,6 @@ def feed(request):
             loaded = json.loads(response)
 
             their_posts = loaded.get('posts')
-            their_post_list = []
 
             for post in their_posts:
                 comments = []
@@ -89,6 +91,9 @@ def feed(request):
                         comments.append(new_comment)
                 new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
                 new_post.comments = comments
+
+                if post.get("visibility"):
+                    public_post_list.append(new_post)
                 their_post_list.append(new_post)
 
     except Exception as e:
@@ -102,76 +107,82 @@ def feed(request):
 
     github_name = "".join((author_object.github).split())
 
-
-
-
-
-
-    # My feed, access all posts that I can see
-    self_posts = Post.objects.filter(author_id=author_object)
-    public_posts = Post.objects.filter(visibility="PUBLIC")
-    all_comments = Comment.objects.all()
-    server_posts = Post.objects.filter(visibility="SERVER ONLY")
-
-    main_posts_list = []
-    main_posts = self_posts | public_posts | server_posts
-    
-    for post in main_posts:
-        # print post.id
-        comment_list = []
-        if (str(author_object.id) == str(post.author)):
-            post.flag = True
-        else:
-            post.flag = False
-
-        for comment in all_comments:
-            if (str(comment.post_id) == str(post.id)):
-                comment_list.append(comment)
-        post.comments = comment_list
-        main_posts_list.append(post)
-        #print post.comments
-
-
-    main_posts = main_posts_list + their_post_list
+    main_posts = their_post_list
     for x in main_posts:
-        x.published= x.published.replace(tzinfo=None)
+      x.published= x.published.replace(tzinfo=None)
     main_posts.sort(key=lambda x: x.published, reverse=True)
-    # end of my feed
 
 
-
-
-
-
-
-
-
-
-
-
-    public_posts_list = []
-    # Begin Public Feed
-    # public_posts was already created for use in the other one
-    for post in public_posts:
-        comment_list = []
-
-        # print post.id
-        if (str(author_object.id) == str(post.author)):
-            post.flag = True
-        else:
-            post.flag = False
-
-        for comment in all_comments:
-            if (str(comment.post_id) == str(post.id)):
-                comment_list.append(comment)
-        post.comments = comment_list
-        public_posts_list.append(post)
-
-
-    public_posts = public_posts_list + their_post_list
+    public_posts = public_post_list
     for x in public_posts:
-        x.published= x.published.replace(tzinfo=None)
+      x.published= x.published.replace(tzinfo=None)
     public_posts.sort(key=lambda x: x.published, reverse=True)
+
+    # # My feed, access all posts that I can see
+    # self_posts = Post.objects.filter(author_id=author_object)
+    # public_posts = Post.objects.filter(visibility="PUBLIC")
+    # all_comments = Comment.objects.all()
+    # server_posts = Post.objects.filter(visibility="SERVER ONLY")
+
+    # main_posts_list = []
+    # main_posts = self_posts | public_posts | server_posts
+    
+    # for post in main_posts:
+    #     # print post.id
+    #     comment_list = []
+    #     if (str(author_object.id) == str(post.author)):
+    #         post.flag = True
+    #     else:
+    #         post.flag = False
+
+    #     for comment in all_comments:
+    #         if (str(comment.post_id) == str(post.id)):
+    #             comment_list.append(comment)
+    #     post.comments = comment_list
+    #     main_posts_list.append(post)
+    #     #print post.comments
+
+
+    # main_posts = main_posts_list + their_post_list
+    # for x in main_posts:
+    #     x.published= x.published.replace(tzinfo=None)
+    # main_posts.sort(key=lambda x: x.published, reverse=True)
+    # # end of my feed
+
+
+
+
+
+
+
+
+
+
+
+
+    # public_posts_list = []
+    # # Begin Public Feed
+    # # public_posts was already created for use in the other one
+    # for post in public_posts:
+    #     comment_list = []
+
+    #     # print post.id
+    #     if (str(author_object.id) == str(post.author)):
+    #         post.flag = True
+    #     else:
+    #         post.flag = False
+
+    #     for comment in all_comments:
+    #         if (str(comment.post_id) == str(post.id)):
+    #             comment_list.append(comment)
+    #     post.comments = comment_list
+    #     public_posts_list.append(post)
+
+
+    # public_posts = public_posts_list + their_post_list
+    # for x in public_posts:
+    #     x.published= x.published.replace(tzinfo=None)
+    # public_posts.sort(key=lambda x: x.published, reverse=True)
 
     # end of public feed
 
@@ -222,6 +233,54 @@ def feed(request):
     }
 
     return render(request, 'feed.html', context)
+
+def getOurShit(author_object):
+    url = author_object.host + "api/author/posts?id=" + str(author_object.id)
+    req = urllib2.Request(url)
+
+    base64string = base64.encodestring('%s:%s' % ("admin", "")).replace('\n', '')
+    req.add_header("Authorization", "Basic %s" % base64string) 
+
+    response = urllib2.urlopen(req).read()
+    loaded = json.loads(response)
+
+    our_posts = loaded.get('posts')
+
+    return_public_posts = []
+    return_main_posts = []
+
+    for post in our_posts:
+        comments = []
+        description = post.get("description")
+        title = post.get("title")
+        content = post.get("content")
+        published_raw = post.get("published")
+        origin = post.get("origin")
+        id = post.get("id")
+        visibility = post.get("visibility")
+        published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
+        published  = published.replace(tzinfo=None)
+
+        their_comments = post.get("comments")
+        if len(their_comments) > 0:
+            for comment1 in their_comments:
+                comment_body = comment1.get('comment')
+
+                comment_author = str(comment1.get('author').get('displayName'))
+
+                new_comment = Comment(author_name = comment_author, comment = comment_body)
+                comments.append(new_comment)
+        new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
+        new_post.comments = comments
+
+        if post.get("visibility") == "PUBLIC":
+            return_public_posts.append(new_post)
+        return_main_posts.append(new_post)
+
+
+    return return_main_posts, return_public_posts
+  
+
 
 def create_github_post(github_id):
     d = feedparser.parse("https://github.com/" + github_id + ".atom")
