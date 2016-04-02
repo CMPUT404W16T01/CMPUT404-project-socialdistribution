@@ -154,7 +154,7 @@ def feed(request):
     main_posts = their_post_list
 
     return_main_posts = []
-    friends = Friend.object.filter(follower_id=author_object.id)
+    friends = Friend.objects.filter(follower_id=author_object.id)
     friends_list = []
     for friend in friends:
         friends_list.append(friend.followed_id)
