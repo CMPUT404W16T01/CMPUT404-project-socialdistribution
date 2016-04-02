@@ -594,5 +594,5 @@ def create_post(request):
 
         new_post.content = new_post.content + ' <br>   <img src="http://ditto-test.herokuapp.com/ditto/media/images/'+image.name+'" >'
         #new_post.content = new_post.content + ' <br>   <img src="http://localhost:8000/ditto/media/images/'+image.name+'" >'
-
+        new_post.save()
     return HttpResponse(request.POST.get('post_body'))
