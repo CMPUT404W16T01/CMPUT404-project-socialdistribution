@@ -57,7 +57,7 @@ def feed(request):
         
         for i in foreign_hosts:
             # url = i.url + "api/author/posts?id=" + str(author_object.id) 
-            url = i.url + "api/post"
+            url = i.url + "api/posts"
             req = urllib2.Request(url)
 
             base64string = base64.encodestring('%s:%s' % (i.username, i.password)).replace('\n', '')
