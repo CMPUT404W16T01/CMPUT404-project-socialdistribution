@@ -5,7 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-
+from api.serializers import PostSerializer
 from feed.models import Post, Git_Post, Author, Comment, ForeignHost, Friend, Img
 from django.contrib.auth.models import User
 from django.template import Context, loader, Template
@@ -46,13 +46,19 @@ def feed(request):
     # assuming that happens, and that the other servers return the same thing all we have to do is call
     # this url once on every server and we are good to go, maybe parsing out duplicates
 
+    user_object = User.objects.get(username=request.user.username)
+    author_object = Author.objects.get(email=user_object)
 
-
-
+    public_post_list = []
     their_post_list = []
     try:
         foreign_hosts = ForeignHost.objects.filter()
+        their_post_list, public_post_list = getOurShit(request, author_object)
+        print 
+        print "Put a print after our call"
+        
         for i in foreign_hosts:
+            # url = i.url + "api/author/posts?id=" + str(author_object.id) 
             url = i.url + "api/posts"
             req = urllib2.Request(url)
 
@@ -63,7 +69,6 @@ def feed(request):
             loaded = json.loads(response)
 
             their_posts = loaded.get('posts')
-            their_post_list = []
 
             for post in their_posts:
                 comments = []
@@ -88,7 +93,11 @@ def feed(request):
                         comments.append(new_comment)
                 new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
                 new_post.comments = comments
+
+                if post.get("visibility"):
+                    public_post_list.append(new_post)
                 their_post_list.append(new_post)
+                # print "Main:" + en(their_post_list) + " Pub: " + len(public_post_list)
 
     except Exception as e:
         print e
@@ -96,93 +105,25 @@ def feed(request):
 
 
 
-    user_object = User.objects.get(username=request.user.username)
-    author_object = Author.objects.get(email=user_object)
+    # user_object = User.objects.get(username=request.user.username)
+    # author_object = Author.objects.get(email=user_object)
 
     github_name = "".join((author_object.github).split())
 
-
-
-
-
-
-    # My feed, access all posts that I can see
-    self_posts = Post.objects.filter(author_id=author_object)
-    public_posts = Post.objects.filter(visibility="PUBLIC")
-    all_comments = Comment.objects.all()
-    server_posts = Post.objects.filter(visibility="SERVER ONLY")
-
-    main_posts_list = []
-    main_posts = self_posts | public_posts | server_posts
-    
-    for post in main_posts:
-        # print post.id
-        comment_list = []
-        if (str(author_object.id) == str(post.author)):
-            post.flag = True
-        else:
-            post.flag = False
-
-        for comment in all_comments:
-            if (str(comment.post_id) == str(post.id)):
-                comment_list.append(comment)
-        post.comments = comment_list
-        main_posts_list.append(post)
-        #print post.comments
-
-
-    main_posts = main_posts_list + their_post_list
+    main_posts = their_post_list
     for x in main_posts:
-        x.published= x.published.replace(tzinfo=None)
+      x.published= x.published.replace(tzinfo=None)
     main_posts.sort(key=lambda x: x.published, reverse=True)
-    # end of my feed
 
 
-
-
-
-
-
-
-
-
-
-
-    public_posts_list = []
-    # Begin Public Feed
-    # public_posts was already created for use in the other one
-    for post in public_posts:
-        comment_list = []
-
-        # print post.id
-        if (str(author_object.id) == str(post.author)):
-            post.flag = True
-        else:
-            post.flag = False
-
-        for comment in all_comments:
-            if (str(comment.post_id) == str(post.id)):
-                comment_list.append(comment)
-        post.comments = comment_list
-        public_posts_list.append(post)
-
-
-    public_posts = public_posts_list + their_post_list
+    public_posts = public_post_list
     for x in public_posts:
-        x.published= x.published.replace(tzinfo=None)
+      x.published= x.published.replace(tzinfo=None)
     public_posts.sort(key=lambda x: x.published, reverse=True)
 
-    # end of public feed
-
-
-
-
-
-
-
-
-
-
+    # # My feed, access all posts that I can see
+    self_posts = Post.objects.filter(author_id=author_object)
+    all_comments = Comment.objects.all()
 
 
     self_posts_list=[]
@@ -221,6 +162,154 @@ def feed(request):
     }
 
     return render(request, 'feed.html', context)
+
+def getOurShit(request, author_object):
+    asker_host = request.META.get("HTTP_HOST")
+    try:
+        asker_object = Author.objects.get(email=request.user)
+        asker_id = str(asker_object.id)
+    except:
+        asker_id = request.GET.get('id', default=None)
+        asker_id = asker_id.strip("/")
+        if asker_id == None:
+            return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            asker_id = str(asker_id)
+
+
+
+    public_posts = Post.objects.filter(visibility="PUBLIC")
+    return_posts = public_posts
+
+
+    all_authors = Author.objects.filter()
+
+    for each in all_authors:
+        each_id = str(each.id)
+
+        # the asker is the user itself, add in what only they could see
+        if (each_id == asker_id):
+            own_posts = Post.objects.filter(author=asker_object)
+            return_posts = return_posts | own_posts
+            continue
+      
+        # if the asker is a friend
+        friend_to_author = Friend.objects.filter(follower_id=each_id, followed_id=asker_id)
+        author_to_friend = Friend.objects.filter(follower_id=asker_id, followed_id=each_id)
+
+        if (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+            #then they are friends, because the relationship is mutual
+            friend_posts = Post.objects.filter(author=each, visibility="FRIENDS")
+            return_posts = return_posts | friend_posts
+
+        # if the asker is on our server, and a friend
+        if (len(Author.objects.filter(id=asker_id)) > 0) and (len(friend_to_author) == 1) and (len(author_to_friend) == 1):
+            server_friends_posts = Post.objects.filter(author=each, visibility="SERVERONLY")
+            return_posts = return_posts | server_friends_posts
+
+        # asker_id is person A
+        # as ditto, we need to ask person A's host who A is friends with
+
+        # fetch list of A's friends
+        url = "http://" + asker_host + "/api/friends/" + asker_id
+        req = urllib2.Request(url)
+
+
+        # assume we are sending to ourselves to begin with, if we are getting this from
+        # another host then we will update after
+        base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string)
+
+        foreign_hosts = ForeignHost.objects.filter()
+        for host in foreign_hosts:
+            # if the sender host, which is a clipped version of the full host path, is part of it, then that host
+            # is the correct one we're looking for
+            if asker_host in host.url:
+                base64string = base64.encodestring('%s:%s' % (host.username, host.password)).replace('\n', '')
+                req.add_header("Authorization", "Basic %s" % base64string)
+
+
+        response = urllib2.urlopen(req).read()
+        loaded = json.loads(response)
+
+
+        # we now have a list of authors who are friends with the asker
+        # if we are friends with any of them then we can give them our FOAF marked posts
+        # or if we were friends to begin with they can also see FOAF marked posts
+
+        for author in loaded['authors']:
+            # if we are directly friends lets just give it to them
+            if ((len(friend_to_author) == 1) and (len(author_to_friend) == 1)) or (each_id == asker_id):
+                foaf_posts = Post.objects.filter(author=each, visibility="FOAF")
+                return_posts = return_posts | foaf_posts
+                break
+            else:
+                # we should check if we are friends of any of A's friends
+                #author is a string of a uuid
+                a_to_b = Friend.objects.filter(follower_id=asker_id, followed_id=author)
+                b_to_a = Friend.objects.filter(follower_id=author, followed_id=asker_id)
+                if (len(a_to_b) == 1) and (len(b_to_a) == 1):
+                    # we are friends with one of their friends
+                    foaf_posts = Post.objects.filter(author=each, visibility="FOAF")
+                    return_posts = return_posts | foaf_posts
+                    break
+
+
+    response = PostSerializer(return_posts, many=True)
+    beep = {"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
+                         "previous": "http://previouspageurlhere", "posts": response.data}
+
+    boop = json.dumps(beep)
+    loaded = json.loads(boop)
+
+
+    our_posts = loaded.get('posts')
+
+    return_public_posts = []
+    return_main_posts = []
+
+    for post in our_posts:
+        comments = []
+        description = post.get("description")
+        title = post.get("title")
+        content = post.get("content")
+        published_raw = post.get("published")
+        origin = post.get("origin")
+        id = post.get("id")
+        visibility = post.get("visibility")
+
+        published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
+        published  = published.replace(tzinfo=None)
+
+        their_comments = post.get("comments")
+        if len(their_comments) > 0:
+            for comment1 in their_comments:
+                comment_body = comment1.get('comment')
+
+                comment_author = str(comment1.get('author').get('displayName'))
+
+                new_comment = Comment(author_name = comment_author, comment = comment_body)
+                comments.append(new_comment)
+        new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
+        new_post.comments = comments
+
+        if (str(author_object.id) == str(post.get('author').get('id'))):
+            new_post.flag = True
+        else:
+            new_post.flag = False
+
+
+        if post.get("visibility") == "PUBLIC":
+            return_public_posts.append(new_post)
+        return_main_posts.append(new_post)
+
+
+
+
+
+    return return_main_posts, return_public_posts
+  
+
 
 def create_github_post(github_id):
     d = feedparser.parse("https://github.com/" + github_id + ".atom")
@@ -315,7 +404,11 @@ def get_profile(request, pk):
 
         except:
             # do something maybe
-            pass
+            context = {
+                "sender": us_object,
+                "them": them_object,
+                "main_posts": []
+            }
     else:
         them_object = them_object[0]
         them_id = str(them_object.id)
