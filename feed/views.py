@@ -348,11 +348,10 @@ def getOurShit(request, author_object):
 
     print "9"
     response = PostSerializer(return_posts, many=True)
-    print type(response)
-    print response
+
 
     #---------------
-    loaded = json.loads(response)
+    loaded = json.loads(response.data)
 
     print "10"
     #our_posts = return_posts
