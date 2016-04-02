@@ -54,8 +54,7 @@ def feed(request):
     try:
         foreign_hosts = ForeignHost.objects.filter()
         their_post_list, public_post_list = getOurShit(request, author_object)
-        print 
-        print "Put a print after our call"
+
         
         for i in foreign_hosts:
             # url = i.url + "api/author/posts?id=" + str(author_object.id) 
@@ -402,7 +401,8 @@ def get_profile(request, pk):
                 "main_posts": return_posts
             }
 
-        except:
+        except Exception as e:
+            print e
             # do something maybe
             context = {
                 "sender": us_object,
