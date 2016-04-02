@@ -349,7 +349,7 @@ def get_profile(request, pk):
                 foreign_authors = json.loads(r.text)
 
                 if 'project' in i.url:
-                    for each in foreign_authors['authors']:
+                    for each in foreign_authors:
                         if each['id'] == pk:
                             them_object = each
                             them_id = them_object.get('id')
