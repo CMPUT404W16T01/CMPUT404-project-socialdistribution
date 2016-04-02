@@ -251,26 +251,28 @@ def getOurShit(request, author_object):
 
     #---------------
     asker_host = request.META.get("HTTP_HOST")
-
+    print "1"
     try:
         asker_object = Author.objects.get(email=request.user)
         asker_id = str(asker_object.id)
     except:
+        print "2"
         asker_id = request.GET.get('id', default=None)
         asker_id = asker_id.strip("/")
+        print "3"
         if asker_id == None:
             return Response({"details": "give and ?id=xxxx"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             asker_id = str(asker_id)
 
-
+    print "4"
 
     public_posts = Post.objects.filter(visibility="PUBLIC")
     return_posts = public_posts
 
 
     all_authors = Author.objects.filter()
-
+    print "5"
     for each in all_authors:
         each_id = str(each.id)
 
@@ -297,7 +299,7 @@ def getOurShit(request, author_object):
         # TODO: Look at FOAF stuff
         # asker_id is person A
         # as ditto, we need to ask person A's host who A is friends with
-
+        print "6"
         # fetch list of A's friends
         url = "http://" + asker_host + "/api/friends/" + asker_id
         req = urllib2.Request(url)
@@ -308,7 +310,7 @@ def getOurShit(request, author_object):
         base64string = base64.encodestring('%s:%s' % ("admin", "pass")).replace('\n', '')
         req.add_header("Authorization", "Basic %s" % base64string)
 
-
+        print "7"
         foreign_hosts = ForeignHost.objects.filter()
         for host in foreign_hosts:
             # if the sender host, which is a clipped version of the full host path, is part of it, then that host
@@ -320,7 +322,7 @@ def getOurShit(request, author_object):
 
         response = urllib2.urlopen(req).read()
         loaded = json.loads(response)
-
+        print "8"
 
         # we now have a list of authors who are friends with the asker
         # if we are friends with any of them then we can give them our FOAF marked posts
@@ -344,14 +346,14 @@ def getOurShit(request, author_object):
                     break
 
 
-
+    print "9"
     response = PostSerializer(return_posts, many=True)
 
 
     #---------------
     loaded = json.loads(response)
 
-
+    print "10"
     #our_posts = return_posts
     our_posts = loaded.get('posts')
 
@@ -375,7 +377,7 @@ def getOurShit(request, author_object):
         # origin = post.origin
         # id = post.id
         # visibility = post.visibility
-
+        print "11"
         published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
         published  = published.replace(tzinfo=None)
 
@@ -390,7 +392,7 @@ def getOurShit(request, author_object):
                 comments.append(new_comment)
         new_post = Post( id = id, description = description, title = title, content = content, published = published, origin = origin, visibility = visibility)
         new_post.comments = comments
-
+        print "12"
         if post.get("visibility") == "PUBLIC":
             return_public_posts.append(new_post)
         return_main_posts.append(new_post)
