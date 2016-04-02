@@ -53,7 +53,7 @@ def feed(request):
     their_post_list = []
     try:
         foreign_hosts = ForeignHost.objects.filter()
-        their_post_list, public_post_list = getOurShit(author_object)
+        #their_post_list, public_post_list = getOurShit(author_object)
         
         for i in foreign_hosts:
             # url = i.url + "api/author/posts?id=" + str(author_object.id) 
