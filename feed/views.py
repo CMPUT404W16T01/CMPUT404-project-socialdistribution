@@ -365,6 +365,9 @@ def get_profile(request, pk):
 
             # get the posts from that user
             print them_host
+            if 'project' in them_host:
+                them_host = "http://project-c404.rhcloud.com/"
+
             foreign_host = ForeignHost.objects.get(url=them_host)
             url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
             print url
