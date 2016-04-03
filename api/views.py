@@ -78,11 +78,11 @@ class post_comments(APIView):
 
         post_object = Post.objects.get(id=pk)
         comments = Comment.objects.filter(id=post_object)
-        print comments
+        print type(comments)
         pages = Paginator(comments, page_size)
-        print pages
+        print type(pages)
         page = pages.page(page_num+1)
-        print page
+        print type(page)
         page_data = page.object_list
         print page_data
         serializer = CommentSerializer(page_data, many=True)
