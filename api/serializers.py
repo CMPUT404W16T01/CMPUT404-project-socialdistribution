@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from feed.models import Post, Comment, Author, CommentAuthor
+from feed.models import Post, Comment, Author, CommentAuthor, Friend
 
 
 class CommentAuthorSerializer(serializers.ModelSerializer):

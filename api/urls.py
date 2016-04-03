@@ -11,6 +11,7 @@ urlpatterns = [
     # Author API
     url(r'^authors/?$', views.author_list.as_view()),
     url(r'^author/posts/?$', views.all_auth_posts.as_view()),
+    url(r'^author/?$', views.author_list.as_view()),
     url(r'^author/(?P<pk>[0-9a-z-]+)/?$', views.author_detail.as_view()),
     url(r'^author/(?P<pk>[0-9a-z-]+)/?posts/$', views.author_posts.as_view()),
     url(r'^author/(?P<pk>[0-9a-z-]+)/?comments/$', views.author_comments.as_view()),

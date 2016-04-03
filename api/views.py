@@ -397,8 +397,17 @@ class author_detail(APIView):
     def get(self, request, pk, format=None):
         author_object = Author.objects.get(id=pk)
         serializer = AuthorSerializer(author_object)
-        return Response({"query": "author", "count": "1", "size": "10", "next": "http://nextpageurlhere",
-                         "previous": "http://previouspageurlhere", "author": serializer.data})
+        response = serializer.data
+        author_id = pk
+        response['friends'] = []
+
+        following = Friend.objects.filter(follower_id=pk)
+
+        for i in following:
+            tmp = Friend.objects.filter(follower_id=i.followed_id, followed_id=i.follower_id)
+            if len(tmp) > 0:
+                response['friends'].append(i.followed_id)
+        return Response(response)
 
 
 class check_friends(APIView):
