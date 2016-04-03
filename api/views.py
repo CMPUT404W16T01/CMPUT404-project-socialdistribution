@@ -79,9 +79,9 @@ class post_comments(APIView):
         post_object = Post.objects.get(id=pk)
         comments = Comment.objects.filter(id=post_object)
         pages = Paginator(comments, page_size)
-        page = pages.page(page_num+1)
-        page_data = page.object_list
-        serializer = CommentSerializer(page_data, many=True)
+        # page = pages.page(page_num+1)
+        # page_data = page.object_list
+        serializer = CommentSerializer(pages.page(page_num+1).object_list, many=True)
 
         response = {"query": "comments", "count": len(comments), "size": page_size, "comments": serializer.data}
 
