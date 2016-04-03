@@ -1,4 +1,8 @@
 import json
+import requests
+import urllib2
+import base64
+
 
 from django.http import Http404
 from django.core.paginator import Paginator
@@ -10,10 +14,6 @@ from rest_framework import status
 
 from api.serializers import PostSerializer, CommentSerializer, AuthorSerializer, AllAuthorSerializer
 from feed.models import Post, Author, Comment, Friend, CommentAuthor, ForeignHost
-
-import requests
-import urllib2
-import base64
 
 DEFAULT_PAGE_NUM = 0
 DEFAULT_PAGE_SIZE = 10
@@ -77,14 +77,11 @@ class post_comments(APIView):
         page_size = int(request.GET.get('size', DEFAULT_PAGE_SIZE))
 
         post_object = Post.objects.get(id=pk)
-        comments = Comment.objects.filter(id=post_object)
+        comments = Comment.objects.filter(comment_author_id=post_object)
         pages = Paginator(comments, page_size)
         page = pages.page(page_num+1)
-        print type(page)
         page_data = page.object_list
-        print page_data
         serializer = CommentSerializer(page_data, many=True)
-        print serializer
         response = {"query": "comments", "count": len(comments), "size": page_size, "comments": serializer.data}
 
         if page.has_next():
