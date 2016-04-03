@@ -78,9 +78,7 @@ class post_comments(APIView):
 
         post_object = Post.objects.get(id=pk)
         comments = Comment.objects.filter(id=post_object)
-        print type(comments)
         pages = Paginator(comments, page_size)
-        print type(pages)
         page = pages.page(page_num+1)
         print type(page)
         page_data = page.object_list
