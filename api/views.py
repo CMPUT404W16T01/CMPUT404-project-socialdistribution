@@ -38,9 +38,9 @@ class public_posts(APIView):
         response = {"query": "posts", "count": len(posts), "size": page_size, "posts": serializer.data}
 
         if page.has_next():
-            response['next'] = 'http://localhost:8000/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
+            response['next'] = 'http://ditto-test.herokuapp.com/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
         if page.has_previous():
-            response['previous'] = 'http://localhost:8000/api/posts/?page=' + str(page_num -1) + '&size=' + str(page_size)
+            response['previous'] = 'http://ditto-test.herokuapp.com/api/posts/?page=' + str(page_num -1) + '&size=' + str(page_size)
 
         return Response(response)
 
@@ -86,9 +86,9 @@ class post_comments(APIView):
         response = {"query": "comments", "count": len(comments), "size": page_size, "comments": serializer.data}
 
         if page.has_next():
-            response['next'] = 'http://localhost:8000/api/posts/' + pk + '/comments/?page=' + str(page_num + 1) + '&size=' + str(page_size)
+            response['next'] = 'http://ditto-test.herokuapp.com/api/posts/' + pk + '/comments/?page=' + str(page_num + 1) + '&size=' + str(page_size)
         if page.has_previous():
-            response['previous'] = 'http://localhost:8000/api/posts/' + pk + '/comments/?page=' + str(page_num - 1) + '&size=' + str(page_size)
+            response['previous'] = 'http://ditto-test.herokuapp.com/api/posts/' + pk + '/comments/?page=' + str(page_num - 1) + '&size=' + str(page_size)
 
         return Response(response)
 
@@ -218,9 +218,9 @@ class all_auth_posts(APIView):
         response = {"query": "posts", "count": len(return_posts), "size": page_size, "posts": serializer.data}
 
         if page.has_next():
-            response['next'] = 'http://localhost:8000/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
+            response['next'] = 'http://ditto-test.herokuapp.com/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
         if page.has_previous():
-            response['previous'] = 'http://localhost:8000/api/posts/?page=' + str(page_num - 1) + '&size=' + str(page_size)
+            response['previous'] = 'http://ditto-test.herokuapp.com/api/posts/?page=' + str(page_num - 1) + '&size=' + str(page_size)
 
         return Response(response)
 
@@ -255,17 +255,25 @@ class author_posts(APIView):
         return_posts = public_posts
 
         # the asker is the user itself, return everything
-        if (pk == asker_id):
+        if pk == asker_id:
             all_posts = Post.objects.filter(author=author_object)
-            return_posts = all_posts
 
-            serializer = PostSerializer(return_posts, many=True)
+            pages = Paginator(all_posts, page_size)
+            page = pages.page(page_num + 1)
+            page_data = page.object_list
+            serializer = PostSerializer(page_data, many=True)
 
-            return Response(
-                {"query": "posts", "count": len(return_posts), "size": "10", "next": "http://nextpageurlhere",
-                 "previous": "http://previouspageurlhere", "posts": serializer.data})
+            response = {"query": "posts", "count": len(return_posts), "size": page_size, "posts": serializer.data}
 
-        # if the asker is a friend
+            if page.has_next():
+                response['next'] = 'http://ditto-test.herok.com/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
+            if page.has_previous():
+                response['previous'] = 'http://ditto-test.herokuapp.com/api/posts/?page=' + str(page_num - 1) + '&size=' + str(
+                    page_size)
+
+            return Response(response)
+
+            # if the asker is a friend
         friend_to_author = Friend.objects.filter(follower_id=pk, followed_id=asker_id)
         author_to_friend = Friend.objects.filter(follower_id=asker_id, followed_id=pk)
 
@@ -333,9 +341,9 @@ class author_posts(APIView):
         response = {"query": "posts", "count": len(return_posts), "size": page_size, "posts": serializer.data}
 
         if page.has_next():
-            response['next'] = 'http://localhost:8000/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
+            response['next'] = 'http://ditto-test.herok.com/api/posts/?page=' + str(page_num + 1) + '&size=' + str(page_size)
         if page.has_previous():
-            response['previous'] = 'http://localhost:8000/api/posts/?page=' + str(page_num - 1) + '&size=' + str(
+            response['previous'] = 'http://ditto-test.herokuapp.com/api/posts/?page=' + str(page_num - 1) + '&size=' + str(
                 page_size)
 
         return Response(response)   
@@ -363,10 +371,10 @@ class author_comments(APIView):
         response = {"query": "comments", "count": len(comments), "size": page_size, "comments": serializer.data}
 
         if page.has_next():
-            response['next'] = 'http://localhost:8000/api/posts/' + pk + '/comments/?page=' + str(
+            response['next'] = 'http://ditto-test.herokuapp.com/api/posts/' + pk + '/comments/?page=' + str(
                 page_num + 1) + '&size=' + str(page_size)
         if page.has_previous():
-            response['previous'] = 'http://localhost:8000/api/posts/' + pk + '/comments/?page=' + str(
+            response['previous'] = 'http://ditto-test.herokuapp.com/api/posts/' + pk + '/comments/?page=' + str(
                 page_num - 1) + '&size=' + str(page_size)
 
         return Response(response)
@@ -398,7 +406,6 @@ class author_detail(APIView):
         author_object = Author.objects.get(id=pk)
         serializer = AuthorSerializer(author_object)
         response = serializer.data
-        author_id = pk
         response['friends'] = []
 
         following = Friend.objects.filter(follower_id=pk)

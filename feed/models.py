@@ -82,6 +82,7 @@ class Friend(models.Model):
     followed_host = models.URLField(max_length=500)
     followed_id = models.UUIDField()
 
+
 # @python_2_unicode_compatible
 class ForeignHost(models.Model):
     foreign_username = models.ForeignKey(User)
@@ -92,9 +93,8 @@ class ForeignHost(models.Model):
     def __unicode__(self):
         return str(self.url)
 
+
 class Img(models.Model):
-    #id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    #actual_image = models.ImageField(upload_to = os.path.join("images"))
     parent_post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None)
     actual_image = models.ImageField(upload_to ='images/',default='images/None/none.jpg')
 
