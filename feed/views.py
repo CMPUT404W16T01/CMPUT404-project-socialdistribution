@@ -399,7 +399,10 @@ def get_profile(request, pk):
                 them_host = "http://project-c404.rhcloud.com/"
 
             foreign_host = ForeignHost.objects.get(url=them_host)
-            url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
+            if "project" not in them_host:
+                url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
+            else:
+                url = them_host + "api/author/" + them_id + "/posts/?id=" + str(us_object.id)
             print url
             req = urllib2.Request(url)
 
