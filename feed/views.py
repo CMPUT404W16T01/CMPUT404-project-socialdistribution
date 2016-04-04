@@ -410,6 +410,7 @@ def get_profile(request, pk):
                 published_raw = post.get("published")
                 origin = post.get("origin")
                 id = post.get("id")
+                trY:
                 published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
                 published  = published.replace(tzinfo=None)
 
@@ -643,7 +644,7 @@ def create_comment(request):
     elif 'mighty' not in origin:
         url1 = "http://project-c404.rhcloud.com/api/posts/" + parent_id + "/comments/" 
     else:
-        url1 = origin + "/api/posts/" + parent_id + "/comments"
+        url1 = origin # + "/api/posts/" + parent_id + "/comments"
 
     print url1
     print json_packet
