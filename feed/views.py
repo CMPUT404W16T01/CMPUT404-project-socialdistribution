@@ -58,7 +58,7 @@ def feed(request):
         for i in foreign_hosts:
             # might = authors
             if "mighty" in i.url:
-                url = i.url + "api/authors/posts?id=" + str(author_object.id) + "&size=100"
+                url = i.url + "api/authors/posts?id=" + str(author_object.id) # + "&size=100"
             else:
                 #url = i.url + "api/author/posts?id=" + str(author_object.id) + "&size=100"
                 url = i.url + "api/posts"
