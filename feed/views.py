@@ -83,8 +83,12 @@ def feed(request):
                 origin = post.get("origin")
                 id = post.get("id")
                 visibility = post.get("visibility")
-                published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
-                published  = published.replace(tzinfo=None)
+                try:
+                    published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
+                    published = published.replace(tzinfo=None)
+                except:
+                    print e
+
 
                 their_comments = post.get("comments")
                 if len(their_comments) > 0:
