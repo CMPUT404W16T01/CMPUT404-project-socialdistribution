@@ -56,7 +56,8 @@ def feed(request):
 
         
         for i in foreign_hosts:
-            url = i.url + "api/author/posts?id=" + str(author_object.id) + "&size=100"
+            url = i.url + "api/author/posts?id=" + str(author_object.id) #+ "&size=100"
+            print url
             #url = i.url + "api/posts?size=100"
             req = urllib2.Request(url)
 
@@ -67,7 +68,7 @@ def feed(request):
             loaded = json.loads(response)
 
             their_posts = loaded.get('posts')
-
+            print "beep"
             for post in their_posts:
                 comments = []
                 description = post.get("description")
