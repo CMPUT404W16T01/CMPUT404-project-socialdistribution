@@ -60,8 +60,8 @@ def feed(request):
             if "mighty" in i.url:
                 url = i.url + "api/author/posts?id=" + str(author_object.id) + "&size=100"
             else:
-                #url = i.url + "api/author/posts?id=" + str(author_object.id) + "&size=100"
-                url = i.url + "api/posts"
+                url = i.url + "api/author/posts?id=" + str(author_object.id) + "&size=100"
+                #url = i.url + "api/posts"
             print url
             #url = i.url + "api/posts?size=100"
             req = urllib2.Request(url)
