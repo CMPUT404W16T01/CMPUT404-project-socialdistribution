@@ -42,14 +42,14 @@ def friends(request):
 				print i.follower_host
 				url = i.follower_host + ("/api/author/%s" % str(i.follower_id))
 				foreign_hosts = ForeignHost.objects.get(url=i.follower_host)
-				print foreign_hosts.username, foreign_hosts.password, foreign_hosts.url
+				#print foreign_hosts.username, foreign_hosts.password, foreign_hosts.url
 				req = urllib2.Request(url)
 				base64string = base64.encodestring('%s:%s' % (foreign_hosts.username, foreign_hosts.password)).replace('\n', '')
 				req.add_header("Authorization", "Basic %s" % base64string) 
 
 				response = urllib2.urlopen(req).read()
 				friend = json.loads(response)
-				print friend
+				#print friend
 
 			# for off host friends
 			if type(friend) == type({}):	
@@ -87,8 +87,8 @@ def friends(request):
 
 			if 'project' in i.url:
 				foreign_authors['authors'].extend(retrieved_authors)
-				print retrieved_authors
-				print type(retrieved_authors)
+				#print retrieved_authors
+				#print type(retrieved_authors)
 			else:
 				foreign_authors['authors'].extend(retrieved_authors['authors'])
 

@@ -52,7 +52,7 @@ def feed(request):
     their_post_list = []
     try:
         foreign_hosts = ForeignHost.objects.filter()
-        their_post_list, public_post_list = getOurShit(request, author_object)
+        their_post_list, public_post_list = getOurPosts(request, author_object)
 
         
         for i in foreign_hosts:
@@ -180,7 +180,7 @@ def feed(request):
 
     return render(request, 'feed.html', context)
 
-def getOurShit(request, author_object):
+def getOurPosts(request, author_object):
     asker_host = request.META.get("HTTP_HOST")
     try:
         asker_object = Author.objects.get(email=request.user)
@@ -389,7 +389,8 @@ def get_profile(request, pk):
                 them_host = "http://project-c404.rhcloud.com/"
 
             foreign_host = ForeignHost.objects.get(url=them_host)
-            url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
+            #url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
+            url = them_host + "api/author/posts?id=" + str(us_object.id)
             print url
             req = urllib2.Request(url)
 
