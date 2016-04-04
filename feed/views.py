@@ -644,7 +644,7 @@ def create_comment(request):
     elif 'mighty' not in origin:
         url1 = "http://project-c404.rhcloud.com/api/posts/" + parent_id + "/comments/" 
     else:
-        url1 = origin # + "/api/posts/" + parent_id + "/comments"
+        url1 = origin + "/comments/" # + "/api/posts/" + parent_id + "/comments"
 
     print url1
     print json_packet
