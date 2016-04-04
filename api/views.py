@@ -532,6 +532,8 @@ class friend_request(APIView):
             try:
                 url = friend_host + 'api/friendrequest'
                 packet = {"query": "friendrequest", "author": author, "friend": friend}
+                if "project" in friend_host:
+                    friend_host = "http://project-c404.rhcloud.com/"
                 print friend_host
                 foreign_host = ForeignHost.objects.get(url=friend_host)
                 r = requests.post(url, json=packet, auth=(foreign_host.username, foreign_host.password))
