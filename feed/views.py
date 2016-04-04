@@ -56,7 +56,12 @@ def feed(request):
 
         
         for i in foreign_hosts:
-            url = i.url + "api/author/posts?id=" + str(author_object.id) #+ "&size=100"
+            # might = authors
+            if "mighty" in i.url:
+                url = i.url + "api/authors/posts?id=" + str(author_object.id) + "&size=100"
+            else:
+                #url = i.url + "api/author/posts?id=" + str(author_object.id) + "&size=100"
+                url = i.url + "api/posts"
             print url
             #url = i.url + "api/posts?size=100"
             req = urllib2.Request(url)
