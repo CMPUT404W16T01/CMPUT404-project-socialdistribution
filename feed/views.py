@@ -56,8 +56,8 @@ def feed(request):
 
         
         for i in foreign_hosts:
-            # url = i.url + "api/author/posts?id=" + str(author_object.id) + "&size=100"
-            url = i.url + "api/posts?size=100"
+            url = i.url + "api/author/posts?id=" + str(author_object.id) + "&size=100"
+            #url = i.url + "api/posts?size=100"
             req = urllib2.Request(url)
 
             base64string = base64.encodestring('%s:%s' % (i.username, i.password)).replace('\n', '')
@@ -389,8 +389,7 @@ def get_profile(request, pk):
                 them_host = "http://project-c404.rhcloud.com/"
 
             foreign_host = ForeignHost.objects.get(url=them_host)
-            #url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
-            url = them_host + "api/author/posts?id=" + str(us_object.id)
+            url = them_host + "api/author/" + them_id + "/posts?id=" + str(us_object.id)
             print url
             req = urllib2.Request(url)
 
