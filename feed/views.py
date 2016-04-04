@@ -409,7 +409,6 @@ def get_profile(request, pk):
                 published_raw = post.get("published")
                 origin = post.get("origin")
                 id = post.get("id")
-                trY:
                 published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
                 published  = published.replace(tzinfo=None)
 
