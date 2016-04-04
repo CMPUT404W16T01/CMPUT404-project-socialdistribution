@@ -86,7 +86,7 @@ def feed(request):
                 try:
                     published = datetime.strptime(published_raw, '%Y-%m-%dT%H:%M:%S.%fZ')
                     published = published.replace(tzinfo=None)
-                except e:
+                except Exception as e:
                     print e
 
 
