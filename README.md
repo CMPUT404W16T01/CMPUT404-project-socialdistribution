@@ -7,6 +7,8 @@ See project.org (plain-text/org-mode) for a description of the project.
 
 Make a distributed social network!
 
+[Video Demo](https://www.youtube.com/watch?v=tFUQla0ScUY).
+
 Contributors / Licensing
 ========================
 
@@ -29,7 +31,3 @@ Contributors:
     Randy Wong
     Ramish Syed
     Marcin Pietrasik
-
-Video
-========================
-https://www.youtube.com/watch?v=tFUQla0ScUY
