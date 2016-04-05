@@ -8,6 +8,7 @@ See project.org (plain-text/org-mode) for a description of the project.
 Make a distributed social network!
 
 [Video Demo](https://www.youtube.com/watch?v=tFUQla0ScUY).
+[Rest API documentation](https://github.com/CMPUT404W16T01/CMPUT404-project-socialdistribution/wiki/REST-API)
 
 Contributors / Licensing
 ========================
